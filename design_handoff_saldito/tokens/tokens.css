@@ -1,0 +1,147 @@
+/* ============================================================
+   Saldito — Tokens de diseño
+   Modo oscuro único. Importar antes que cualquier otro CSS.
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ---------- Fondos ---------- */
+  --sd-bg-app: #111013;
+  --sd-bg-lienzo: #2A2825;
+  --sd-bg-hueco: #0B0A0D;
+
+  /* ---------- Superficies ---------- */
+  --sd-surface: #1B1A1F;
+  --sd-surface-elevada: #16151A;
+  --sd-surface-sutil: #1F1E24;
+  --sd-surface-input: #111013;
+  --sd-surface-grad: linear-gradient(155deg, #2A2732 0%, #1C1A21 48%, #101015 100%);
+  --sd-surface-grad-elevada: linear-gradient(155deg, #26232E 0%, #19181E 48%, #0E0D12 100%);
+  --sd-surface-grad-dorada: linear-gradient(155deg, #40371D 0%, #2B2515 50%, #1B1709 100%);
+  --sd-surface-grad-rosa: linear-gradient(155deg, #341C24 0%, #211317 50%, #140A0E 100%);
+
+  /* ---------- Bordes ---------- */
+  --sd-border: #28262D;
+  --sd-border-fuerte: #34323A;
+  --sd-border-sutil: #1F1E24;
+  --sd-border-acento: #EFC75E;
+
+  /* ---------- Texto ---------- */
+  --sd-text: #F0EFEA;
+  --sd-text-secundario: #C7C4CC;
+  --sd-text-atenuado: #88858C;
+  --sd-text-deshabilitado: #56535C;
+  --sd-text-sobre-dorado: #211804;
+
+  /* ---------- Acento dorado ---------- */
+  --sd-dorado: #EFC75E;
+  --sd-dorado-claro: #F4D77C;
+  --sd-dorado-profundo: #DCA637;
+  --sd-dorado-tenue: #57491F;
+  --sd-dorado-texto: #C9B87A;
+  --sd-dorado-grad: linear-gradient(135deg, #F4D77C, #DCA637);
+  --sd-dorado-a10: rgba(239, 199, 94, .10);
+  --sd-dorado-a08: rgba(239, 199, 94, .08);
+
+  /* ---------- Semánticos ---------- */
+  --sd-positivo: #7BB47A;
+  --sd-positivo-bg: rgba(123, 180, 122, .10);
+  --sd-negativo: #E38799;
+  --sd-negativo-profundo: #8C2F41;
+  --sd-negativo-bg: rgba(140, 47, 65, .18);
+  --sd-negativo-tinte: #F7E9EC;
+
+  /* ---------- Overlays ---------- */
+  --sd-overlay-modal: rgba(11, 10, 13, .65);
+  --sd-overlay-sheet: rgba(11, 10, 13, .72);
+  --sd-overlay-nav: rgba(24, 23, 28, .82);
+
+  /* ---------- Luminiscencia ambiente ---------- */
+  /* Mobile */
+  --sd-bloom-dorado: radial-gradient(140% 68% at 50% 85%, rgba(239,199,94,.15) 0%, rgba(220,166,55,.06) 45%, rgba(17,16,19,0) 78%);
+  --sd-bloom-rosa: radial-gradient(85% 45% at 8% -6%, rgba(227,135,153,.20) 0%, rgba(17,16,19,0) 62%);
+  /* Desktop: el lienzo es más grande, así que ambos blooms van más intensos */
+  --sd-bloom-dorado-desktop: radial-gradient(70% 62% at 50% 108%, rgba(239,199,94,.25) 0%, rgba(220,166,55,.05) 42%, rgba(17,16,19,0) 72%);
+  --sd-bloom-rosa-desktop: radial-gradient(52% 48% at 22% -8%, rgba(227,135,153,.19) 0%, rgba(17,16,19,0) 64%);
+
+  /* ---------- Tipografía ---------- */
+  --sd-font: 'Archivo', system-ui, -apple-system, sans-serif;
+  --sd-fw-regular: 400;
+  --sd-fw-medio: 500;
+  --sd-fw-semibold: 600;
+  --sd-fw-bold: 700;
+
+  --sd-fs-micro: 10.5px;
+  --sd-fs-caption: 11.5px;
+  --sd-fs-label: 12px;
+  --sd-fs-body-sm: 12.5px;
+  --sd-fs-body: 13px;
+  --sd-fs-body-lg: 14px;
+  --sd-fs-subtitulo: 15px;
+  --sd-fs-titulo-sm: 16px;
+  --sd-fs-titulo: 19px;
+  --sd-fs-titulo-lg: 24px;
+  --sd-fs-display-sm: 28px;
+  --sd-fs-display: 40px;
+  --sd-fs-display-lg: 48px;
+
+  --sd-track-ancho: .06em;
+  --sd-track-titular: -.02em;
+
+  /* ---------- Espaciado ---------- */
+  --sd-sp-1: 4px;  --sd-sp-2: 6px;  --sd-sp-3: 8px;  --sd-sp-4: 10px;
+  --sd-sp-5: 12px; --sd-sp-6: 14px; --sd-sp-7: 16px; --sd-sp-8: 18px;
+  --sd-sp-9: 20px; --sd-sp-10: 22px; --sd-sp-12: 26px; --sd-sp-14: 32px; --sd-sp-16: 40px;
+
+  /* ---------- Radios ---------- */
+  --sd-r-xs: 6px;  --sd-r-sm: 8px;  --sd-r-md: 10px; --sd-r-lg: 12px;
+  --sd-r-xl: 14px; --sd-r-2xl: 16px; --sd-r-3xl: 24px;
+  --sd-r-nav: 28px; --sd-r-device: 40px; --sd-r-pill: 100px;
+  --sd-r-rail: 18px;      /* superficie del rail lateral */
+  --sd-r-rail-item: 13px; /* ítem del rail */
+
+  /* ---------- Sombras ---------- */
+  --sd-sh-sutil: 0 2px 8px rgba(0,0,0,.6);
+  --sd-sh-card: 0 6px 16px rgba(0,0,0,.45);
+  --sd-sh-dropdown: 0 20px 40px rgba(0,0,0,.5);
+  --sd-sh-modal: 0 24px 60px rgba(0,0,0,.5);
+  --sd-sh-sheet: 0 -16px 40px rgba(0,0,0,.6);
+  --sd-sh-nav: 0 14px 34px rgba(0,0,0,.55);
+  --sd-sh-dispositivo: 0 40px 90px rgba(0,0,0,.5);
+  --sd-sh-fab: 0 8px 22px rgba(239,199,94,.38), 0 0 0 5px rgba(24,23,28,.9);
+  --sd-sh-fab-hover: 0 12px 26px rgba(239,199,94,.5), 0 0 0 5px rgba(24,23,28,.9);
+  --sd-sh-donut: drop-shadow(0 4px 9px rgba(0,0,0,.55));
+  --sd-sh-donut-hub: 0 2px 8px rgba(0,0,0,.6), inset 0 1px 4px rgba(0,0,0,.8);
+  --sd-donut-grosor: 11;   /* unidades del viewBox de 100 */
+  --sd-donut-gap: 17;      /* separación de arco entre segmentos */
+
+  /* ---------- Movimiento ---------- */
+  --sd-dur-instante: 150ms;
+  --sd-dur-rapido: 180ms;
+  --sd-dur-normal: 220ms;
+  --sd-dur-lento: 320ms;
+  --sd-ease-salida: cubic-bezier(.16, 1, .3, 1);
+  --sd-transicion-hover: transform .15s ease, background .15s ease, border-color .15s ease, color .15s ease;
+
+  /* ---------- Layout ---------- */
+  --sd-mobile-w: 390px;
+  --sd-mobile-h: 760px;
+  --sd-sidebar-rail: 64px;   /* rail colapsado */
+  --sd-sidebar-w: 212px;     /* rail expandido por hover */
+  --sd-sidebar-hueco: 76px;  /* hueco reservado en el layout (rail + aire a la derecha) */
+  --sd-sidebar-aire: 8px;    /* separación del rail respecto del borde del lienzo */
+  --sd-col-derecha: 300px;
+  --sd-target-min: 44px;
+}
+
+/* ---------- Keyframes compartidos ---------- */
+@keyframes sd-screen-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes sd-sheet-up   { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes sd-fade-in    { from { opacity: 0; } to { opacity: 1; } }
+@keyframes sd-toast-in   { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes sd-pop-in     { from { transform: scale(.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes sd-pulse-dot  { 0%, 100% { box-shadow: 0 0 0 0 rgba(227,135,153,.55); } 50% { box-shadow: 0 0 0 5px rgba(227,135,153,0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
