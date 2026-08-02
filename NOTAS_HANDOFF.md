@@ -21,40 +21,6 @@ copia de referencia y queda como llegó.
 - `Chip` no aplica una clase `sd-chip--activo`, pero **está bien**: `components.css` estiliza
   el estado con el selector de atributo `.sd-chip[aria-pressed='true']`.
 
-## Corregido: el pseudocódigo de la especificación 2.3 rompe su propio invariante
-
-**Esto conviene avisarlo a quien escribió la especificación.** El algoritmo de
-`deudasDeGasto` tal como está en el documento viola el invariante que el mismo documento
-señala como "la mejor red de seguridad del sistema": que el saldo de cada persona coincida
-con `puso − consumió`.
-
-Caso mínimo que lo rompe — lo encontró el property testing, no se nos habría ocurrido a mano:
-
-> Un gasto de **2**. Caro y Dani ponen **1 cada uno** y lo consumen entre los dos por partes
-> iguales, **1 cada uno**. Nadie debería quedar debiendo nada.
->
-> El pseudocódigo procesa una fila por vez. La deuda de Caro (1) se reparte entre los dos
-> pagadores: empate de 0,5 y 0,5, y el sobrante va al primero de la lista, o sea a Caro
-> mismo — que después se descarta por ser la porción propia. La deuda de Dani (1) tiene el
-> mismo empate y el sobrante también va a Caro, que esta vez sí sobrevive.
->
-> Resultado: Dani le debe 1 a Caro. Pero `puso − consumió` da cero para los dos.
-
-**La causa.** Redondear fila por fila garantiza que cada **fila** cierre exacto contra el
-reparto, pero deja las **columnas** a la deriva respecto de lo que puso cada uno. Y el saldo
-neto de una persona es exactamente `su columna − su fila`. Con un solo pagador el problema
-no aparece, porque la única columna se lleva todo; por eso el prototipo nunca lo mostró.
-
-**Cómo se resolvió.** `repartirMatriz`, en `features/deudas/calculo/redondeo.ts`, redondea la
-matriz completa preservando los dos márgenes: primero ajusta las filas por mayor parte
-fraccionaria, y después corrige las columnas moviendo unidades **dentro de una misma fila**,
-que es lo único que no rompe lo ya ajustado. Con las columnas exactas, descartar la porción
-propia deja el invariante intacto.
-
-El resultado sigue siendo la atribución proporcional que pide la sección 1.4, y la pantalla
-Deudas no cambia. Los invariantes están cubiertos con property testing en
-`features/deudas/calculo/invariantes.test.ts`.
-
 ## Pendiente de importar
 
 Del proyecto de Claude Design todavía faltan, porque son archivos grandes o de bajo valor
