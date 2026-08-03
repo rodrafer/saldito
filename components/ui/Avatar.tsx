@@ -33,7 +33,7 @@ export interface CategoryIconProps {
 export function CategoryIcon({ icon, background, className }: CategoryIconProps) {
   return (
     <div
-      className={cn('sd-avatar', 'sd-avatar--icono', className)}
+      className={cn('sd-avatar', 'sd-avatar--icon', className)}
       style={background ? { background } : undefined}
       aria-hidden="true"
     >

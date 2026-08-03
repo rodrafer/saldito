@@ -66,7 +66,7 @@ export function FilterMenuSearch({
   ...props
 }: Omit<InputHTMLAttributes<HTMLInputElement>, 'className'> & { className?: string }) {
   return (
-    <div className={cn('sd-dropdown__buscador', className)}>
+    <div className={cn('sd-dropdown__search', className)}>
       <Input type="search" autoFocus {...props} />
     </div>
   );

@@ -1,12 +1,12 @@
-/* Orden obligatorio: los tokens definen las variables, components.css las
-   consume, theme.css se las presta a Tailwind. */
+/* Mandatory order: the tokens define the variables, components.css consumes
+   them, theme.css lends them to Tailwind. */
 @import 'tailwindcss';
 @import '../styles/tokens.css';
 @import '../styles/components.css';
 @import '../styles/theme.css';
 
-/* El handoff es material de referencia, no código del proyecto: si Tailwind lo
-   escanea, saca utilidades de un prototipo de 289K que nadie renderiza. */
+/* The handoff is reference material, not project code: if Tailwind scans it,
+   it generates utilities from a 289K prototype nobody renders. */
 @source not "../design_handoff_saldito";
 
 html,

@@ -19,11 +19,11 @@ export interface PlaceholderScreenProps {
  */
 export function PlaceholderScreen({ title, phase, aside = null }: PlaceholderScreenProps) {
   return (
-    <div className="sd-pantalla sd-stack">
-      <h1 className="text-titulo desktop:text-titulo-lg font-semibold">{title}</h1>
+    <div className="sd-screen sd-stack">
+      <h1 className="text-title desktop:text-title-lg font-semibold">{title}</h1>
       <DesktopGrid aside={aside}>
         <Card>
-          <p className="text-body text-texto-atenuado">Se construye en la {phase}.</p>
+          <p className="text-body text-text-muted">Se construye en la {phase}.</p>
         </Card>
       </DesktopGrid>
     </div>

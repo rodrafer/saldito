@@ -54,6 +54,21 @@ every dependency in the project.
 
 Branches `feature/<slug>`, merged via **Squash & Merge**.
 
+**Once merged, the branch goes — local and remote.** Nothing is lost by deleting it: GitHub
+keeps `refs/pull/<n>/head` pointing at the pre-squash tip indefinitely, so the PR page still
+shows every individual commit and the branch can be restored from there. What is lost by
+keeping them is the ability to read `git branch -r` and see what is actually in flight.
+
+Squash & Merge replays the work as one new commit, so the branch's own commits are never
+ancestors of `main`. `git branch -d` will refuse on that basis and `git branch -D` is the
+correct call — the one case where that flag doesn't mean "I am discarding unmerged work".
+
+**`git branch -r` is a local cache, not the remote.** Remote-tracking refs survive the branch
+they track: delete a branch on GitHub and the local `origin/…` entry stays until something
+prunes it, so the list reads as stale branches that no longer exist. Before claiming anything
+about what's in flight, `git fetch --prune`, or ask the remote directly with
+`git ls-remote --heads origin`.
+
 ## Workflow to ship code to `main`
 
 In this order:
@@ -68,8 +83,8 @@ In this order:
    me** — an unassigned PR has nobody waiting on it, and it's the assignee list that says
    whose turn it is.
 6. **Self-review the PR** — read your own diff as if it were someone else's.
-7. **Fix** whatever comes out of the review, and **update the notes** if something worth
-   recording changed.
+7. **Fix** whatever comes out of the review, and **update the notes and the PR description**
+   if something worth recording changed.
 8. **Save the screenshots** where they belong and flag it so they get pasted into the PR.
 9. **Final CI check** green.
 10. **Ask for explicit approval to merge**, and wait for it. Never merge on your own
@@ -85,6 +100,34 @@ whether it proves it. The heading names the state — which screen, which viewpo
 overlay open — and the line points at the specific thing that changed, so a reviewer can
 tell agreement from oversight without reading the diff first. The body of the PR carries
 those headings before the screenshots exist, each with a marker where the image goes.
+
+**Every PR description carries a `## Review guide`.** It says what order to read the files
+in, why that order, and what can be skipped. The point is to spend the reviewer's attention
+where it changes the outcome: start at the file that carries the decision, not at the top of
+the alphabet, and name outright the parts that are mechanical, generated, or the same edit
+repeated — a PR where twenty of twenty-five files are one rename applied over and over should
+say so, instead of letting the reviewer discover it on file eleven. Saying "skip these" is
+the part that makes it a guide rather than an index.
+
+**A mermaid diagram goes in when the PR introduces or rewires relationships between
+modules** — and stays out otherwise. It has to show what the diff doesn't make obvious: a
+dependency through context, a new seam, who calls the new thing, and **the untouched files
+the new code leans on**, which are precisely the ones a diff never mentions. A diagram that
+restates the changed-file list is redundant with what GitHub already shows above it.
+
+Deliberately not mandatory. Nothing verifies a diagram against the code, so it rots faster
+than prose, and a wrong architecture diagram is worse than none because it gets believed. On
+a mechanical change or a contained fix, leave it out.
+
+**The title and description describe the PR as it stands, not as it was opened.** Anything
+that lands afterwards — review fixes, a scope that grew, work that rode along — updates the
+description whenever it changes what a reviewer should expect to find, and updates the
+**title** too once the title has stopped naming what is actually in there. A description that
+only matches the first push is worse than a thin one, because it still gets read as current.
+
+**`🤖 Generated with [Claude Code](https://claude.com/claude-code)` goes last, always.**
+Appending a new section is the easy way to bury it mid-body; every rewrite puts it back at
+the bottom.
 
 Step 10 is not a formality: merging is the one step in this list that can't be undone
 quietly, and it's the last chance to catch something the automated checks can't see. A green

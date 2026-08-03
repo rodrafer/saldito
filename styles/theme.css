@@ -1,15 +1,16 @@
 /* ============================================================
-   Saldito — Puente a Tailwind v4
+   Saldito — Bridge to Tailwind v4
 
-   Traducción del `tailwind.config.ts` del handoff al CSS-first de Tailwind v4.
-   Todo apunta a `var(--sd-*)`, así que tokens.css sigue siendo la única fuente
-   de verdad y no hay un segundo lugar donde un color pueda quedar desfasado.
+   The handoff's `tailwind.config.ts` translated to Tailwind v4's CSS-first
+   form. Everything points at `var(--sd-*)`, so tokens.css stays the only
+   source of truth and there is no second place a colour can drift in.
 
-   `inline` es lo que evita la indirección: Tailwind escribe el `var(--sd-*)`
-   dentro de la utilidad en vez de emitir una variable propia que lo copie.
+   `inline` is what removes the indirection: Tailwind writes the `var(--sd-*)`
+   into the utility instead of emitting a variable of its own that copies it.
 
-   Los nombres de las claves son los que eligió el handoff (`texto`, `borde`,
-   `dorado`): son la fachada del sistema de diseño, igual que los tokens.
+   Some keys deliberately shadow a Tailwind default (`--tracking-wide`,
+   `--ease-out`, the whole `--radius-*` and `--text-*` scales). That is the
+   point: one name, one value, whichever file it is written in.
    ============================================================ */
 
 @theme inline {
@@ -17,31 +18,31 @@
   --color-app: var(--sd-bg-app);
 
   --color-surface: var(--sd-surface);
-  --color-surface-elevada: var(--sd-surface-elevada);
-  --color-surface-sutil: var(--sd-surface-sutil);
+  --color-surface-elevated: var(--sd-surface-elevated);
+  --color-surface-subtle: var(--sd-surface-subtle);
   --color-surface-input: var(--sd-surface-input);
 
-  --color-borde: var(--sd-border);
-  --color-borde-fuerte: var(--sd-border-fuerte);
-  --color-borde-sutil: var(--sd-border-sutil);
-  --color-borde-acento: var(--sd-border-acento);
+  --color-border: var(--sd-border);
+  --color-border-strong: var(--sd-border-strong);
+  --color-border-subtle: var(--sd-border-subtle);
+  --color-border-accent: var(--sd-border-accent);
 
-  --color-texto: var(--sd-text);
-  --color-texto-secundario: var(--sd-text-secundario);
-  --color-texto-atenuado: var(--sd-text-atenuado);
-  --color-texto-deshabilitado: var(--sd-text-deshabilitado);
-  --color-texto-dorado: var(--sd-text-sobre-dorado);
+  --color-text: var(--sd-text);
+  --color-text-secondary: var(--sd-text-secondary);
+  --color-text-muted: var(--sd-text-muted);
+  --color-text-disabled: var(--sd-text-disabled);
+  --color-text-on-gold: var(--sd-text-on-gold);
 
-  --color-dorado: var(--sd-dorado);
-  --color-dorado-claro: var(--sd-dorado-claro);
-  --color-dorado-profundo: var(--sd-dorado-profundo);
-  --color-dorado-tenue: var(--sd-dorado-tenue);
+  --color-gold: var(--sd-gold);
+  --color-gold-light: var(--sd-gold-light);
+  --color-gold-deep: var(--sd-gold-deep);
+  --color-gold-faint: var(--sd-gold-faint);
 
-  --color-positivo: var(--sd-positivo);
-  --color-negativo: var(--sd-negativo);
-  --color-negativo-profundo: var(--sd-negativo-profundo);
+  --color-positive: var(--sd-positive);
+  --color-negative: var(--sd-negative);
+  --color-negative-deep: var(--sd-negative-deep);
 
-  /* ---------- Tipografía ---------- */
+  /* ---------- Typography ---------- */
   --font-sans: var(--sd-font);
 
   --text-micro: var(--sd-fs-micro);
@@ -50,18 +51,18 @@
   --text-body-sm: var(--sd-fs-body-sm);
   --text-body: var(--sd-fs-body);
   --text-body-lg: var(--sd-fs-body-lg);
-  --text-subtitulo: var(--sd-fs-subtitulo);
-  --text-titulo-sm: var(--sd-fs-titulo-sm);
-  --text-titulo: var(--sd-fs-titulo);
-  --text-titulo-lg: var(--sd-fs-titulo-lg);
+  --text-subtitle: var(--sd-fs-subtitle);
+  --text-title-sm: var(--sd-fs-title-sm);
+  --text-title: var(--sd-fs-title);
+  --text-title-lg: var(--sd-fs-title-lg);
   --text-display-sm: var(--sd-fs-display-sm);
   --text-display: var(--sd-fs-display);
   --text-display-lg: var(--sd-fs-display-lg);
 
-  --tracking-ancho: var(--sd-track-ancho);
-  --tracking-titular: var(--sd-track-titular);
+  --tracking-wide: var(--sd-track-wide);
+  --tracking-heading: var(--sd-track-heading);
 
-  /* ---------- Radios ---------- */
+  /* ---------- Radii ---------- */
   --radius-xs: var(--sd-r-xs);
   --radius-sm: var(--sd-r-sm);
   --radius-md: var(--sd-r-md);
@@ -73,8 +74,8 @@
   --radius-rail: var(--sd-r-rail);
   --radius-pill: var(--sd-r-pill);
 
-  /* ---------- Sombras ---------- */
-  --shadow-sutil: var(--sd-sh-sutil);
+  /* ---------- Shadows ---------- */
+  --shadow-subtle: var(--sd-sh-subtle);
   --shadow-card: var(--sd-sh-card);
   --shadow-dropdown: var(--sd-sh-dropdown);
   --shadow-modal: var(--sd-sh-modal);
@@ -82,42 +83,42 @@
   --shadow-nav: var(--sd-sh-nav);
   --shadow-fab: var(--sd-sh-fab);
 
-  /* ---------- Movimiento ---------- */
-  --ease-salida: var(--sd-ease-salida);
-  --animate-screen-in: sd-screen-in var(--sd-dur-normal) var(--sd-ease-salida) both;
-  --animate-sheet-up: sd-sheet-up var(--sd-dur-normal) var(--sd-ease-salida) both;
-  --animate-pop-in: sd-pop-in var(--sd-dur-rapido) var(--sd-ease-salida) both;
-  --animate-fade-in: sd-fade-in var(--sd-dur-rapido) ease both;
-  --animate-toast-in: sd-toast-in var(--sd-dur-normal) var(--sd-ease-salida) both;
+  /* ---------- Motion ---------- */
+  --ease-out: var(--sd-ease-out);
+  --animate-screen-in: sd-screen-in var(--sd-dur-normal) var(--sd-ease-out) both;
+  --animate-sheet-up: sd-sheet-up var(--sd-dur-normal) var(--sd-ease-out) both;
+  --animate-pop-in: sd-pop-in var(--sd-dur-fast) var(--sd-ease-out) both;
+  --animate-fade-in: sd-fade-in var(--sd-dur-fast) ease both;
+  --animate-toast-in: sd-toast-in var(--sd-dur-normal) var(--sd-ease-out) both;
 
   /* ---------- Layout ----------
-     El handoff no fija un breakpoint: separa "mobile 390×760" de "desktop", y
-     el prototipo alterna entre los dos con un toggle. 900px es el punto donde
-     el grid firme entra sin apretarse — 76 de rail + 40+40 de aire + 300 de
-     columna derecha + 20 de gap dejan ~424px para la columna principal. */
+     The handoff never fixes a breakpoint: it separates "mobile 390×760" from
+     "desktop", and the prototype flips between the two with a toggle. 900px is
+     where the firm grid stops being cramped — 76 of rail + 40+40 of padding +
+     300 of right column + 20 of gap leave ~424px for the main column. */
   --breakpoint-desktop: 900px;
 }
 
-/* Tailwind v4 no tiene namespace para background-image, así que los degradados
-   del handoff entran como utilidades propias. */
+/* Tailwind v4 has no namespace for background-image, so the handoff's
+   gradients come in as utilities of our own. */
 @utility bg-surface-grad {
   background-image: var(--sd-surface-grad);
 }
-@utility bg-surface-grad-elevada {
-  background-image: var(--sd-surface-grad-elevada);
+@utility bg-surface-grad-elevated {
+  background-image: var(--sd-surface-grad-elevated);
 }
-@utility bg-surface-grad-dorada {
-  background-image: var(--sd-surface-grad-dorada);
+@utility bg-surface-grad-gold {
+  background-image: var(--sd-surface-grad-gold);
 }
-@utility bg-surface-grad-rosa {
-  background-image: var(--sd-surface-grad-rosa);
+@utility bg-surface-grad-pink {
+  background-image: var(--sd-surface-grad-pink);
 }
-@utility bg-dorado-grad {
-  background-image: var(--sd-dorado-grad);
+@utility bg-gold-grad {
+  background-image: var(--sd-gold-grad);
 }
-@utility bg-bloom-dorado {
-  background-image: var(--sd-bloom-dorado);
+@utility bg-bloom-gold {
+  background-image: var(--sd-bloom-gold);
 }
-@utility bg-bloom-rosa {
-  background-image: var(--sd-bloom-rosa);
+@utility bg-bloom-pink {
+  background-image: var(--sd-bloom-pink);
 }

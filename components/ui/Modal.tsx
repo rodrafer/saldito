@@ -42,7 +42,7 @@ export function Modal({
         <Dialog.Overlay className="sd-overlay" />
         <Dialog.Content className={cn('sd-modal', className)} style={{ width }} {...returnFocus}>
           {title ? (
-            <Dialog.Title className="sd-modal__titulo">{title}</Dialog.Title>
+            <Dialog.Title className="sd-modal__title">{title}</Dialog.Title>
           ) : (
             <VisuallyHidden asChild>
               <Dialog.Title>Opciones</Dialog.Title>

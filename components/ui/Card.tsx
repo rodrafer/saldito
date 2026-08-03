@@ -4,9 +4,9 @@ import type { HTMLAttributes, ReactNode } from 'react';
 export type CardTone = 'neutral' | 'elevated' | 'gold' | 'pink';
 
 const TONE_CLASS: Record<Exclude<CardTone, 'neutral'>, string> = {
-  elevated: 'sd-card--elevada',
-  gold: 'sd-card--dorada',
-  pink: 'sd-card--rosa',
+  elevated: 'sd-card--elevated',
+  gold: 'sd-card--gold',
+  pink: 'sd-card--pink',
 };
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
@@ -26,7 +26,7 @@ export function Card({ tone = 'neutral', flat = false, className, children, ...p
       className={cn(
         'sd-card',
         tone !== 'neutral' && TONE_CLASS[tone],
-        flat && 'sd-card--plano',
+        flat && 'sd-card--flat',
         className,
       )}
       {...props}

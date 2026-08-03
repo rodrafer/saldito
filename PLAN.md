@@ -17,6 +17,7 @@ Sources of truth:
 | First deliverable scope | Core: calculation → expenses → debts → plan (phases 0–7)                               |
 | Auth                    | Email + password **and** Google OAuth                                                  |
 | Screenshots             | **Playwright, from the next PR on.** Phase 2's were driven by a throwaway CDP script   |
+| URL paths               | **Stay in Spanish** (`/gastos`, `/deudas`, `/grupo`) — they are text the user reads    |
 
 ## Assumptions (flag if any don't work)
 
@@ -41,8 +42,8 @@ saldito/
 │   ├── (app)/
 │   │   ├── layout.tsx                # desktop Sidebar + mobile BottomNav
 │   │   ├── page.tsx                  # Dashboard
-│   │   ├── expenses/                 # page · new · [id] · [id]/edit
-│   │   ├── debts/ · group/ · categories/ · notifications/ · profile/
+│   │   ├── gastos/                   # page · new · [id] · [id]/edit
+│   │   ├── deudas/ · grupo/ · categorias/ · notificaciones/ · perfil/
 │   └── api/exchange-rate/route.ts
 ├── features/                         # one folder per domain
 │   ├── expenses/      components · hooks · actions.ts · queries.ts · schemas.ts
@@ -64,7 +65,16 @@ anything from Next or Supabase. That way it runs identically in tests, on the se
 rendering, and on the client for optimistic updates.
 
 **Style rule:** no hardcoded hex. `tokens.css` remains the only source; `theme.css` exposes
-it to Tailwind v4 via `@theme inline`.
+it to Tailwind v4 via `@theme inline`. Token, class and theme-key names are English; the
+mapping back to the handoff's Spanish is in `docs/glossary.md`.
+
+**Route rule:** URL segments stay in Spanish, and so do the route folders that produce them.
+A path is an identifier _and_ something the user reads, types and shares, which puts it under
+the "text the end user sees" exception in `AGENTS.md` — the handoff's README proposes these
+paths, the product is for Argentine users, and changing a URL after launch costs redirects
+forever. The route handler and the component it exports are English as usual: `app/(app)/gastos/page.tsx`
+exports `ExpensesPage`. This is the one place the two languages meet, and it meets on the
+file boundary rather than inside a name.
 
 ---
 
@@ -123,12 +133,14 @@ Decided before starting the phase:
   Spanish included. React components, props, and types are ours, so they go to English, and
   `docs/glossary.md` carries the mapping.
 
-  > **Reversed after the phase shipped.** The reasoning above rested on the two `.dc.html`
-  > files being written against the token names. They aren't: the prototype never mentions
-  > `--sd-*` at all — it is inline hex end to end — and the design-system page mentions it
-  > twice, once in prose and once as the caption of a single swatch. With that gone there is
-  > no case for a half-translated codebase, and the glossary table was evidence of the
-  > problem rather than a fix for it. The rename is in "Cross-cutting work" below.
+  > **Reversed after the phase shipped, and now done.** The reasoning above rested on the two
+  > `.dc.html` files being written against the token names. They aren't: the prototype never
+  > mentions `--sd-*` at all — it is inline hex end to end — and the design-system page
+  > mentions it twice, once in prose and once as the caption of a single swatch. With that
+  > gone there is no case for a half-translated codebase, and the glossary table was evidence
+  > of the problem rather than a fix for it. Tokens, classes and theme keys are in English as
+  > of the `feature/css-vocabulary-english` branch; `docs/glossary.md` now maps the repo's
+  > names back to the handoff's, which is the only direction that still needs a mapping.
 
 - **The app shell is a `100dvh` container that scrolls internally**, not a page that grows.
   The handoff anchors every overlay with `position: absolute` against the app container
@@ -229,11 +241,11 @@ that has nothing to do with them.
 Each one carries **when it has to land** — that's what stops this becoming a list nobody
 reads. Anything with no trigger doesn't belong here; it belongs in nobody's plan.
 
-| What                                                                                                                                                                                                                                                                                                                                                                                                                                  | Trigger                                                      |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| **Playwright as a devDependency, with the screenshot run scripted in the repo.** Phase 2's captures came from a throwaway CDP script that lives in a scratchpad and dies with the session. Same viewports, same shots, same names, diffable between phases.                                                                                                                                                                           | Before phase 3's screenshots                                 |
-| **E2E tests on the same Playwright, wired into CI.** Different commitment from the screenshots and worth keeping separate: it adds CI time, a class of flakiness the suite doesn't have today, and a budget every later phase has to carry. It also changes the shipping workflow, which grows an e2e step — that edit to `AGENTS.md` lands with the tests, not before, so the convention never describes a suite that doesn't exist. | Phase 3, with auth: the first flow worth driving end to end  |
-| **Translate the CSS vocabulary to English** — tokens, class names, and the Tailwind theme keys. See the reversal note under phase 2. Mechanical, and it only gets more expensive as screens are written against the current names.                                                                                                                                                                                                    | Before phase 3, so nothing new is built on the Spanish names |
+| What                                                                                                                                                                                                                                                                                                                                                                                                                                  | Trigger                                                     |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **Playwright as a devDependency, with the screenshot run scripted in the repo.** Phase 2's captures came from a throwaway CDP script that lives in a scratchpad and dies with the session. Same viewports, same shots, same names, diffable between phases.                                                                                                                                                                           | Before phase 3's screenshots                                |
+| **E2E tests on the same Playwright, wired into CI.** Different commitment from the screenshots and worth keeping separate: it adds CI time, a class of flakiness the suite doesn't have today, and a budget every later phase has to carry. It also changes the shipping workflow, which grows an e2e step — that edit to `AGENTS.md` lands with the tests, not before, so the convention never describes a suite that doesn't exist. | Phase 3, with auth: the first flow worth driving end to end |
+| ~~**Translate the CSS vocabulary to English** — tokens, class names, and the Tailwind theme keys. See the reversal note under phase 2.~~ **Done**, along with every TS and CSS comment, before phase 3. Mapping back to the handoff is in `docs/glossary.md`.                                                                                                                                                                         | ~~Before phase 3~~ — landed                                 |
 
 ## Identified risks
 

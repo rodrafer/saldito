@@ -3,6 +3,9 @@
 Differences found against the design material. `design_handoff_saldito/` is the reference
 copy and is never edited; this file is where the divergences live.
 
+Token and class names below are the repo's, which are in English while the handoff's are in
+Spanish. `docs/glossary.md` maps the two.
+
 ## Resolved in Phase 2
 
 The seven items found while importing, and what happened to each when the primitives were
@@ -15,12 +18,12 @@ ported to `components/ui/`.
 | `ListRow`                                                  | `onClick` on a `div`, without role or keyboard focus                | A clickable row is a `<button>`; a display-only row stays a `div` rather than becoming a button that does nothing                                 |
 | `SegmentedControl`, `DropdownItem`, `BottomNav`, `Sidebar` | Clickable `div`s with `role`/`aria` but no keyboard support         | Radix ToggleGroup and DropdownMenu for the first two; `next/link` for the two navs, which are links and not buttons                               |
 | `DonutChart`                                               | Hardcoded the hub gradient (`#24222A`…), `GAP = 17`, and the shadow | Shadows and the hub read tokens now. The hub gradient had no token, so `--sd-donut-hub` was added — see the finding on the two numeric ones below |
-| `Sidebar`                                                  | Comment said "fixed gap of 88px"                                    | The real token is `--sd-sidebar-hueco: 76px`. Comment rewritten in both the component and `components.css`                                        |
+| `Sidebar`                                                  | Comment said "fixed gap of 88px"                                    | The real token is `--sd-sidebar-gap: 76px`. Comment rewritten in both the component and `components.css`                                          |
 | `tokens.css`                                               | Pulled Archivo in with a Google Fonts `@import`                     | `next/font/google`, which self-hosts it. `--sd-font` now reads the `--font-archivo` that the root layout defines                                  |
 
 ### Verified, not a problem
 
-- `Chip` doesn't apply an `sd-chip--activo` class, but that's **fine**: `components.css`
+- `Chip` doesn't apply an `sd-chip--active` class, but that's **fine**: `components.css`
   styles the state from the attribute selector. Radix adds `data-state`, which is now
   covered by the same rule — and it earns its keep, because a filter chip that is also a
   popover trigger has its `data-state` overwritten by the popover's open/closed. The
@@ -55,9 +58,9 @@ config that does exactly that.
   design-system page, which assign the elevated gradient to "modales · sheets · menús".
   Rendering settled it: every one of the eight desktop modals in the prototype _does_ use
   the elevated gradient, so the flat sheet is a deliberate distinction between the two
-  envelopes rather than an oversight. The handle stays on `--sd-border-fuerte`; the
+  envelopes rather than an oversight. The handle stays on `--sd-border-strong`; the
   prototype's `#3A3740` is not a token and is three units away.
-- **`.sd-row--accion` sits on `--sd-surface-input`.** It was on the card gradient, which
+- **`.sd-row--action` sits on `--sd-surface-input`.** It was on the card gradient, which
   inside a sheet inverts the relationship: the rows read as raised cards over the sheet
   instead of wells sunk into it. That inversion is plainly visible side by side. The
   design-system page's standalone sample does use the gradient, but it sits on a card, not
@@ -78,7 +81,7 @@ config that does exactly that.
   exists only to hold it.
 - **Near-miss colours were rounded to their token.** The prototype uses `#2A2831` for the
   rail border, `#2C2A31` for the bar's, and `#23222A` for the rail's footer rule — none of
-  them tokens, all within a few units. The bar's border did move from `--sd-border-fuerte`
+  them tokens, all within a few units. The bar's border did move from `--sd-border-strong`
   to `--sd-border`, which is twice as close to what the prototype actually paints.
 - **Rail labels are 14px**, the `--sd-fs-body-lg` token. Both prototype and design-system
   page say 13.5px, which is not on the type scale at all.
@@ -91,7 +94,7 @@ config that does exactly that.
   76px of rail plus 40+40 of padding plus the 300px column and its 20px gap leave ~424px for
   the main column.
 - **Focus is a 2px gold outline at 2px offset.** The README asks for "foco visible con borde
-  dorado" and reserves `--sd-border-acento` for it, but no file in the handoff draws one.
+  dorado" and reserves `--sd-border-accent` for it, but no file in the handoff draws one.
 
 ## The import is complete
 

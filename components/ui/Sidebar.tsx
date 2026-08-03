@@ -24,7 +24,7 @@ export interface SidebarProps {
  * - The rail is a surface of its own (155° gradient, 18px radius) floating over
  *   the background, not a bordered column.
  * - It expands **over** the content (`position: absolute` inside a fixed gap of
- *   --sd-sidebar-hueco, 76px), so opening it causes no reflow.
+ *   --sd-sidebar-gap, 76px), so opening it causes no reflow.
  * - The icons live in 44px boxes that don't move as it expands; only the
  *   labels fade in.
  * - The active item gets the diagonal gold gradient and no border.
@@ -36,7 +36,7 @@ export interface SidebarProps {
  */
 export function Sidebar({ items, activeHref, header, footer, className }: SidebarProps) {
   return (
-    <div className="sd-sidebar-hueco">
+    <div className="sd-sidebar-gap">
       <aside className={cn('sd-sidebar', className)}>
         {header}
         <nav aria-label="Navegación principal" className="sd-sidebar__items">
@@ -47,14 +47,14 @@ export function Sidebar({ items, activeHref, header, footer, className }: Sideba
               aria-current={item.href === activeHref ? 'page' : undefined}
               className="sd-sidebar__item"
             >
-              <span className="sd-sidebar__icono" aria-hidden="true">
+              <span className="sd-sidebar__icon" aria-hidden="true">
                 {item.icon}
               </span>
               <span className="sd-sidebar__label">{item.label}</span>
             </Link>
           ))}
         </nav>
-        {footer && <div className="sd-sidebar__pie">{footer}</div>}
+        {footer && <div className="sd-sidebar__footer">{footer}</div>}
       </aside>
     </div>
   );

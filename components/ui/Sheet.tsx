@@ -38,7 +38,7 @@ export function Sheet({ open, onOpenChange, title, description, children, classN
               optional. When there's none, the title still exists — just not on
               screen — instead of shipping an unnamed dialog. */}
           {title ? (
-            <Dialog.Title className="sd-sheet__titulo">{title}</Dialog.Title>
+            <Dialog.Title className="sd-sheet__title">{title}</Dialog.Title>
           ) : (
             <VisuallyHidden asChild>
               <Dialog.Title>Opciones</Dialog.Title>
