@@ -115,6 +115,30 @@ it to Tailwind v4 via `@theme inline`.
 - Helper for the firm `1fr 300px` grid with a 20px gap, mandatory on every desktop screen.
 - `/dev/kitchen-sink` route (dev only) to compare against `Sistema de diseño.dc.html`.
 
+Decided before starting the phase:
+
+- **The CSS vocabulary stays as delivered; English stops at the TypeScript boundary.** Token
+  and class names (`--sd-text-atenuado`, `.sd-btn--primario`) keep the handoff's spelling,
+  Spanish included. They are the design system's published API: both `.dc.html` files and
+  every future handoff revision are written against them, and those files are the thing our
+  screenshots get compared to. Renaming would buy consistency with the rest of the repo and
+  cost the ability to diff against the reference — the same reason the language rule already
+  exempts reference material. React components, props, and types are ours, so they go to
+  English, and `docs/glossary.md` carries the mapping.
+- **The app shell is a `100dvh` container that scrolls internally**, not a page that grows.
+  The handoff anchors every overlay with `position: absolute` against the app container
+  rather than the viewport; that only behaves if the container is the viewport's size. It
+  also matches the prototype, whose content column is its own scroll area. This is what
+  Radix's `container` prop gets pointed at.
+- **On `BottomNav`, the prototype overrides `components.css`.** The prototype's bar is icons
+  only; `components.css` and the design-system page draw a label under each icon. The
+  handoff's own tiebreaker is explicit — "ante cualquier duda, manda el prototipo" — so the
+  labels become accessible names rather than visible text, and `components.css` is corrected
+  to match.
+- **`@radix-ui/react-visually-hidden` joins the five packages above.** `Dialog.Title` is
+  mandatory for accessibility, but the handoff's `Sheet` treats its title as optional; when
+  none is given the title still has to exist, just not visibly.
+
 ### Phase 3 — Supabase: schema, RLS, and auth
 
 - Migrations for every entity. Debts, balances, and the exchange rate are **not**
