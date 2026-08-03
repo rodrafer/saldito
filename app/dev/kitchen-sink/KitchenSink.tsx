@@ -108,44 +108,42 @@ export function KitchenSink() {
       >
         <header className="sd-stack" style={{ gap: 'var(--sd-sp-4)' }}>
           <div className="text-label font-semibold uppercase tracking-wide text-text-muted">
-            Kitchen sink · sólo en desarrollo
+            Kitchen sink · development only
           </div>
-          <h1 className="text-display font-semibold tracking-heading">Primitivas</h1>
+          <h1 className="text-display font-semibold tracking-heading">Primitives</h1>
           <p className="max-w-[62ch] text-body-lg leading-relaxed text-text-secondary">
-            Para contrastar contra <code>Sistema de diseño.dc.html</code>, sección por sección. El
-            rail y la barra inferior no están acá: se verifican en la app misma, que es donde viven.
-            La barra sólo aparece por debajo de los 900px.
+            To compare against <code>Sistema de diseño.dc.html</code>, section by section. The rail
+            and the bottom bar are not here: they get verified in the app itself, which is where
+            they live. The bar only appears below 900px.
           </p>
         </header>
 
-        <Section n="01" title="Superficies">
+        <Section n="01" title="Surfaces">
           <Grid min="230px">
             <Card>
-              <div className="text-body-lg font-semibold">Tarjeta estándar</div>
+              <div className="text-body-lg font-semibold">Standard card</div>
               <div className="mt-1 font-mono text-caption text-text-muted">--sd-surface-grad</div>
             </Card>
             <Card tone="elevated">
-              <div className="text-body-lg font-semibold">Elevada</div>
+              <div className="text-body-lg font-semibold">Elevated</div>
               <div className="mt-1 font-mono text-caption text-text-muted">
-                modales · sheets · menús
+                modals · sheets · menus
               </div>
             </Card>
             <Card tone="gold">
-              <div className="text-body-lg font-semibold text-gold">Dorada</div>
+              <div className="text-body-lg font-semibold text-gold">Gold</div>
               <div className="mt-1 font-mono text-caption" style={{ color: 'var(--sd-gold-text)' }}>
-                seleccionado · hover acción
+                selected · action hover
               </div>
             </Card>
             <Card tone="pink">
-              <div className="text-body-lg font-semibold text-negative">Rosa</div>
-              <div className="mt-1 font-mono text-caption text-text-muted">
-                deudor · alerta suave
-              </div>
+              <div className="text-body-lg font-semibold text-negative">Pink</div>
+              <div className="mt-1 font-mono text-caption text-text-muted">debtor · soft alert</div>
             </Card>
           </Grid>
         </Section>
 
-        <Section n="02" title="Tipografía">
+        <Section n="02" title="Typography">
           <Card flat>
             {(
               [
@@ -173,9 +171,9 @@ export function KitchenSink() {
           </Card>
         </Section>
 
-        <Section n="03" title="Componentes">
+        <Section n="03" title="Components">
           <Grid>
-            <Demo title="Botones" note="Un solo primario por vista. Hover: brillo +8% y −1px.">
+            <Demo title="Buttons" note="One primary per view. Hover: +8% brightness and −1px.">
               <div className="flex flex-wrap items-center gap-[10px]">
                 <Button>Guardar gasto</Button>
                 <Button variant="secondary">Cancelar</Button>
@@ -187,16 +185,16 @@ export function KitchenSink() {
                 <Button size="sm" variant="secondary">
                   Deshacer
                 </Button>
-                <Button disabled>Deshabilitado</Button>
+                <Button disabled>Disabled</Button>
               </div>
               <Button block variant="secondary">
-                Bloque
+                Block
               </Button>
             </Demo>
 
             <Demo
-              title="Chips y segmented"
-              note="La fila nunca hace wrap: en mobile va en una sola línea con scroll horizontal."
+              title="Chips and segmented"
+              note="The row never wraps: on mobile it stays a single line with horizontal scroll."
             >
               <ChipRow>
                 <Chip pressed={chipOn} onPressedChange={setChipOn}>
@@ -226,8 +224,8 @@ export function KitchenSink() {
             </Demo>
 
             <Demo
-              title="Filas de lista"
-              note="Alto mínimo 44px. La variante de acción vira a dorado completo y se desplaza 3px."
+              title="List rows"
+              note="Minimum height 44px. The action variant turns full gold and shifts 3px."
             >
               <Card flat style={{ background: 'var(--sd-surface-input)' }}>
                 <ListRow
@@ -247,7 +245,7 @@ export function KitchenSink() {
                 <ListRow
                   left={<Avatar name="Rocío" />}
                   title="Rocío"
-                  detail="Fila sin onClick — no es un botón"
+                  detail="Row with no onClick — not a button"
                   right={<Badge tone="negative">{formatBalance(-8200)}</Badge>}
                 />
               </Card>
@@ -255,15 +253,15 @@ export function KitchenSink() {
                 action
                 left={<span aria-hidden="true">💸</span>}
                 title="Registrar un pago"
-                detail="Variante acción — pasá el mouse"
+                detail="Action variant — hover it"
                 right={<span aria-hidden="true">→</span>}
                 onClick={() => setToast('Pago registrado')}
               />
             </Demo>
 
             <Demo
-              title="Campos y menús"
-              note="El foco se marca sólo con borde dorado. Los menús se anclan al disparador, no a la fila."
+              title="Fields and menus"
+              note="Focus is marked with the gold border alone. Menus anchor to the trigger, not to the row."
             >
               <Input label="Descripción" defaultValue="Ferretería — canilla cocina" />
 
@@ -326,10 +324,7 @@ export function KitchenSink() {
               </div>
             </Demo>
 
-            <Demo
-              title="Avatares y badges"
-              note="Inicial sobre superficie dorada. Categorías = emoji."
-            >
+            <Demo title="Avatars and badges" note="Initial on a gold surface. Categories = emoji.">
               <div className="flex flex-wrap items-center gap-[12px]">
                 <Avatar name="Rodrigo" size="sm" />
                 <Avatar name="Agustín" />
@@ -347,7 +342,7 @@ export function KitchenSink() {
 
             <Demo
               title="Overlays"
-              note="Escape cierra, el foco queda atrapado adentro y vuelve al disparador al salir."
+              note="Escape closes, focus is trapped inside and returns to the trigger on exit."
             >
               <div className="flex flex-wrap gap-[10px]">
                 <Button variant="secondary" onClick={() => setSheetOpen(true)}>
@@ -364,10 +359,10 @@ export function KitchenSink() {
           </Grid>
         </Section>
 
-        <Section n="04" title="Gráficos">
+        <Section n="04" title="Charts">
           <Demo
             title="Donut"
-            note="Segmentos separados con extremos redondeados. Al pasar el mouse el segmento engorda, el resto se atenúa y aparece el tooltip."
+            note="Separated segments with rounded ends. On hover the segment thickens, the rest dim and the tooltip appears."
           >
             <div className="flex flex-wrap items-center gap-[22px]">
               <DonutChart
@@ -402,8 +397,8 @@ export function KitchenSink() {
 
         <Section n="05" title="Layout">
           <Demo
-            title="Rail lateral"
-            note="64px colapsado, 212px al pasar el mouse o al tabular hacia adentro. Se superpone al contenido dentro de un hueco fijo de 76px. Sólo visible a partir de 900px."
+            title="Side rail"
+            note="64px collapsed, 212px on hover or on tabbing into it. It overlaps the content inside a fixed 76px gap. Only visible from 900px up."
           >
             {/* `flex` is not decoration: the rail is absolutely positioned against
                 its 76px gap, and that gap only gets a height by being stretched as
@@ -414,18 +409,18 @@ export function KitchenSink() {
           </Demo>
 
           <Demo
-            title="Grid firme 1fr / 300px"
-            note="Toda pantalla desktop lo usa, incluso cuando la columna derecha queda vacía."
+            title="Firm 1fr / 300px grid"
+            note="Every desktop screen uses it, even when the right column is empty."
           >
             <DesktopGrid
               aside={
                 <Card tone="gold">
-                  <div className="text-body font-semibold text-gold">Columna de 300px</div>
+                  <div className="text-body font-semibold text-gold">300px column</div>
                 </Card>
               }
             >
               <Card>
-                <div className="text-body font-semibold">Columna principal · 1fr</div>
+                <div className="text-body font-semibold">Main column · 1fr</div>
               </Card>
             </DesktopGrid>
           </Demo>

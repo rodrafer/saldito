@@ -28,8 +28,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="es-AR" className={archivo.variable}>
       <body>
-        {/* Uso único: la luminiscencia ambiente envuelve la app entera y nunca
-            se repite por pantalla. */}
+        {/* Single use: the ambient glow wraps the whole app and is never
+            repeated per screen. */}
         <AmbientBackground>{children}</AmbientBackground>
       </body>
     </html>

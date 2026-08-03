@@ -40,5 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# claude code (configuración local, no compartida)
+# claude code (local settings, not shared)
 .claude/settings.local.json

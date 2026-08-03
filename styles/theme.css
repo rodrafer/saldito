@@ -1,16 +1,16 @@
 /* ============================================================
-   Saldito — Puente a Tailwind v4
+   Saldito — Bridge to Tailwind v4
 
-   Traducción del `tailwind.config.ts` del handoff al CSS-first de Tailwind v4.
-   Todo apunta a `var(--sd-*)`, así que tokens.css sigue siendo la única fuente
-   de verdad y no hay un segundo lugar donde un color pueda quedar desfasado.
+   The handoff's `tailwind.config.ts` translated to Tailwind v4's CSS-first
+   form. Everything points at `var(--sd-*)`, so tokens.css stays the only
+   source of truth and there is no second place a colour can drift in.
 
-   `inline` es lo que evita la indirección: Tailwind escribe el `var(--sd-*)`
-   dentro de la utilidad en vez de emitir una variable propia que lo copie.
+   `inline` is what removes the indirection: Tailwind writes the `var(--sd-*)`
+   into the utility instead of emitting a variable of its own that copies it.
 
-   Algunas claves pisan a propósito un default de Tailwind (`--tracking-wide`,
-   `--ease-out`, y las escalas `--radius-*` y `--text-*` enteras). Es el punto:
-   un nombre, un valor, se escriba en el archivo que se escriba.
+   Some keys deliberately shadow a Tailwind default (`--tracking-wide`,
+   `--ease-out`, the whole `--radius-*` and `--text-*` scales). That is the
+   point: one name, one value, whichever file it is written in.
    ============================================================ */
 
 @theme inline {
@@ -42,7 +42,7 @@
   --color-negative: var(--sd-negative);
   --color-negative-deep: var(--sd-negative-deep);
 
-  /* ---------- Tipografía ---------- */
+  /* ---------- Typography ---------- */
   --font-sans: var(--sd-font);
 
   --text-micro: var(--sd-fs-micro);
@@ -62,7 +62,7 @@
   --tracking-wide: var(--sd-track-wide);
   --tracking-heading: var(--sd-track-heading);
 
-  /* ---------- Radios ---------- */
+  /* ---------- Radii ---------- */
   --radius-xs: var(--sd-r-xs);
   --radius-sm: var(--sd-r-sm);
   --radius-md: var(--sd-r-md);
@@ -74,7 +74,7 @@
   --radius-rail: var(--sd-r-rail);
   --radius-pill: var(--sd-r-pill);
 
-  /* ---------- Sombras ---------- */
+  /* ---------- Shadows ---------- */
   --shadow-subtle: var(--sd-sh-subtle);
   --shadow-card: var(--sd-sh-card);
   --shadow-dropdown: var(--sd-sh-dropdown);
@@ -83,7 +83,7 @@
   --shadow-nav: var(--sd-sh-nav);
   --shadow-fab: var(--sd-sh-fab);
 
-  /* ---------- Movimiento ---------- */
+  /* ---------- Motion ---------- */
   --ease-out: var(--sd-ease-out);
   --animate-screen-in: sd-screen-in var(--sd-dur-normal) var(--sd-ease-out) both;
   --animate-sheet-up: sd-sheet-up var(--sd-dur-normal) var(--sd-ease-out) both;
@@ -92,15 +92,15 @@
   --animate-toast-in: sd-toast-in var(--sd-dur-normal) var(--sd-ease-out) both;
 
   /* ---------- Layout ----------
-     El handoff no fija un breakpoint: separa "mobile 390×760" de "desktop", y
-     el prototipo alterna entre los dos con un toggle. 900px es el punto donde
-     el grid firme entra sin apretarse — 76 de rail + 40+40 de aire + 300 de
-     columna derecha + 20 de gap dejan ~424px para la columna principal. */
+     The handoff never fixes a breakpoint: it separates "mobile 390×760" from
+     "desktop", and the prototype flips between the two with a toggle. 900px is
+     where the firm grid stops being cramped — 76 of rail + 40+40 of padding +
+     300 of right column + 20 of gap leave ~424px for the main column. */
   --breakpoint-desktop: 900px;
 }
 
-/* Tailwind v4 no tiene namespace para background-image, así que los degradados
-   del handoff entran como utilidades propias. */
+/* Tailwind v4 has no namespace for background-image, so the handoff's
+   gradients come in as utilities of our own. */
 @utility bg-surface-grad {
   background-image: var(--sd-surface-grad);
 }

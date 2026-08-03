@@ -37,7 +37,7 @@ export interface AppShellProps {
 }
 
 /**
- * Mismo contenido, distinto envase: the rail on desktop, the floating bar on
+ * Same content, different envelope: the rail on desktop, the floating bar on
  * mobile. Both are always rendered and CSS picks one, so the first paint is
  * already right — measuring the window in JS would mean a wrong frame on every
  * load and a hydration mismatch on top.
