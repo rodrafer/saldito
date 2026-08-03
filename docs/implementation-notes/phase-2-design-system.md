@@ -40,7 +40,7 @@ Radix's `Presence` reads the computed `animation-name`, and when it changes on c
 the element mounted until `animationend`. Verified — `data-state="closed"` with
 `sd-sheet-down` running, then unmount.
 
-What it *does* require is that **enter and exit use different `animation-name`s**. `Presence`
+What it _does_ require is that **enter and exit use different `animation-name`s**. `Presence`
 decides an exit animation is running by comparing the previous name to the current one; a
 single keyframe played in reverse looks like "no change" and the element unmounts
 instantly. Hence `sd-sheet-down`, `sd-fade-out` and `sd-pop-out` alongside their entrances.
@@ -61,7 +61,7 @@ This is precisely the class of bug Radix was brought in to prevent, and no scree
 ever have shown it.
 
 `useReturnFocus` fixes it by capturing the opener in `onOpenAutoFocus` — which the focus
-scope fires *before* it moves focus into the dialog, so `document.activeElement` is still the
+scope fires _before_ it moves focus into the dialog, so `document.activeElement` is still the
 opener at that point — and restoring it in `onCloseAutoFocus`. No effects, no ordering to get
 wrong.
 
@@ -72,7 +72,7 @@ only behaves if the container is the viewport's size, so `.sd-app` is `100dvh` w
 `overflow: hidden` and the content column scrolls inside it. It also mirrors the prototype,
 whose content area is its own scroll region.
 
-The first version gave `.sd-contenido` only `flex: 1`, which distributes *width* in the
+The first version gave `.sd-contenido` only `flex: 1`, which distributes _width_ in the
 shell's row and says nothing about height. Outside the shell — the kitchen sink, which has no
 `AppShell` — the column grew to its content and `.sd-app` clipped it: a 2900px page with no
 way to scroll. It needs `height: 100%` as well.
@@ -91,7 +91,7 @@ runs during render. Reading a custom property out of the cascade needs a mounted
 the server and the client would disagree on the first paint. They're mirrored as
 `DONUT_THICKNESS` and `DONUT_GAP` in `DonutChart.tsx` with a comment pointing back at the
 tokens. Changing one without the other is the failure mode to watch for; everything the CSS
-*can* express — the hub gradient, both shadows — reads `var(--sd-*)`.
+_can_ express — the hub gradient, both shadows — reads `var(--sd-*)`.
 
 The arc maths also moved to a module-level `toArcs`. The running total was being mutated
 inside `.map()` during render, which the React Compiler lint rule rejects outright.

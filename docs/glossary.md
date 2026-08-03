@@ -26,20 +26,20 @@ CSS tokens and class names keep the handoff's own spelling, Spanish included (se
 [PLAN.md](../PLAN.md) for why). English stops at the TypeScript boundary, so a component's
 props and its classes don't always read the same. This is that seam.
 
-| Token / class          | React prop         |
-| ---------------------- | ------------------ |
-| `sd-btn--primario`     | `variant="primary"` |
-| `sd-btn--secundario`   | `variant="secondary"` |
-| `sd-btn--fantasma`     | `variant="ghost"`  |
-| `sd-btn--peligro`      | `variant="danger"` |
-| `sd-btn--bloque`       | `block`            |
-| `sd-card--elevada`     | `tone="elevated"`  |
-| `sd-card--dorada`      | `tone="gold"`      |
-| `sd-card--rosa`        | `tone="pink"`      |
-| `sd-card--plano`       | `flat`             |
-| `sd-badge--positivo`   | `tone="positive"`  |
-| `sd-badge--negativo`   | `tone="negative"`  |
-| `sd-row--accion`       | `action`           |
+| Token / class        | React prop            |
+| -------------------- | --------------------- |
+| `sd-btn--primario`   | `variant="primary"`   |
+| `sd-btn--secundario` | `variant="secondary"` |
+| `sd-btn--fantasma`   | `variant="ghost"`     |
+| `sd-btn--peligro`    | `variant="danger"`    |
+| `sd-btn--bloque`     | `block`               |
+| `sd-card--elevada`   | `tone="elevated"`     |
+| `sd-card--dorada`    | `tone="gold"`         |
+| `sd-card--rosa`      | `tone="pink"`         |
+| `sd-card--plano`     | `flat`                |
+| `sd-badge--positivo` | `tone="positive"`     |
+| `sd-badge--negativo` | `tone="negative"`     |
+| `sd-row--accion`     | `action`              |
 
 Words that appear in token names and nowhere in the code: `dorado` (gold, the accent),
 `atenuado` (muted, on text), `hueco` (the gap the rail is reserved), `lienzo` (canvas),

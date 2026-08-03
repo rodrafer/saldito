@@ -96,9 +96,6 @@
      el grid firme entra sin apretarse — 76 de rail + 40+40 de aire + 300 de
      columna derecha + 20 de gap dejan ~424px para la columna principal. */
   --breakpoint-desktop: 900px;
-  --spacing-rail: var(--sd-sidebar-rail);
-  --spacing-hueco: var(--sd-sidebar-hueco);
-  --spacing-col-derecha: var(--sd-col-derecha);
 }
 
 /* Tailwind v4 no tiene namespace para background-image, así que los degradados

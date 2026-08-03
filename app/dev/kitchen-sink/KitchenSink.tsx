@@ -169,7 +169,7 @@ export function KitchenSink() {
                 key={spec}
                 className="flex items-baseline gap-[24px] border-b border-borde px-[22px] py-[16px] last:border-b-0"
               >
-                <span className="w-[130px] flex-none font-mono text-caption text-texto-atenuado">
+                <span className="w-[150px] flex-none font-mono text-caption text-texto-atenuado">
                   {spec}
                 </span>
                 <span className={`${cls} font-semibold tracking-titular`}>{sample}</span>
@@ -387,7 +387,7 @@ export function KitchenSink() {
                 }
               />
               <DonutChart segments={DONUT_SEGMENTS} size={72} period="Julio 2026 · filtrado" />
-              <ul className="flex min-w-[170px] flex-1 flex-col gap-[7px]">
+              <ul className="flex w-[220px] min-w-[170px] flex-col gap-[7px]">
                 {DONUT_SEGMENTS.map((s) => (
                   <li key={s.name} className="flex justify-between text-caption">
                     <span className="flex items-center gap-[7px]">
@@ -410,7 +410,10 @@ export function KitchenSink() {
             title="Rail lateral"
             note="64px colapsado, 212px al pasar el mouse o al tabular hacia adentro. Se superpone al contenido dentro de un hueco fijo de 76px. Sólo visible a partir de 900px."
           >
-            <div className="relative h-[260px] rounded-xl border border-borde bg-app p-[16px]">
+            {/* `flex` is not decoration: the rail is absolutely positioned against
+                its 76px gap, and that gap only gets a height by being stretched as
+                a flex child — which is what the shell does to it. */}
+            <div className="relative flex h-[260px] rounded-xl border border-borde bg-app p-[16px]">
               <Sidebar items={NAV_ITEMS} activeHref="/" />
             </div>
           </Demo>
