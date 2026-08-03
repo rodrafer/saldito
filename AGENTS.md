@@ -83,8 +83,8 @@ In this order:
    me** — an unassigned PR has nobody waiting on it, and it's the assignee list that says
    whose turn it is.
 6. **Self-review the PR** — read your own diff as if it were someone else's.
-7. **Fix** whatever comes out of the review, and **update the notes** if something worth
-   recording changed.
+7. **Fix** whatever comes out of the review, and **update the notes and the PR description**
+   if something worth recording changed.
 8. **Save the screenshots** where they belong and flag it so they get pasted into the PR.
 9. **Final CI check** green.
 10. **Ask for explicit approval to merge**, and wait for it. Never merge on your own
@@ -118,6 +118,16 @@ restates the changed-file list is redundant with what GitHub already shows above
 Deliberately not mandatory. Nothing verifies a diagram against the code, so it rots faster
 than prose, and a wrong architecture diagram is worse than none because it gets believed. On
 a mechanical change or a contained fix, leave it out.
+
+**The title and description describe the PR as it stands, not as it was opened.** Anything
+that lands afterwards — review fixes, a scope that grew, work that rode along — updates the
+description whenever it changes what a reviewer should expect to find, and updates the
+**title** too once the title has stopped naming what is actually in there. A description that
+only matches the first push is worse than a thin one, because it still gets read as current.
+
+**`🤖 Generated with [Claude Code](https://claude.com/claude-code)` goes last, always.**
+Appending a new section is the easy way to bury it mid-body; every rewrite puts it back at
+the bottom.
 
 Step 10 is not a formality: merging is the one step in this list that can't be undone
 quietly, and it's the last chance to catch something the automated checks can't see. A green
