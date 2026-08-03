@@ -1,11 +1,30 @@
 # Tooling — Playwright and the scripted screenshot run
 
-Cross-cutting item from `PLAN.md`, due before phase 3's captures. Phase 2's eleven shots
-came from a throwaway Node script driving Chrome over CDP; it lived in a session scratchpad
-and no longer exists, so this is a rewrite against the same eleven states, not a move.
+Cross-cutting item from `PLAN.md`, due before phase 3's captures. Phase 2's shots came from
+a throwaway Node script driving Chrome over CDP; it lived in a session scratchpad and no
+longer exists, so this is a rewrite against the same eleven states, not a move.
 
 **This is not the e2e suite.** Nothing asserts anything and nothing runs in CI. E2E stays a
 separate item in the plan, landing with phase 3's auth.
+
+## What is fixed and what isn't
+
+The first cut of this treated phase 2's eleven as _the_ set — one desktop file, one mobile
+file, both permanent, every phase re-running all of them and adding more. That reading
+survived into the file names and into `AGENTS.md` before it was caught, and it is wrong in a
+way worth writing down, because it is the natural mistake: the eleven were the only concrete
+thing available to build against, so they got mistaken for the requirement.
+
+What the driver owns is the **how** — the two viewports, the scale factor, the naming, the
+things every capture must do before it fires. **Which** shots a PR takes is that PR's
+judgement: enough to show the thing being built works, and to have believed it while
+building. A margin fix is one shot. Nothing is owed to a shot from a previous PR; the reason
+to re-run an old set is that this PR could plausibly have changed what it shows.
+
+So sets are files, named `<slug>.desktop.ts` / `<slug>.mobile.ts`, with the suffix as the
+entire registration mechanism, and a filename filter to run one set. Phase 2's stays as
+`design-system.*` — the thing to re-run when the shell changes, and the worked example of
+the four techniques that aren't obvious.
 
 ## Why a name that isn't `phase-<n>-`
 
@@ -16,10 +35,11 @@ tooling under the design system, where nobody looking for it would think to chec
 
 ## Shape
 
-`@playwright/test` as the runner rather than the bare `playwright` library. Three things it
+`@playwright/test` as the runner rather than the bare `playwright` library. Four things it
 brings that would otherwise be hand-written: `webServer` starts `next dev` and tears it
-down, `projects` carry the two viewports without either shot file knowing about the other,
-and `--project` / `-g` make it cheap to iterate on one shot.
+down, `projects` carry the two viewports without any shot file knowing about the other,
+`testMatch` turns a filename suffix into the whole registration story for a new set, and
+`--project` / `-g` / a filename filter make it cheap to run one shot while iterating.
 
 The destination directory can't be a Playwright argument — its CLI reads bare arguments as
 test-file filters — so `tools/screenshots/run.mjs` takes it, exports it as `SHOTS_OUT`, and
@@ -73,8 +93,9 @@ for the rest of that class and found three:
 
 ## Left for later
 
-- The set is phase 2's eleven. Each phase from here adds its own, and the older ones stay so
-  a reviewer can see what a change did to a screen that wasn't the point of the PR.
+- Old sets accumulate, and nothing prunes them. `design-system.*` earns its place today
+  because the shell it captures is the one every screen sits in; a set for a screen that
+  later gets rewritten does not, and deleting it is part of the PR that rewrites the screen.
 - Nothing compares two runs. Playwright ships `toHaveScreenshot` with a diff report, which
   would turn this into visual regression testing — a different commitment, and one that
   needs a baseline in the repo. Not now, and not without deciding where the PNGs live.

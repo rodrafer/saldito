@@ -237,23 +237,42 @@ Visual verification starts in Phase 2, comparing against `Prototipo.dc.html`.
 ## Generating the screenshots
 
 ```bash
-npm run shots -- <output-dir>
+npm run shots -- <output-dir> [file filter] [playwright flags]
 ```
 
-Playwright starts `next dev` on its own, walks the shots and writes
-`<output-dir>/NN-<name>.png`, overwriting what is there. The browser binary isn't a
+Playwright starts `next dev` on its own, runs the shot files and writes
+`<output-dir>/<name>.png`, overwriting what is there. The browser binary isn't a
 dependency — `npx playwright install chromium`, once per machine.
 
-The shots live in `tools/screenshots/`: `desktop.shots.ts` at 1280×800 and
-`mobile.shots.ts` at 390×760, both written at 2×. Adding one means adding it there, so the
-next phase re-runs the same set and the two are comparable. **Where the copies end up, and
-how each one is presented in the PR, is step 8 of the workflow above.**
+**What to capture is decided per PR.** There is no standard set to reproduce and no fixed
+list of dimensions to walk. Take the shots that show the thing this PR builds actually
+working — plus whatever you needed rendered to believe it while building, which is usually
+the same set arrived at from the other direction. A tightened margin is one shot. A new
+screen with an overlay, an empty state and a mobile envelope is four or five. **Owing a shot
+to a previous PR is not a reason to take it**; the reason to re-run an old set is that this
+PR could plausibly have changed what it shows.
 
-Two flags earn their keep while iterating on a single shot: `--project=mobile` and
-`-g '07'`. Both are forwarded to Playwright untouched.
+Shots are code, in `tools/screenshots/`, grouped one set per file:
+
+- `<slug>.desktop.ts` runs at 1280×800, `<slug>.mobile.ts` at 390×760, both written at 2×.
+  The suffix is the whole registration mechanism — a new file is picked up by existing.
+- A single viewport is the honest amount of evidence when the change looks the same on both
+  sides of the 900px breakpoint. Two files means two claims.
+- A bare argument after the output directory filters by filename, so
+  `npm run shots -- <dir> auth` runs `auth.desktop.ts` and `auth.mobile.ts` and nothing
+  else. `-g '03'` narrows to one shot inside a file, `--project=mobile` to one viewport.
+  Everything after the directory is forwarded to Playwright untouched.
+- Files from finished PRs stay only while they still pay for themselves. `design-system.*`
+  is kept on purpose: it is what re-checks the shell and the primitives, and it is the
+  worked example of the four techniques that aren't obvious — opening an overlay, framing a
+  shot a click would otherwise scroll into a corner, capturing keyboard focus, clipping to
+  a band. Copy from it rather than rediscovering them.
+
+**Where the copies end up, and how each one is presented in the PR, is step 8 of the
+workflow above.**
 
 It has to run against `next dev`, not a build: `/dev/kitchen-sink` is a page only in
-development, and five of the eleven shots are on it.
+development.
 
 **This is not the e2e suite and it is not in CI.** Nothing here asserts anything — the
 captures are for a reviewer to look at, and a failing capture run should not block a merge.

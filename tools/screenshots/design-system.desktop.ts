@@ -2,11 +2,20 @@ import type { Page } from '@playwright/test';
 import { settle, shot, test } from './shot';
 
 /**
- * Desktop shots — 1280×800, written at 2× (2560×1600 PNGs).
+ * The design system and the app shell, at 1280×800 (2560×1600 PNGs).
  *
- * The order is the order they go into the PR body, and the numeric prefix is
- * what keeps them in it: the directory is read by a human comparing shot 02
- * against shot 01.
+ * Phase 2's set, and the one to re-run when the shell or the primitives change
+ * — the case where comparing against a previous PR's images is the point. It
+ * is not a set anyone else has to reproduce: a PR captures what it needs to
+ * show its own work, which is usually far fewer than these eight.
+ *
+ * It doubles as the worked example. Between here and the mobile file, the four
+ * things that aren't obvious: opening an overlay, framing a shot a click would
+ * otherwise scroll into a corner, capturing keyboard focus, and clipping to a
+ * band.
+ *
+ * The numeric prefix is the order they go into the PR body, and it only has to
+ * be unique among whatever is being written into one directory.
  */
 
 /** Puts a kitchen-sink section flush at the top of the viewport. */

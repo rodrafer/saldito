@@ -1,11 +1,13 @@
 import { settle, shot, test } from './shot';
 
 /**
- * Mobile shots — 390×760, written at 2× (780×1520 PNGs).
+ * The same phase 2 material at 390×760 (780×1520 PNGs).
  *
- * Below the 900px breakpoint the rail is gone and the floating bar is in, so
- * these are a different envelope around the same content, not a narrower
- * version of the desktop ones.
+ * It has its own file because below the 900px breakpoint the rail is gone and
+ * the floating bar is in: a different envelope around the same content, not a
+ * narrower version of the desktop shots. Which is also the test for whether a
+ * PR needs a mobile file at all — if the change looks the same on both sides
+ * of 900px, one viewport is the honest amount of evidence.
  */
 
 test('09 · dashboard', async ({ page }) => {

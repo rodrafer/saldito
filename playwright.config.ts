@@ -7,6 +7,11 @@
  * separate item in `PLAN.md`, with their own commitment to CI time and
  * flakiness.
  *
+ * What is durable here is the driver, not the shot list. Which captures a PR
+ * needs is decided by that PR — see `AGENTS.md`. Shot files come and go;
+ * `<slug>.desktop.ts` and `<slug>.mobile.ts` is all a new set has to be called
+ * to get picked up.
+ *
  * It runs against `next dev` on purpose. `/dev/kitchen-sink` is a page only in
  * development — `pageExtensions` in `next.config.ts` counts `*.dev.tsx` only
  * when `NODE_ENV` is `development` — so five of the eleven shots do not exist
@@ -49,12 +54,12 @@ export default defineConfig({
   projects: [
     {
       name: 'desktop',
-      testMatch: /desktop\.shots\.ts$/,
+      testMatch: /\.desktop\.ts$/,
       use: { ...RETINA, viewport: { width: 1280, height: 800 } },
     },
     {
       name: 'mobile',
-      testMatch: /mobile\.shots\.ts$/,
+      testMatch: /\.mobile\.ts$/,
       /* Phone width, but not a phone preset: `devices['iPhone …']` carries a
          touch flag and a scale factor of its own. The breakpoint that decides
          the layout is 900px, and the shot has to be as legible as the desktop

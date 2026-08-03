@@ -4,25 +4,29 @@ import { mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 /**
- * `npm run shots -- <dir> [playwright flags]`
+ * `npm run shots -- <dir> [file filter] [playwright flags]`
  *
  * Playwright's CLI reads bare arguments as test-file filters, so the
  * destination directory can't be passed straight through — it goes in as
- * `SHOTS_OUT` and everything after it is forwarded untouched, which is what
- * makes `--project=mobile` and `-g 07` work while iterating.
+ * `SHOTS_OUT` and everything after it is forwarded untouched. That forwarding
+ * is what selects a set: a bare `auth` runs `auth.desktop.ts` and
+ * `auth.mobile.ts`, `--project=mobile` cuts to one viewport, `-g 03` to one
+ * shot.
  */
 const [dir, ...forwarded] = process.argv.slice(2);
 
 if (!dir || dir.startsWith('-')) {
   console.error(
     [
-      'usage: npm run shots -- <output-dir> [playwright flags]',
+      'usage: npm run shots -- <output-dir> [file filter] [playwright flags]',
       '',
-      'example:',
+      'examples:',
       "  npm run shots -- ~/Documents/Images/dev-screenshots/saldito/'#7-my-branch'",
+      '  npm run shots -- .screenshots design-system   # one set',
       '  npm run shots -- .screenshots --project=mobile',
       '',
-      'the shots go to <output-dir>/NN-<name>.png, overwriting what is there.',
+      'the shots go to <output-dir>/<name>.png, overwriting what is there.',
+      'a set is a file: tools/screenshots/<slug>.desktop.ts or <slug>.mobile.ts.',
     ].join('\n'),
   );
   process.exit(2);
