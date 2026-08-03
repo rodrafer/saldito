@@ -12,7 +12,7 @@ const eslintConfig = defineConfig([
     'out/**',
     'build/**',
     'next-env.d.ts',
-    // Material de referencia del handoff de diseño: no es código del proyecto.
+    // Reference material from the design handoff: not project code.
     'design_handoff_saldito/**',
   ]),
 ]);

@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  // Vite resuelve los paths de tsconfig de forma nativa: `@/…` funciona sin plugin.
+  // Vite resolves tsconfig paths natively: `@/…` works without a plugin.
   resolve: { tsconfigPaths: true },
   test: {
     environment: 'jsdom',

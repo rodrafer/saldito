@@ -1,185 +1,194 @@
-# Saldito — Plan de implementación
+# Saldito — Implementation plan
 
-Gestor de gastos compartidos. React + TypeScript + Next.js (App Router) + Tailwind v4 + Supabase.
+Shared expense manager. React + TypeScript + Next.js (App Router) + Tailwind v4 + Supabase.
 
-Fuentes de verdad:
+Sources of truth:
 
-- **Funcional** → `design_handoff_saldito/ESPECIFICACION_FUNCIONAL.md`
-- **Visual** → `design_handoff_saldito/Prototipo.dc.html` (manda sobre el README ante conflicto)
-- **Sistema visual** → `design_handoff_saldito/README.md`
+- **Functional** → `design_handoff_saldito/ESPECIFICACION_FUNCIONAL.md`
+- **Visual** → `design_handoff_saldito/Prototipo.dc.html` (wins over the README on conflict)
+- **Visual system** → `design_handoff_saldito/README.md`
 
-## Decisiones tomadas
+## Decisions made
 
-| Tema                          | Decisión                                                                               |
-| ----------------------------- | -------------------------------------------------------------------------------------- |
-| Capa de datos                 | Híbrido: lectura en RSC, mutaciones por Server Actions, realtime solo en Plan y saldos |
-| Tailwind                      | v4, CSS-first. Se traduce el `tailwind.config.ts` del handoff a `@theme inline`        |
-| Alcance del primer entregable | Núcleo: cálculo → gastos → deudas → plan (fases 0–7)                                   |
-| Auth                          | Email + contraseña **y** Google OAuth                                                  |
+| Topic                   | Decision                                                                               |
+| ----------------------- | -------------------------------------------------------------------------------------- |
+| Data layer              | Hybrid: reads in RSC, mutations via Server Actions, realtime only on Plan and balances |
+| Tailwind                | v4, CSS-first. The handoff's `tailwind.config.ts` is translated to `@theme inline`     |
+| First deliverable scope | Core: calculation → expenses → debts → plan (phases 0–7)                               |
+| Auth                    | Email + password **and** Google OAuth                                                  |
 
-## Supuestos (decir si alguno no va)
+## Assumptions (flag if any don't work)
 
-- Gestor de paquetes **npm** (pnpm no está instalado en la máquina).
-- Tests con **Vitest** + **fast-check** para los invariantes de redondeo.
-- Validación de entrada con **Zod**, compartida entre Server Actions y formularios.
-- Deploy en **Vercel**; Supabase gestionado.
-- Cotización desde **dolarapi.com**, cacheada unos minutos del lado del servidor y
-  **nunca persistida**; si falla, se omite la referencia sin bloquear nada.
-- Generación de borradores recurrentes con **pg_cron** en Supabase.
-- Trabajo en branches por fase, con PR por fase.
+- **npm** as package manager (pnpm isn't installed on the machine).
+- Tests with **Vitest** + **fast-check** for the rounding invariants.
+- Input validation with **Zod**, shared between Server Actions and forms.
+- Deploy on **Vercel**; managed Supabase.
+- Exchange rate from **dolarapi.com**, cached a few minutes server-side and **never
+  persisted**; if it fails, the reference is omitted without blocking anything.
+- Recurring drafts generated with **pg_cron** on Supabase.
+- Work in per-phase branches, with a PR per phase.
 
 ---
 
-## Scaffolding feature-based
+## Feature-based scaffolding
 
 ```
 saldito/
 ├── app/
-│   ├── layout.tsx                    # tokens + AmbientBackground + fuente Archivo
-│   ├── (auth)/login | registro | recuperar | onboarding
+│   ├── layout.tsx                    # tokens + AmbientBackground + Archivo font
+│   ├── (auth)/login | signup | recover | onboarding
 │   ├── (app)/
-│   │   ├── layout.tsx                # Sidebar desktop + BottomNav mobile
+│   │   ├── layout.tsx                # desktop Sidebar + mobile BottomNav
 │   │   ├── page.tsx                  # Dashboard
-│   │   ├── gastos/                   # page · nuevo · [id] · [id]/editar
-│   │   ├── deudas/ · grupo/ · categorias/ · notificaciones/ · perfil/
-│   └── api/cotizacion/route.ts
-├── features/                         # una carpeta por dominio
-│   ├── gastos/        components · hooks · actions.ts · queries.ts · schemas.ts
-│   ├── deudas/        calculo/  ← algoritmos puros, sin dependencias
-│   ├── plan/ · recurrencias/ · grupos/ · categorias/
-│   ├── notificaciones/ · perfil/ · auth/
-├── components/ui/                    # las 16 primitivas del handoff
+│   │   ├── expenses/                 # page · new · [id] · [id]/edit
+│   │   ├── debts/ · group/ · categories/ · notifications/ · profile/
+│   └── api/exchange-rate/route.ts
+├── features/                         # one folder per domain
+│   ├── expenses/      components · hooks · actions.ts · queries.ts · schemas.ts
+│   ├── debts/          calculation/  ← pure algorithms, no dependencies
+│   ├── plan/ · recurrences/ · groups/ · categories/
+│   ├── notifications/ · profile/ · auth/
+├── components/ui/                    # the handoff's 16 primitives
 ├── lib/
 │   ├── supabase/      client.ts · server.ts · middleware.ts
-│   └── cn.ts · formato.ts · fechas.ts
+│   └── cn.ts · format.ts · dates.ts
 ├── types/
 ├── styles/            tokens.css · components.css · theme.css
 ├── supabase/          migrations/ · seed.sql
-└── design_handoff_saldito/           # referencia, no se edita
+└── design_handoff_saldito/           # reference, not edited
 ```
 
-**Regla estructural:** `features/deudas/calculo/` es TypeScript puro — no importa nada de
-Next ni de Supabase. Así corre idéntico en los tests, en el servidor al renderizar y en el
-cliente para los updates optimistas.
+**Structural rule:** `features/debts/calculation/` is pure TypeScript — it doesn't import
+anything from Next or Supabase. That way it runs identically in tests, on the server when
+rendering, and on the client for optimistic updates.
 
-**Regla de estilo:** ningún hex hardcodeado. `tokens.css` sigue siendo la única fuente;
-`theme.css` la expone a Tailwind v4 vía `@theme inline`.
-
----
-
-## Fases
-
-### Fase 0 — Bootstrap
-
-- Vincular la carpeta local al repo `rodrafer/saldito` conservando `LICENSE`, `.gitignore` y `README.md` de `main`.
-- Terminar de importar el handoff desde Claude Design: `components.css`, `tokens.json`,
-  `README.md`, las 16 primitivas `.tsx`, `support.js` y los dos `.dc.html`.
-- `create-next-app` (TS, App Router, Tailwind v4, ESLint) + estructura feature-based + paths en `tsconfig`.
-- Vitest, Testing Library, Prettier, y CI en GitHub Actions (typecheck · lint · test · build).
-
-### Fase 1 — Núcleo de cálculo, sin UI
-
-- `types/` de dominio (ya importado del handoff).
-- Algoritmos 2.1–2.7 de la spec en `features/deudas/calculo/`.
-- Suite de tests con los invariantes que la propia spec marca como red de seguridad:
-  - la suma de contribuciones y la del reparto dan **exactamente** el monto;
-  - por moneda, la suma de todos los saldos del grupo es **cero**;
-  - el saldo de cada persona coincide con `puso − consumió` **y** con la suma de sus deudas por par;
-  - el plan produce a lo sumo `n − 1` movimientos por moneda y salda exacto.
-- `lib/fechas.ts` para las franjas "Hoy / Esta semana / Antes".
-
-> Esta fase es la que más barato sale hacer bien y más caro sale hacer mal. Va entera antes de cualquier pantalla.
-
-### Fase 2 — Sistema de diseño
-
-- `tokens.css` + `components.css` + `theme.css`; fuente Archivo por `next/font`.
-- Portar las 16 primitivas, adaptándolas a las convenciones del repo.
-- `AmbientBackground` en el layout raíz (uso único) con sus blooms mobile y desktop.
-- Shell: rail lateral colapsable (64px → 212px por hover, hueco fijo 76px, activo sin borde)
-  y barra inferior flotante con FAB.
-- Helper para el grid firme `1fr 300px` con gap 20px, obligatorio en toda pantalla desktop.
-- Ruta `/dev/kitchen-sink` (solo en dev) para comparar contra `Sistema de diseño.dc.html`.
-
-### Fase 3 — Supabase: esquema, RLS y auth
-
-- Migraciones de todas las entidades. **No** se persisten deudas, saldos ni cotización.
-- Modelado de contribuciones y reparto: tabla hija por persona, para que el filtro "Pagó"
-  y la integridad referencial funcionen sin desarmar jsonb.
-- RLS en cada tabla, apoyada en pertenencia al grupo.
-- Constraints y triggers que reflejen las reglas de integridad de la sección 1.2.
-- Middleware de sesión, login, registro, recuperación, Google OAuth y onboarding.
-- `seed.sql` con los fixtures del prototipo.
-
-### Fase 4 — Gastos
-
-- Lista con agrupación por franja, anulados atenuados, borradores arriba.
-- Fila de filtros en una sola línea con scroll horizontal; cada chip abre su propio menú
-  de 300px anclado a sí mismo, con buscador cuando la lista es larga; se combinan con AND.
-- Detalle de gasto con historial (pantalla nueva, no está en el prototipo).
-- Nuevo gasto: multi-pagador (Iguales · Montos) + reparto (Iguales · Porcentaje · Montos),
-  con toda la validación y los mensajes de ayuda de la sección 6.4.
-- Edición, anulación con restauración a 24hs, e historial de cambios.
-- Modo selección múltiple.
-- `/api/cotizacion` para la equivalencia estimada en ARS.
-
-### Fase 5 — Deudas por persona y pagos
-
-- Agrupado por moneda, badges semánticos, alias copiable.
-- Acciones según rol: Registrar pago · Recordar · Pagar → {app} · Ya pagué.
-- Registro, declaración y confirmación de pagos, con anulación a 24hs.
-- Detalle de una deuda con los gastos que la originaron.
-- Pantalla Recordar.
-
-### Fase 6 — Plan simplificado y tiempo real
-
-- Máquina de estados `idle → running → completed`.
-- Al iniciar se congelan movimientos y gastos de origen.
-- Bloqueo de deudas individuales y de edición/anulación mientras corre; cargar gastos sigue permitido.
-- Realtime con resolución de conflictos: gana el primero, y al segundo se le informa sin tratarlo como error.
-- Updates optimistas con reversión si el servidor rechaza.
-- Cierre automático, con las dos salidas (sin deudas → felicitación; con deudas nuevas → vuelve a idle).
-
-### Fase 7 — Dashboard
-
-- Saldo neto apilado por moneda, con el de mayor monto arriba.
-- `DonutChart` en SVG: segmentos separados con extremos redondeados; al pasar el mouse
-  engorda el segmento, atenúa el resto y muestra tooltip.
-- Avisos clicables de borradores pendientes y de plan en curso.
-- Actividad reciente, accesos rápidos, y resumen por integrante en la columna derecha.
+**Style rule:** no hardcoded hex. `tokens.css` remains the only source; `theme.css` exposes
+it to Tailwind v4 via `@theme inline`.
 
 ---
 
-## Segunda tanda
+## Phases
 
-### Fase 8 — Recurrentes
+### Phase 0 — Bootstrap
 
-Definición desde un gasto existente, generación mensual del borrador por cron,
-confirmación, recordatorio a 7 días, descarte a 30, y la regla de nunca dos borradores
-abiertos de la misma recurrencia. Administración inline en Grupo.
+- Link the local folder to the `rodrafer/saldito` repo, keeping `LICENSE`, `.gitignore`, and
+  `README.md` from `main`.
+- Finish importing the handoff from Claude Design: `components.css`, `tokens.json`,
+  `README.md`, the 16 `.tsx` primitives, `support.js`, and the two `.dc.html` files.
+- `create-next-app` (TS, App Router, Tailwind v4, ESLint) + feature-based structure + paths
+  in `tsconfig`.
+- Vitest, Testing Library, Prettier, and CI on GitHub Actions (typecheck · lint · test ·
+  build).
 
-### Fase 9 — Grupo, categorías, perfil, notificaciones
+### Phase 1 — Calculation core, no UI
 
-Nombre editable, integrantes y tarjetas, invitación por link, baja de integrantes bloqueada
-con deudas abiertas, ABM de categorías, perfil con gestión de tarjetas, y la bandeja de
-notificaciones con sus acciones embebidas.
+- Domain `types/` (already imported from the handoff).
+- Spec algorithms 2.1–2.7 in `features/debts/calculation/`.
+- Test suite with the invariants the spec itself calls out as the safety net:
+  - the sum of contributions and of the split give **exactly** the amount;
+  - per currency, the sum of all balances in the group is **zero**;
+  - each person's balance matches `paid in − consumed` **and** the sum of their debts by
+    pair;
+  - the plan produces at most `n − 1` transfers per currency and settles exactly.
+- `lib/dates.ts` for the "Today / This week / Before" buckets.
 
-### Fase 10 — Pulido
+> This phase is the cheapest to get right and the most expensive to get wrong. It goes
+> entirely before any screen.
 
-Estados vacíos, esqueletos con la forma real del contenido, manejo de errores,
-accesibilidad (foco dorado, `aria-*`, Escape cierra overlays), `prefers-reduced-motion`,
-QA responsive contra el prototipo, y deploy.
+### Phase 2 — Design system
+
+- `tokens.css` + `components.css` + `theme.css`; Archivo font via `next/font`.
+- Port the 16 primitives, adapting them to the repo's conventions.
+- `AmbientBackground` in the root layout (single use) with its mobile and desktop blooms.
+- Shell: collapsible side rail (64px → 212px on hover, fixed 76px gap, active without
+  border) and a floating bottom bar with a FAB.
+- Helper for the firm `1fr 300px` grid with a 20px gap, mandatory on every desktop screen.
+- `/dev/kitchen-sink` route (dev only) to compare against `Sistema de diseño.dc.html`.
+
+### Phase 3 — Supabase: schema, RLS, and auth
+
+- Migrations for every entity. Debts, balances, and the exchange rate are **not**
+  persisted.
+- Modeling contributions and the split: a child table per person, so the "Paid by" filter
+  and referential integrity work without unpacking jsonb.
+- RLS on every table, based on group membership.
+- Constraints and triggers reflecting the integrity rules from section 1.2.
+- Session middleware, login, signup, recovery, Google OAuth, and onboarding.
+- `seed.sql` with the prototype's fixtures.
+
+### Phase 4 — Expenses
+
+- List grouped by time bucket, voided ones dimmed, drafts on top.
+- Single-line filter row with horizontal scroll; each chip opens its own 300px menu
+  anchored to itself, with a search box when the list is long; combined with AND.
+- Expense detail with history (new screen, not in the prototype).
+- New expense: multi-payer (Equal · Amounts) + split (Equal · Percentage · Amounts), with
+  all the validation and help copy from section 6.4.
+- Editing, voiding with a 24hs restore window, and edit history.
+- Multi-select mode.
+- `/api/exchange-rate` for the estimated ARS equivalence.
+
+### Phase 5 — Per-person debts and payments
+
+- Grouped by currency, semantic badges, copyable alias.
+- Actions by role: Record payment · Remind · Pay via {app} · Already paid.
+- Recording, declaring, and confirming payments, with a 24hs void window.
+- Debt detail with the expenses that originated it.
+- Reminder screen.
+
+### Phase 6 — Settlement plan and realtime
+
+- State machine `idle → running → completed`.
+- On start, transfers and source expenses are frozen.
+- Individual debts and editing/voiding blocked while it runs; logging expenses stays
+  allowed.
+- Realtime with conflict resolution: first one wins, and the second is informed without
+  treating it as an error.
+- Optimistic updates with rollback if the server rejects.
+- Automatic close, with the two outcomes (no debts → congratulations; new debts → back to
+  idle).
+
+### Phase 7 — Dashboard
+
+- Net balance stacked by currency, largest amount on top.
+- SVG `DonutChart`: separated segments with rounded ends; on hover the segment thickens,
+  dims the rest, and shows a tooltip.
+- Clickable notices for pending drafts and a plan in progress.
+- Recent activity, quick actions, and a per-member summary in the right column.
 
 ---
 
-## Riesgos identificados
+## Second batch
 
-- **Redondeo.** Es donde se rompe la confianza del usuario. Mitigado con la Fase 1 completa
-  y tests generativos antes de cualquier pantalla.
-- **Cálculo derivado en cada request.** Derivar deudas de todos los gastos vigentes es
-  correcto y es lo que pide la spec, pero escala linealmente con el historial del grupo.
-  Si un grupo se pone grande, cachear el resultado derivado — nunca persistirlo como verdad.
-- **Realtime y RSC conviven mal si se mezclan.** Por eso el realtime queda acotado a Plan y
-  saldos, con un límite explícito de qué se suscribe.
-- **Cuatro pantallas no están dibujadas** (detalle con historial, edición, administración de
-  recurrentes, confirmación de borrador). Se construyen con el vocabulario visual existente,
-  sin inventar patrones nuevos.
+### Phase 8 — Recurrences
+
+Defined from an existing expense, monthly draft generation via cron, confirmation, a
+7-day reminder, discard at 30, and the rule that no recurrence ever has two open drafts.
+Managed inline within Group.
+
+### Phase 9 — Group, categories, profile, notifications
+
+Editable name, members and cards, invite by link, member removal blocked while owing,
+category CRUD, profile with card management, and the notification tray with its embedded
+actions.
+
+### Phase 10 — Polish
+
+Empty states, skeletons shaped like the real content, error handling, accessibility
+(golden focus, `aria-*`, Escape closes overlays), `prefers-reduced-motion`, responsive QA
+against the prototype, and deploy.
+
+---
+
+## Identified risks
+
+- **Rounding.** This is where the user's trust breaks. Mitigated with Phase 1 fully done
+  and generative tests before any screen.
+- **Derived calculation on every request.** Deriving debts from all current expenses is
+  correct and what the spec calls for, but scales linearly with the group's history. If a
+  group grows large, cache the derived result — never persist it as the source of truth.
+- **Realtime and RSC don't mix well when combined.** That's why realtime stays scoped to
+  Plan and balances, with an explicit limit on what it subscribes to.
+- **Four screens aren't drawn** (detail with history, editing, recurrence management,
+  draft confirmation). They're built with the existing visual vocabulary, without
+  inventing new patterns.

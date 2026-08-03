@@ -1,3 +1,3 @@
 # Saldito
 
-Gestor de gastos compartidos entre convivientes y grupos. Multi-moneda.
+Shared expense manager for roommates and groups. Multi-currency.

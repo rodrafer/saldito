@@ -1,28 +1,27 @@
-# Notas de implementación
+# Implementation notes
 
-Un documento por fase, escrito **al cerrar la fase**, junto con su PR.
+One document per phase, written **when the phase closes**, alongside its PR.
 
-## Para qué sirven
+## What they're for
 
-Guardan lo que el código no puede contar por sí solo: por qué se eligió un camino y no
-otro, qué se descartó, qué se rompió en el intento, y qué queda pendiente. El diff muestra
-_qué_ cambió; estas notas explican _por qué_.
+They keep what the code can't tell on its own: why one path was chosen over another, what
+was discarded, what broke along the way, and what's left pending. The diff shows _what_
+changed; these notes explain _why_.
 
-Lo que más valor tiene son los hallazgos: cuando la implementación contradice a la
-especificación, cuando una herramienta se comporta distinto de lo esperado, o cuando un
-test encuentra algo que nadie había previsto. Eso se pierde apenas termina la sesión si no
-queda escrito.
+What's most valuable are the **findings**: when the implementation contradicts the spec,
+when a tool behaves differently than expected, or when a test finds something no one had
+anticipated. That's lost as soon as the session ends if it doesn't get written down.
 
-## Convención
+## Convention
 
-- Un archivo por fase: `phase-<n>-<slug>.md`.
-- Se escribe antes de abrir el PR, y el PR lo enlaza.
-- No repite lo que ya dice el código ni la especificación. Si algo se entiende leyendo el
-  diff, no va acá.
-- Los hallazgos que le sirven a otra persona —un bug en la especificación, una decisión
-  que hay que consultar— se marcan explícitamente para que no se pierdan.
+- One file per phase: `phase-<n>-<slug>.md`.
+- Written before opening the PR, and the PR links it.
+- Doesn't repeat what the code or the spec already says. If something is clear from reading
+  the diff, it doesn't go here.
+- Findings useful to someone else —a bug in the spec, a decision that needs to be
+  checked— are marked explicitly so they don't get lost.
 
-## Qué no va acá
+## What doesn't go here
 
-- **Discrepancias del handoff de diseño** → `NOTAS_HANDOFF.md`, en la raíz.
-- **Decisiones de alcance y orden de fases** → `PLAN.md`, en la raíz.
+- **Design handoff discrepancies** → `HANDOFF_NOTES.md`, at the root.
+- **Scope and phase-order decisions** → `PLAN.md`, at the root.
