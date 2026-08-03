@@ -32,9 +32,13 @@ test('02 · the rail expanded by keyboard', async ({ page }) => {
      programmatic focus would expand the rail and show no ring — the exact
      thing this shot exists to prove. */
   const railItem = page.locator('.sd-sidebar__item').first();
-  for (let i = 0; i < 5 && !(await railItem.evaluate((el) => el === document.activeElement)); i++) {
+  const focused = () => railItem.evaluate((el) => el === document.activeElement);
+  for (let i = 0; i < 5 && !(await focused()); i++) {
     await page.keyboard.press('Tab');
   }
+  /* Without this the shot degrades quietly into a collapsed rail with no ring,
+     which is a picture of the bug this one is meant to prove is fixed. */
+  if (!(await focused())) throw new Error('five tabs did not reach the rail');
   await settle(page);
   await shot(page, '02-desktop-rail-expanded');
 });

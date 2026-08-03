@@ -1,5 +1,3 @@
-import { defineConfig, devices } from '@playwright/test';
-
 /**
  * Playwright is here for **screenshots**, not for tests.
  *
@@ -14,6 +12,8 @@ import { defineConfig, devices } from '@playwright/test';
  * when `NODE_ENV` is `development` — so five of the eleven shots do not exist
  * in a production build.
  */
+import { defineConfig, devices } from '@playwright/test';
+
 /**
  * Retina, like the machine the design was reviewed on: a 1280×800 shot lands
  * as a 2560×1600 PNG.

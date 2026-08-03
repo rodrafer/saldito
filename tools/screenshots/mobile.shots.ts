@@ -23,12 +23,14 @@ test('10 · floating bar and FAB', async ({ page }) => {
      and the raised FAB — is a 60px band that nobody can judge inside a
      full-height phone screenshot. */
   const bar = await page.locator('.sd-bottomnav').boundingBox();
+  const viewport = page.viewportSize();
   if (!bar) throw new Error('the floating bar is not visible at this viewport');
+  if (!viewport) throw new Error('no viewport: the clip has nothing to measure against');
   await shot(page, '10-mobile-bottom-bar-fab', {
     x: 0,
     y: bar.y - 24,
-    width: 390,
-    height: 760 - bar.y + 24,
+    width: viewport.width,
+    height: viewport.height - bar.y + 24,
   });
 });
 

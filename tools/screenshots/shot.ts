@@ -41,10 +41,27 @@ interface Clip {
 
 export const test = base;
 
-/* A shot of a broken page is still a valid PNG, and the run stays green while
-   producing it. This is the only thing standing between that and a PR. */
+/**
+ * A page that threw still screenshots fine, and the shot goes into a PR looking
+ * like every other one. Nothing else in this run would catch it: there are no
+ * assertions here by design, so an uncaught exception is the one failure the
+ * captures can't show.
+ *
+ * Collected rather than thrown on the spot — the error arrives asynchronously,
+ * and failing the shot it actually broke is worth more than failing whichever
+ * one was in flight.
+ */
+const pageErrors: Error[] = [];
+
 test.beforeEach(({ page }) => {
-  page.on('pageerror', (error) => console.error(`  ✗ page error: ${error.message}`));
+  pageErrors.length = 0;
+  page.on('pageerror', (error) => pageErrors.push(error));
+});
+
+test.afterEach(() => {
+  if (pageErrors.length > 0) {
+    throw new Error(`the page threw while capturing:\n  ${pageErrors.join('\n  ')}`);
+  }
 });
 
 /**

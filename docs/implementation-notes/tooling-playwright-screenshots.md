@@ -42,7 +42,7 @@ It now lives on each project, past the spread.
 **The pointer stays where the last click left it, and hover states go into the shot.** The
 mobile actions sheet opened under the FAB, which left the cursor resting on its third row:
 the capture came out with one row in the gold hover state, a combination no user is ever in.
-`shot()` parks the pointer at the top-right corner before capturing. Top-*left* would have
+`shot()` parks the pointer at the top-right corner before capturing. Top-_left_ would have
 been worse than doing nothing — that is the rail's hover zone, and it would have expanded
 the rail in every desktop shot.
 
@@ -56,6 +56,20 @@ It presses Tab until the rail item is `document.activeElement`.
 filter menu meant a viewport cut through the middle of the card above and the popover
 wherever it happened to land. Any shot whose subject is reached by clicking needs its own
 `scrollIntoView` first; the click then finds the element already on screen and moves nothing.
+
+## What the self-review changed
+
+Every finding above is the same failure mode: **the run stays green and the picture stops
+being true.** There are no assertions here, so nothing else notices. The review went looking
+for the rest of that class and found three:
+
+- The Tab loop in shot 02 gave up after five presses and captured whatever it had, which is
+  a collapsed rail with no ring — a picture of the bug the shot exists to prove is fixed. It
+  now throws.
+- A page that threw mid-capture produced a normal-looking PNG. Errors are collected per shot
+  and fail it.
+- Shot 10's clip repeated `390` and `760` as literals while the viewport is set in the
+  config, so changing one would have silently cropped the other. It measures.
 
 ## Left for later
 
