@@ -8,10 +8,10 @@ export type ButtonSize = 'sm' | 'md';
 
 /** Props are English; the classes keep the handoff's names. See docs/glossary.md. */
 const VARIANT_CLASS: Record<ButtonVariant, string> = {
-  primary: 'sd-btn--primario',
-  secondary: 'sd-btn--secundario',
-  ghost: 'sd-btn--fantasma',
-  danger: 'sd-btn--peligro',
+  primary: 'sd-btn--primary',
+  secondary: 'sd-btn--secondary',
+  ghost: 'sd-btn--ghost',
+  danger: 'sd-btn--danger',
 };
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -38,7 +38,7 @@ export function Button({
         'sd-btn',
         VARIANT_CLASS[variant],
         size === 'sm' && 'sd-btn--sm',
-        block && 'sd-btn--bloque',
+        block && 'sd-btn--block',
         className,
       )}
       {...props}

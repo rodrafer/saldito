@@ -67,7 +67,7 @@ export function AppShell({
         header={sidebarHeader}
         footer={sidebarFooter}
       />
-      <main className="sd-contenido">{children}</main>
+      <main className="sd-content">{children}</main>
       <BottomNav
         items={items}
         activeHref={activeHref}

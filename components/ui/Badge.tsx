@@ -4,8 +4,8 @@ import type { ReactNode } from 'react';
 export type BadgeTone = 'positive' | 'negative' | 'neutral';
 
 const TONE_CLASS: Record<BadgeTone, string> = {
-  positive: 'sd-badge--positivo',
-  negative: 'sd-badge--negativo',
+  positive: 'sd-badge--positive',
+  negative: 'sd-badge--negative',
   neutral: 'sd-badge--neutral',
 };
 

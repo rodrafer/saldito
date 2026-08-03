@@ -38,20 +38,15 @@ export function ListRow({
   const body = (
     <>
       {left}
-      <div className="sd-row__cuerpo">
-        <div className="sd-row__titulo">{title}</div>
-        {detail && <div className="sd-row__detalle">{detail}</div>}
+      <div className="sd-row__body">
+        <div className="sd-row__title">{title}</div>
+        {detail && <div className="sd-row__detail">{detail}</div>}
       </div>
       {right}
     </>
   );
 
-  const classes = cn(
-    'sd-row',
-    action && 'sd-row--accion',
-    !onClick && 'sd-row--estatico',
-    className,
-  );
+  const classes = cn('sd-row', action && 'sd-row--action', !onClick && 'sd-row--static', className);
 
   if (!onClick) {
     return <div className={classes}>{body}</div>;

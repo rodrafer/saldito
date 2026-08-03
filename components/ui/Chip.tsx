@@ -38,7 +38,7 @@ export function Chip({ className, children, ...props }: ChipProps) {
  * Layout only — it holds `Chip`s, `ChipGroup`s or filter-menu triggers alike.
  */
 export function ChipRow({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn('sd-chip-fila', className)}>{children}</div>;
+  return <div className={cn('sd-chip-row', className)}>{children}</div>;
 }
 
 export interface ChipGroupProps {
@@ -61,7 +61,7 @@ export function ChipGroup({ value, onValueChange, label, className, children }: 
       value={value}
       onValueChange={onValueChange}
       aria-label={label}
-      className={cn('sd-chip-fila', className)}
+      className={cn('sd-chip-row', className)}
     >
       {children}
     </ToggleGroup.Root>

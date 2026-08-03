@@ -16,7 +16,7 @@ const R = 40;
 const CIRC = 2 * Math.PI * R;
 
 /**
- * These two mirror `--sd-donut-grosor` and `--sd-donut-gap` in tokens.css.
+ * These two mirror `--sd-donut-thickness` and `--sd-donut-gap` in tokens.css.
  *
  * They can't read the tokens the way the colours do: both feed the
  * `stroke-dasharray` arithmetic below, which runs during render, and pulling a
@@ -159,8 +159,8 @@ export function DonutChart({
             position: 'absolute',
             left: 0,
             bottom: 'calc(100% + 10px)',
-            background: 'var(--sd-surface-elevada)',
-            border: '1px solid var(--sd-border-fuerte)',
+            background: 'var(--sd-surface-elevated)',
+            border: '1px solid var(--sd-border-strong)',
             borderRadius: 'var(--sd-r-sm)',
             padding: '8px 11px',
             whiteSpace: 'nowrap',
@@ -193,7 +193,7 @@ export function DonutChart({
             style={{
               fontSize: 'var(--sd-fs-caption)',
               fontWeight: 'var(--sd-fw-bold)',
-              color: 'var(--sd-dorado)',
+              color: 'var(--sd-gold)',
               marginTop: 3,
             }}
           >
@@ -204,7 +204,7 @@ export function DonutChart({
             <div
               style={{
                 fontSize: 'var(--sd-fs-micro)',
-                color: 'var(--sd-text-atenuado)',
+                color: 'var(--sd-text-muted)',
                 marginTop: 2,
               }}
             >

@@ -2,10 +2,11 @@
    Saldito — Tokens de diseño
    Modo oscuro único. Importar antes que cualquier otro CSS.
 
-   Ported from design_handoff_saldito/tokens/tokens.css. Names keep the
-   handoff's spelling on purpose: they are the design system's published API
-   and both .dc.html references are written against them (see PLAN.md).
-   The only change is the font: the handoff pulled Archivo in with a Google
+   Ported from design_handoff_saldito/tokens/tokens.css, whose names are in
+   Spanish. Everything here is in English; docs/glossary.md maps the two, so a
+   design review still lines up against the handoff.
+
+   The other change is the font: the handoff pulled Archivo in with a Google
    Fonts @import, which blocks the first paint and shifts the layout when it
    lands. next/font/google self-hosts it and hands us --font-archivo instead.
    ============================================================ */
@@ -13,49 +14,49 @@
 :root {
   /* ---------- Fondos ---------- */
   --sd-bg-app: #111013;
-  --sd-bg-lienzo: #2a2825;
-  --sd-bg-hueco: #0b0a0d;
+  --sd-bg-canvas: #2a2825;
+  --sd-bg-well: #0b0a0d;
 
   /* ---------- Superficies ---------- */
   --sd-surface: #1b1a1f;
-  --sd-surface-elevada: #16151a;
-  --sd-surface-sutil: #1f1e24;
+  --sd-surface-elevated: #16151a;
+  --sd-surface-subtle: #1f1e24;
   --sd-surface-input: #111013;
   --sd-surface-grad: linear-gradient(155deg, #2a2732 0%, #1c1a21 48%, #101015 100%);
-  --sd-surface-grad-elevada: linear-gradient(155deg, #26232e 0%, #19181e 48%, #0e0d12 100%);
-  --sd-surface-grad-dorada: linear-gradient(155deg, #40371d 0%, #2b2515 50%, #1b1709 100%);
-  --sd-surface-grad-rosa: linear-gradient(155deg, #341c24 0%, #211317 50%, #140a0e 100%);
+  --sd-surface-grad-elevated: linear-gradient(155deg, #26232e 0%, #19181e 48%, #0e0d12 100%);
+  --sd-surface-grad-gold: linear-gradient(155deg, #40371d 0%, #2b2515 50%, #1b1709 100%);
+  --sd-surface-grad-pink: linear-gradient(155deg, #341c24 0%, #211317 50%, #140a0e 100%);
 
   /* ---------- Bordes ---------- */
   --sd-border: #28262d;
-  --sd-border-fuerte: #34323a;
-  --sd-border-sutil: #1f1e24;
-  --sd-border-acento: #efc75e;
+  --sd-border-strong: #34323a;
+  --sd-border-subtle: #1f1e24;
+  --sd-border-accent: #efc75e;
 
   /* ---------- Texto ---------- */
   --sd-text: #f0efea;
-  --sd-text-secundario: #c7c4cc;
-  --sd-text-atenuado: #88858c;
-  --sd-text-deshabilitado: #56535c;
-  --sd-text-sobre-dorado: #211804;
+  --sd-text-secondary: #c7c4cc;
+  --sd-text-muted: #88858c;
+  --sd-text-disabled: #56535c;
+  --sd-text-on-gold: #211804;
 
   /* ---------- Acento dorado ---------- */
-  --sd-dorado: #efc75e;
-  --sd-dorado-claro: #f4d77c;
-  --sd-dorado-profundo: #dca637;
-  --sd-dorado-tenue: #57491f;
-  --sd-dorado-texto: #c9b87a;
-  --sd-dorado-grad: linear-gradient(135deg, #f4d77c, #dca637);
-  --sd-dorado-a10: rgba(239, 199, 94, 0.1);
-  --sd-dorado-a08: rgba(239, 199, 94, 0.08);
+  --sd-gold: #efc75e;
+  --sd-gold-light: #f4d77c;
+  --sd-gold-deep: #dca637;
+  --sd-gold-faint: #57491f;
+  --sd-gold-text: #c9b87a;
+  --sd-gold-grad: linear-gradient(135deg, #f4d77c, #dca637);
+  --sd-gold-a10: rgba(239, 199, 94, 0.1);
+  --sd-gold-a08: rgba(239, 199, 94, 0.08);
 
   /* ---------- Semánticos ---------- */
-  --sd-positivo: #7bb47a;
-  --sd-positivo-bg: rgba(123, 180, 122, 0.1);
-  --sd-negativo: #e38799;
-  --sd-negativo-profundo: #8c2f41;
-  --sd-negativo-bg: rgba(140, 47, 65, 0.18);
-  --sd-negativo-tinte: #f7e9ec;
+  --sd-positive: #7bb47a;
+  --sd-positive-bg: rgba(123, 180, 122, 0.1);
+  --sd-negative: #e38799;
+  --sd-negative-deep: #8c2f41;
+  --sd-negative-bg: rgba(140, 47, 65, 0.18);
+  --sd-negative-tint: #f7e9ec;
 
   /* ---------- Overlays ---------- */
   --sd-overlay-modal: rgba(11, 10, 13, 0.65);
@@ -64,25 +65,25 @@
 
   /* ---------- Luminiscencia ambiente ---------- */
   /* Mobile */
-  --sd-bloom-dorado: radial-gradient(
+  --sd-bloom-gold: radial-gradient(
     140% 68% at 50% 85%,
     rgba(239, 199, 94, 0.15) 0%,
     rgba(220, 166, 55, 0.06) 45%,
     rgba(17, 16, 19, 0) 78%
   );
-  --sd-bloom-rosa: radial-gradient(
+  --sd-bloom-pink: radial-gradient(
     85% 45% at 8% -6%,
     rgba(227, 135, 153, 0.2) 0%,
     rgba(17, 16, 19, 0) 62%
   );
   /* Desktop: el lienzo es más grande, así que ambos blooms van más intensos */
-  --sd-bloom-dorado-desktop: radial-gradient(
+  --sd-bloom-gold-desktop: radial-gradient(
     70% 62% at 50% 108%,
     rgba(239, 199, 94, 0.25) 0%,
     rgba(220, 166, 55, 0.05) 42%,
     rgba(17, 16, 19, 0) 72%
   );
-  --sd-bloom-rosa-desktop: radial-gradient(
+  --sd-bloom-pink-desktop: radial-gradient(
     52% 48% at 22% -8%,
     rgba(227, 135, 153, 0.19) 0%,
     rgba(17, 16, 19, 0) 64%
@@ -92,7 +93,7 @@
   /* --font-archivo lo define next/font/google en el layout raíz. */
   --sd-font: var(--font-archivo), system-ui, -apple-system, sans-serif;
   --sd-fw-regular: 400;
-  --sd-fw-medio: 500;
+  --sd-fw-medium: 500;
   --sd-fw-semibold: 600;
   --sd-fw-bold: 700;
 
@@ -102,16 +103,16 @@
   --sd-fs-body-sm: 12.5px;
   --sd-fs-body: 13px;
   --sd-fs-body-lg: 14px;
-  --sd-fs-subtitulo: 15px;
-  --sd-fs-titulo-sm: 16px;
-  --sd-fs-titulo: 19px;
-  --sd-fs-titulo-lg: 24px;
+  --sd-fs-subtitle: 15px;
+  --sd-fs-title-sm: 16px;
+  --sd-fs-title: 19px;
+  --sd-fs-title-lg: 24px;
   --sd-fs-display-sm: 28px;
   --sd-fs-display: 40px;
   --sd-fs-display-lg: 48px;
 
-  --sd-track-ancho: 0.06em;
-  --sd-track-titular: -0.02em;
+  --sd-track-wide: 0.06em;
+  --sd-track-heading: -0.02em;
 
   /* ---------- Espaciado ---------- */
   --sd-sp-1: 4px;
@@ -143,30 +144,30 @@
   --sd-r-rail-item: 13px; /* ítem del rail */
 
   /* ---------- Sombras ---------- */
-  --sd-sh-sutil: 0 2px 8px rgba(0, 0, 0, 0.6);
+  --sd-sh-subtle: 0 2px 8px rgba(0, 0, 0, 0.6);
   --sd-sh-card: 0 6px 16px rgba(0, 0, 0, 0.45);
   --sd-sh-dropdown: 0 20px 40px rgba(0, 0, 0, 0.5);
   --sd-sh-modal: 0 24px 60px rgba(0, 0, 0, 0.5);
   --sd-sh-sheet: 0 -16px 40px rgba(0, 0, 0, 0.6);
   --sd-sh-nav: 0 14px 34px rgba(0, 0, 0, 0.55);
-  --sd-sh-dispositivo: 0 40px 90px rgba(0, 0, 0, 0.5);
+  --sd-sh-device: 0 40px 90px rgba(0, 0, 0, 0.5);
   --sd-sh-rail: 0 10px 26px rgba(0, 0, 0, 0.35);
-  --sd-sh-rail-abierto: 0 26px 64px rgba(0, 0, 0, 0.6);
+  --sd-sh-rail-open: 0 26px 64px rgba(0, 0, 0, 0.6);
   --sd-sh-fab: 0 8px 22px rgba(239, 199, 94, 0.38), 0 0 0 5px rgba(24, 23, 28, 0.9);
   --sd-sh-fab-hover: 0 12px 26px rgba(239, 199, 94, 0.5), 0 0 0 5px rgba(24, 23, 28, 0.9);
   --sd-sh-donut: drop-shadow(0 4px 9px rgba(0, 0, 0, 0.55));
   --sd-sh-donut-hub: 0 2px 8px rgba(0, 0, 0, 0.6), inset 0 1px 4px rgba(0, 0, 0, 0.8);
   --sd-donut-hub: radial-gradient(circle at 34% 28%, #24222a 0%, #1a181e 55%, #131217 100%);
-  --sd-donut-grosor: 11; /* unidades del viewBox de 100 */
+  --sd-donut-thickness: 11; /* unidades del viewBox de 100 */
   --sd-donut-gap: 17; /* separación de arco entre segmentos */
 
   /* ---------- Movimiento ---------- */
-  --sd-dur-instante: 150ms;
-  --sd-dur-rapido: 180ms;
+  --sd-dur-instant: 150ms;
+  --sd-dur-fast: 180ms;
   --sd-dur-normal: 220ms;
-  --sd-dur-lento: 320ms;
-  --sd-ease-salida: cubic-bezier(0.16, 1, 0.3, 1);
-  --sd-transicion-hover:
+  --sd-dur-slow: 320ms;
+  --sd-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --sd-transition-hover:
     transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 
   /* ---------- Layout ---------- */
@@ -174,9 +175,9 @@
   --sd-mobile-h: 760px;
   --sd-sidebar-rail: 64px; /* rail colapsado */
   --sd-sidebar-w: 212px; /* rail expandido por hover */
-  --sd-sidebar-hueco: 76px; /* hueco reservado en el layout (rail + aire a la derecha) */
-  --sd-sidebar-aire: 8px; /* separación del rail respecto del borde del lienzo */
-  --sd-col-derecha: 300px;
+  --sd-sidebar-gap: 76px; /* hueco reservado en el layout (rail + aire a la derecha) */
+  --sd-sidebar-inset: 8px; /* separación del rail respecto del borde del lienzo */
+  --sd-col-right: 300px;
   --sd-target-min: 44px;
 }
 

@@ -8,8 +8,9 @@
    `inline` es lo que evita la indirección: Tailwind escribe el `var(--sd-*)`
    dentro de la utilidad en vez de emitir una variable propia que lo copie.
 
-   Los nombres de las claves son los que eligió el handoff (`texto`, `borde`,
-   `dorado`): son la fachada del sistema de diseño, igual que los tokens.
+   Algunas claves pisan a propósito un default de Tailwind (`--tracking-wide`,
+   `--ease-out`, y las escalas `--radius-*` y `--text-*` enteras). Es el punto:
+   un nombre, un valor, se escriba en el archivo que se escriba.
    ============================================================ */
 
 @theme inline {
@@ -17,29 +18,29 @@
   --color-app: var(--sd-bg-app);
 
   --color-surface: var(--sd-surface);
-  --color-surface-elevada: var(--sd-surface-elevada);
-  --color-surface-sutil: var(--sd-surface-sutil);
+  --color-surface-elevated: var(--sd-surface-elevated);
+  --color-surface-subtle: var(--sd-surface-subtle);
   --color-surface-input: var(--sd-surface-input);
 
-  --color-borde: var(--sd-border);
-  --color-borde-fuerte: var(--sd-border-fuerte);
-  --color-borde-sutil: var(--sd-border-sutil);
-  --color-borde-acento: var(--sd-border-acento);
+  --color-border: var(--sd-border);
+  --color-border-strong: var(--sd-border-strong);
+  --color-border-subtle: var(--sd-border-subtle);
+  --color-border-accent: var(--sd-border-accent);
 
-  --color-texto: var(--sd-text);
-  --color-texto-secundario: var(--sd-text-secundario);
-  --color-texto-atenuado: var(--sd-text-atenuado);
-  --color-texto-deshabilitado: var(--sd-text-deshabilitado);
-  --color-texto-dorado: var(--sd-text-sobre-dorado);
+  --color-text: var(--sd-text);
+  --color-text-secondary: var(--sd-text-secondary);
+  --color-text-muted: var(--sd-text-muted);
+  --color-text-disabled: var(--sd-text-disabled);
+  --color-text-on-gold: var(--sd-text-on-gold);
 
-  --color-dorado: var(--sd-dorado);
-  --color-dorado-claro: var(--sd-dorado-claro);
-  --color-dorado-profundo: var(--sd-dorado-profundo);
-  --color-dorado-tenue: var(--sd-dorado-tenue);
+  --color-gold: var(--sd-gold);
+  --color-gold-light: var(--sd-gold-light);
+  --color-gold-deep: var(--sd-gold-deep);
+  --color-gold-faint: var(--sd-gold-faint);
 
-  --color-positivo: var(--sd-positivo);
-  --color-negativo: var(--sd-negativo);
-  --color-negativo-profundo: var(--sd-negativo-profundo);
+  --color-positive: var(--sd-positive);
+  --color-negative: var(--sd-negative);
+  --color-negative-deep: var(--sd-negative-deep);
 
   /* ---------- Tipografía ---------- */
   --font-sans: var(--sd-font);
@@ -50,16 +51,16 @@
   --text-body-sm: var(--sd-fs-body-sm);
   --text-body: var(--sd-fs-body);
   --text-body-lg: var(--sd-fs-body-lg);
-  --text-subtitulo: var(--sd-fs-subtitulo);
-  --text-titulo-sm: var(--sd-fs-titulo-sm);
-  --text-titulo: var(--sd-fs-titulo);
-  --text-titulo-lg: var(--sd-fs-titulo-lg);
+  --text-subtitle: var(--sd-fs-subtitle);
+  --text-title-sm: var(--sd-fs-title-sm);
+  --text-title: var(--sd-fs-title);
+  --text-title-lg: var(--sd-fs-title-lg);
   --text-display-sm: var(--sd-fs-display-sm);
   --text-display: var(--sd-fs-display);
   --text-display-lg: var(--sd-fs-display-lg);
 
-  --tracking-ancho: var(--sd-track-ancho);
-  --tracking-titular: var(--sd-track-titular);
+  --tracking-wide: var(--sd-track-wide);
+  --tracking-heading: var(--sd-track-heading);
 
   /* ---------- Radios ---------- */
   --radius-xs: var(--sd-r-xs);
@@ -74,7 +75,7 @@
   --radius-pill: var(--sd-r-pill);
 
   /* ---------- Sombras ---------- */
-  --shadow-sutil: var(--sd-sh-sutil);
+  --shadow-subtle: var(--sd-sh-subtle);
   --shadow-card: var(--sd-sh-card);
   --shadow-dropdown: var(--sd-sh-dropdown);
   --shadow-modal: var(--sd-sh-modal);
@@ -83,12 +84,12 @@
   --shadow-fab: var(--sd-sh-fab);
 
   /* ---------- Movimiento ---------- */
-  --ease-salida: var(--sd-ease-salida);
-  --animate-screen-in: sd-screen-in var(--sd-dur-normal) var(--sd-ease-salida) both;
-  --animate-sheet-up: sd-sheet-up var(--sd-dur-normal) var(--sd-ease-salida) both;
-  --animate-pop-in: sd-pop-in var(--sd-dur-rapido) var(--sd-ease-salida) both;
-  --animate-fade-in: sd-fade-in var(--sd-dur-rapido) ease both;
-  --animate-toast-in: sd-toast-in var(--sd-dur-normal) var(--sd-ease-salida) both;
+  --ease-out: var(--sd-ease-out);
+  --animate-screen-in: sd-screen-in var(--sd-dur-normal) var(--sd-ease-out) both;
+  --animate-sheet-up: sd-sheet-up var(--sd-dur-normal) var(--sd-ease-out) both;
+  --animate-pop-in: sd-pop-in var(--sd-dur-fast) var(--sd-ease-out) both;
+  --animate-fade-in: sd-fade-in var(--sd-dur-fast) ease both;
+  --animate-toast-in: sd-toast-in var(--sd-dur-normal) var(--sd-ease-out) both;
 
   /* ---------- Layout ----------
      El handoff no fija un breakpoint: separa "mobile 390×760" de "desktop", y
@@ -103,21 +104,21 @@
 @utility bg-surface-grad {
   background-image: var(--sd-surface-grad);
 }
-@utility bg-surface-grad-elevada {
-  background-image: var(--sd-surface-grad-elevada);
+@utility bg-surface-grad-elevated {
+  background-image: var(--sd-surface-grad-elevated);
 }
-@utility bg-surface-grad-dorada {
-  background-image: var(--sd-surface-grad-dorada);
+@utility bg-surface-grad-gold {
+  background-image: var(--sd-surface-grad-gold);
 }
-@utility bg-surface-grad-rosa {
-  background-image: var(--sd-surface-grad-rosa);
+@utility bg-surface-grad-pink {
+  background-image: var(--sd-surface-grad-pink);
 }
-@utility bg-dorado-grad {
-  background-image: var(--sd-dorado-grad);
+@utility bg-gold-grad {
+  background-image: var(--sd-gold-grad);
 }
-@utility bg-bloom-dorado {
-  background-image: var(--sd-bloom-dorado);
+@utility bg-bloom-gold {
+  background-image: var(--sd-bloom-gold);
 }
-@utility bg-bloom-rosa {
-  background-image: var(--sd-bloom-rosa);
+@utility bg-bloom-pink {
+  background-image: var(--sd-bloom-pink);
 }

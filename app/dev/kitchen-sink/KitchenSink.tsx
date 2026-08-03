@@ -43,18 +43,18 @@ const CATEGORIES = [
 ];
 
 const DONUT_SEGMENTS = [
-  { name: 'Mejoras', color: 'var(--sd-dorado)', pct: 42, amount: formatAmount(77364) },
-  { name: 'Impuestos', color: 'var(--sd-negativo)', pct: 26, amount: formatAmount(47840) },
-  { name: 'Servicios', color: 'var(--sd-positivo)', pct: 18, amount: formatAmount(33156) },
-  { name: 'Súper', color: 'var(--sd-dorado-profundo)', pct: 14, amount: formatAmount(25788) },
+  { name: 'Mejoras', color: 'var(--sd-gold)', pct: 42, amount: formatAmount(77364) },
+  { name: 'Impuestos', color: 'var(--sd-negative)', pct: 26, amount: formatAmount(47840) },
+  { name: 'Servicios', color: 'var(--sd-positive)', pct: 18, amount: formatAmount(33156) },
+  { name: 'Súper', color: 'var(--sd-gold-deep)', pct: 14, amount: formatAmount(25788) },
 ];
 
 function Section({ n, title, children }: { n: string; title: string; children: ReactNode }) {
   return (
     <section className="sd-stack">
-      <div className="flex items-baseline gap-[14px] border-b border-borde pb-[14px]">
-        <span className="text-label font-bold text-dorado">{n}</span>
-        <h2 className="text-titulo-lg font-semibold">{title}</h2>
+      <div className="flex items-baseline gap-[14px] border-b border-border pb-[14px]">
+        <span className="text-label font-bold text-gold">{n}</span>
+        <h2 className="text-title-lg font-semibold">{title}</h2>
       </div>
       {children}
     </section>
@@ -76,8 +76,8 @@ function Demo({ title, note, children }: { title: string; note?: string; childre
   return (
     <Card className="flex flex-col gap-[16px] !p-[20px]">
       <div>
-        <div className="text-subtitulo font-semibold">{title}</div>
-        {note && <p className="mt-1 text-label leading-relaxed text-texto-atenuado">{note}</p>}
+        <div className="text-subtitle font-semibold">{title}</div>
+        {note && <p className="mt-1 text-label leading-relaxed text-text-muted">{note}</p>}
       </div>
       {children}
     </Card>
@@ -101,17 +101,17 @@ export function KitchenSink() {
   );
 
   return (
-    <main className="sd-contenido">
+    <main className="sd-content">
       <div
         className="sd-stack"
         style={{ gap: 'var(--sd-sp-16)', maxWidth: 1180, margin: '0 auto' }}
       >
         <header className="sd-stack" style={{ gap: 'var(--sd-sp-4)' }}>
-          <div className="text-label font-semibold uppercase tracking-ancho text-texto-atenuado">
+          <div className="text-label font-semibold uppercase tracking-wide text-text-muted">
             Kitchen sink · sólo en desarrollo
           </div>
-          <h1 className="text-display font-semibold tracking-titular">Primitivas</h1>
-          <p className="max-w-[62ch] text-body-lg leading-relaxed text-texto-secundario">
+          <h1 className="text-display font-semibold tracking-heading">Primitivas</h1>
+          <p className="max-w-[62ch] text-body-lg leading-relaxed text-text-secondary">
             Para contrastar contra <code>Sistema de diseño.dc.html</code>, sección por sección. El
             rail y la barra inferior no están acá: se verifican en la app misma, que es donde viven.
             La barra sólo aparece por debajo de los 900px.
@@ -122,28 +122,23 @@ export function KitchenSink() {
           <Grid min="230px">
             <Card>
               <div className="text-body-lg font-semibold">Tarjeta estándar</div>
-              <div className="mt-1 font-mono text-caption text-texto-atenuado">
-                --sd-surface-grad
-              </div>
+              <div className="mt-1 font-mono text-caption text-text-muted">--sd-surface-grad</div>
             </Card>
             <Card tone="elevated">
               <div className="text-body-lg font-semibold">Elevada</div>
-              <div className="mt-1 font-mono text-caption text-texto-atenuado">
+              <div className="mt-1 font-mono text-caption text-text-muted">
                 modales · sheets · menús
               </div>
             </Card>
             <Card tone="gold">
-              <div className="text-body-lg font-semibold text-dorado">Dorada</div>
-              <div
-                className="mt-1 font-mono text-caption"
-                style={{ color: 'var(--sd-dorado-texto)' }}
-              >
+              <div className="text-body-lg font-semibold text-gold">Dorada</div>
+              <div className="mt-1 font-mono text-caption" style={{ color: 'var(--sd-gold-text)' }}>
                 seleccionado · hover acción
               </div>
             </Card>
             <Card tone="pink">
-              <div className="text-body-lg font-semibold text-negativo">Rosa</div>
-              <div className="mt-1 font-mono text-caption text-texto-atenuado">
+              <div className="text-body-lg font-semibold text-negative">Rosa</div>
+              <div className="mt-1 font-mono text-caption text-text-muted">
                 deudor · alerta suave
               </div>
             </Card>
@@ -156,9 +151,9 @@ export function KitchenSink() {
               [
                 ['display-lg · 48/600', 'text-display-lg', formatAmount(184200)],
                 ['display · 40/600', 'text-display', formatAmount(32400)],
-                ['titulo-lg · 24/600', 'text-titulo-lg', 'Deudas del grupo'],
-                ['titulo · 19/600', 'text-titulo', 'Gastos'],
-                ['subtitulo · 15/600', 'text-subtitulo', '¿Qué querés hacer?'],
+                ['titulo-lg · 24/600', 'text-title-lg', 'Deudas del grupo'],
+                ['titulo · 19/600', 'text-title', 'Gastos'],
+                ['subtitulo · 15/600', 'text-subtitle', '¿Qué querés hacer?'],
                 ['body-lg · 14/600', 'text-body-lg', 'Ferretería — canilla cocina'],
                 ['body · 13/600', 'text-body', 'Registrar un pago'],
                 ['label · 12/600', 'text-label', 'Pagó Rocío · hace 2 días'],
@@ -167,12 +162,12 @@ export function KitchenSink() {
             ).map(([spec, cls, sample]) => (
               <div
                 key={spec}
-                className="flex items-baseline gap-[24px] border-b border-borde px-[22px] py-[16px] last:border-b-0"
+                className="flex items-baseline gap-[24px] border-b border-border px-[22px] py-[16px] last:border-b-0"
               >
-                <span className="w-[150px] flex-none font-mono text-caption text-texto-atenuado">
+                <span className="w-[150px] flex-none font-mono text-caption text-text-muted">
                   {spec}
                 </span>
-                <span className={`${cls} font-semibold tracking-titular`}>{sample}</span>
+                <span className={`${cls} font-semibold tracking-heading`}>{sample}</span>
               </div>
             ))}
           </Card>
@@ -303,7 +298,7 @@ export function KitchenSink() {
                       </FilterMenuItem>
                     ))}
                     {filtered.length === 0 && (
-                      <div className="px-[14px] py-[10px] text-body text-texto-atenuado">
+                      <div className="px-[14px] py-[10px] text-body text-text-muted">
                         Sin resultados
                       </div>
                     )}
@@ -382,7 +377,7 @@ export function KitchenSink() {
                 center={
                   <div>
                     <div className="text-body-lg font-bold">$184k</div>
-                    <div className="text-micro text-texto-atenuado">total</div>
+                    <div className="text-micro text-text-muted">total</div>
                   </div>
                 }
               />
@@ -397,7 +392,7 @@ export function KitchenSink() {
                       />
                       {s.name}
                     </span>
-                    <span className="text-texto-atenuado">{s.pct}%</span>
+                    <span className="text-text-muted">{s.pct}%</span>
                   </li>
                 ))}
               </ul>
@@ -413,7 +408,7 @@ export function KitchenSink() {
             {/* `flex` is not decoration: the rail is absolutely positioned against
                 its 76px gap, and that gap only gets a height by being stretched as
                 a flex child — which is what the shell does to it. */}
-            <div className="relative flex h-[260px] rounded-xl border border-borde bg-app p-[16px]">
+            <div className="relative flex h-[260px] rounded-xl border border-border bg-app p-[16px]">
               <Sidebar items={NAV_ITEMS} activeHref="/" />
             </div>
           </Demo>
@@ -425,7 +420,7 @@ export function KitchenSink() {
             <DesktopGrid
               aside={
                 <Card tone="gold">
-                  <div className="text-body font-semibold text-dorado">Columna de 300px</div>
+                  <div className="text-body font-semibold text-gold">Columna de 300px</div>
                 </Card>
               }
             >
