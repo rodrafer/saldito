@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  verificar:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -22,13 +22,13 @@ jobs:
 
       - run: npm ci
 
-      - name: Formato
+      - name: Format
         run: npm run format:check
 
       - name: Lint
         run: npm run lint
 
-      - name: Tipos
+      - name: Types
         run: npm run typecheck
 
       - name: Tests
