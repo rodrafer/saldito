@@ -63,6 +63,12 @@ Squash & Merge replays the work as one new commit, so the branch's own commits a
 ancestors of `main`. `git branch -d` will refuse on that basis and `git branch -D` is the
 correct call — the one case where that flag doesn't mean "I am discarding unmerged work".
 
+**`git branch -r` is a local cache, not the remote.** Remote-tracking refs survive the branch
+they track: delete a branch on GitHub and the local `origin/…` entry stays until something
+prunes it, so the list reads as stale branches that no longer exist. Before claiming anything
+about what's in flight, `git fetch --prune`, or ask the remote directly with
+`git ls-remote --heads origin`.
+
 ## Workflow to ship code to `main`
 
 In this order:
