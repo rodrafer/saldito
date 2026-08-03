@@ -23,37 +23,34 @@ decisiones que el prototipo todavía no refleja.
 `design_handoff_saldito/` es material de referencia: **no se edita**. Es la copia de lo que
 entregó diseño y tiene que seguir comparándose contra el original.
 
-## Notas de implementación
+## Dónde van las cosas que se escriben
 
-Cada fase cierra con un documento en `docs/implementation-notes/phase-<n>-<slug>.md`,
-escrito **antes de abrir el PR** y enlazado desde su descripción. Ver
+| Qué                                 | Dónde                                           |
+| ----------------------------------- | ----------------------------------------------- |
+| Hallazgos de una fase               | `docs/implementation-notes/phase-<n>-<slug>.md` |
+| Discrepancias del handoff de diseño | `NOTAS_HANDOFF.md`                              |
+| Alcance y orden de fases            | `PLAN.md`                                       |
+
+Una fase cierra con su nota de implementación. Ver
 `docs/implementation-notes/README.md` para qué va y qué no.
 
-Lo que más importa registrar son los hallazgos: cuando la implementación contradice a la
-especificación, cuando una herramienta se comporta distinto de lo esperado, o cuando un test
-encuentra algo que nadie había previsto. Eso se pierde apenas termina la sesión.
+## Particularidades del proyecto
 
-Las discrepancias del **handoff de diseño** van aparte, en `NOTAS_HANDOFF.md`.
+**Las deudas y los saldos son derivados.** Se calculan desde los gastos vigentes y **nunca**
+se persisten. Tampoco se guarda la cotización del dólar: se consulta fresca y sólo se usa
+como referencia informativa.
 
-## Commits y PRs
+**`features/deudas/calculo/` es TypeScript puro.** No importa nada de Next ni de Supabase,
+así que corre idéntico en los tests, en el servidor al renderizar y en el cliente para los
+updates optimistas. Mantenerlo así.
 
-Commits agrupados por tema, no un commit gigante por fase. Si un cambio toca varias cosas
-sin relación entre sí, van commits separados aunque hayan salido de la misma sesión.
+**Ningún hex hardcodeado.** `tokens.css` es la única fuente de color, tipografía y
+espaciado; los componentes usan siempre `var(--sd-*)`.
 
-Trabajo en branches `feature/<slug>`, con PR por fase y merge por squash.
+**ARS y USD nunca se mezclan.** Saldos, deudas y plan simplificado se calculan por moneda
+separada. Los montos son enteros: no hay centavos.
 
-## Verificación visual
-
-Desde la Fase 2, todo cambio con impacto visible se verifica con capturas antes de abrir el
-PR, comparando contra el prototipo. Las copias finales van a
-`~/Documents/Images/dev-screenshots/saldito/#<PR>-<slug>/` — ver `../CLAUDE.md` para el
-detalle de la convención.
-
-**No se commitean capturas al repo.** Se deja un placeholder `## Screenshots` en el body del
-PR para que el usuario las pegue: GitHub las sube a su propio CDN y no pesan en cada clone.
-
-Como las capturas se toman antes de que exista el número de PR, se usa el nombre de la
-branch como slug y se renombra la carpeta después.
+La verificación visual arranca en la Fase 2, comparando contra `Prototipo.dc.html`.
 
 ## Antes de dar algo por terminado
 
