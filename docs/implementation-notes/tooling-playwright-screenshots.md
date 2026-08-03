@@ -67,9 +67,38 @@ test-file filters — so `tools/screenshots/run.mjs` takes it, exports it as `SH
 forwards everything after it untouched. It also expands a leading `~`, which the shell won't
 do inside the quotes the convention's `#` in the folder name forces.
 
-Shot names are English now (`02-rail-expanded`, not `02-desktop-rail-expandido`). Phase 2's
-PR predates the vocabulary migration, and its numbering was global across all eleven; the
-framing of each capture is unchanged, so the images still line up one for one.
+## What is tracked, and what deliberately isn't
+
+The harness is tracked. The shot files are not — `tools/screenshots/*.shots.ts` is
+gitignored, and the session that needs captures writes them, runs them and lets them go.
+
+This landed the other way round first: phase 2's eleven shots were committed, reorganised by
+subject, and defended in `AGENTS.md` on two grounds — that they re-check what later screens
+sit on, and that they are a worked example of the techniques that aren't obvious.
+
+Neither survived the question _what runs them?_ Nothing does, by design: this isn't in CI.
+So a tracked set rots in silence — `kitchen-sink.shots.ts` scrolled to headings by their
+text, `shell.shots.ts` opened the actions sheet through a FAB whose rows phases 4 and 5 will
+rewire — and the person who finds out is whoever tries to reuse it months later and ends up
+debugging a screenshot script instead of working. And the re-check argument dissolves on
+inspection: a PR that changes the shell captures the shell as its own evidence, which is the
+same image, taken deliberately rather than inherited.
+
+The second argument was real but pointed at the wrong container. The knowledge _was_ worth
+keeping; executable-but-never-executed example code is just the worst place to keep it,
+because it looks authoritative and decays without a signal. It moved into `shot.ts`: the two
+techniques that name no screen became `tabTo` and `clipOf`, and the two that are judgement
+became the doc block the file opens with.
+
+What's left tracked is the part that isn't per-PR and can't rot, because none of it mentions
+a screen: the viewports, the 2× scale, font readiness, animation freezing, pointer parking,
+the duplicate-name guard, and the four techniques. Every one of those was learned by getting
+it wrong, and every one fails by producing a plausible image rather than an error — which is
+the worst failure mode there is for something whose whole job is to be evidence.
+
+Shot names are English now (`02-rail-expanded`, not `02-desktop-rail-expandido`), which is
+visible in phase 2's PR body; that PR predates the vocabulary migration and its numbering was
+global across all eleven.
 
 ## Findings
 

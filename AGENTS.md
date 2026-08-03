@@ -237,46 +237,35 @@ Visual verification starts in Phase 2, comparing against `Prototipo.dc.html`.
 ## Generating the screenshots
 
 ```bash
-npm run shots -- <output-dir> [file filter] [playwright flags]
+npm run shots -- <output-dir> [playwright flags]
 ```
 
-Playwright starts `next dev` on its own, runs the shot files and writes
-`<output-dir>/<name>.png`, overwriting what is there. The browser binary isn't a
-dependency — `npx playwright install chromium`, once per machine.
+Playwright starts `next dev` on its own, runs whatever shot files are present and writes
+`<output-dir>/<name>.png`. The browser binary isn't a dependency — `npx playwright install
+chromium`, once per machine.
 
 **What to capture is decided per PR.** There is no standard set to reproduce and no fixed
 list of dimensions to walk. Take the shots that show the thing this PR builds actually
 working — plus whatever you needed rendered to believe it while building, which is usually
 the same set arrived at from the other direction. A tightened margin is one shot. A new
-screen with an overlay, an empty state and a mobile envelope is four or five. **Owing a shot
-to a previous PR is not a reason to take it**; the reason to re-run an old set is that this
-PR could plausibly have changed what it shows.
+screen with an overlay, an empty state and a mobile envelope is four or five.
 
-Shots are code, in `tools/screenshots/`, one file per **subject**:
+**The shot files are not tracked.** `tools/screenshots/*.shots.ts` is gitignored: the session
+that needs captures writes them, runs them, and lets them go. Nothing in CI runs these, so a
+tracked shot file would rot silently — it scrolls to a heading by name, or opens an overlay
+through a button that later moves — and the person who finds out is whoever tried to reuse it
+months later. What a capture proves belongs to the PR that took it, and the images are
+already in that PR's description.
 
-- `<subject>.shots.ts` — `shell.shots.ts`, `kitchen-sink.shots.ts`, later `expenses.shots.ts`.
-  The suffix is the whole registration mechanism: a new file is picked up by existing. A PR
-  adds its own file instead of editing someone else's.
-- **The viewport is a property of a shot, not of a file.** A file declares it with
-  `test.use(DESKTOP)` or `test.use(MOBILE)` — 1280×800 and 390×760, both written at 2× —
-  and a subject with something to show on both sides of the 900px breakpoint puts both in
-  one file, in `describe` blocks. Capturing at one viewport is the honest amount of evidence
-  when the change looks the same at the other.
-- **Numbers restart in every file.** They are that set's running order — the order it goes
-  into the PR body — and mean nothing outside it. A run refuses to write two shots under one
-  name rather than let the second quietly replace the first.
-- A bare argument after the output directory filters by filename, so
-  `npm run shots -- <dir> shell` runs `shell.shots.ts` and nothing else, and `-g '02'` cuts
-  that to one shot. Everything after the directory is forwarded to Playwright untouched.
-- Files from finished PRs stay only while they still pay for themselves; deleting the set
-  for a screen is part of the PR that rewrites the screen. `shell` and `kitchen-sink` are
-  kept on purpose — they re-check what every later screen sits on, and they are the worked
-  example of the four techniques that aren't obvious: opening an overlay, framing a shot a
-  click would otherwise scroll into a corner, capturing keyboard focus, clipping to a band.
-  Copy from them rather than rediscovering them.
+What _is_ tracked is the harness, because it isn't per-PR and doesn't rot:
+`playwright.config.ts` and `tools/screenshots/shot.ts`. `shot.ts` opens with the four
+techniques that aren't obvious — arriving at focus by keyboard so `:focus-visible` applies,
+framing before clicking, waiting on an overlay by role and name, and clipping to a band —
+and carries `settle`, `tabTo` and `clipOf`. Read it before writing a shot file; the shape is
+`test.use(DESKTOP)` or `test.use(MOBILE)`, `goto`, `settle`, `shot`.
 
-**Where the copies end up, and how each one is presented in the PR, is step 8 of the
-workflow above.**
+**Where the copies end up, and how each one is presented in the PR, is step 8 of the workflow
+above.**
 
 It has to run against `next dev`, not a build: `/dev/kitchen-sink` is a page only in
 development.
