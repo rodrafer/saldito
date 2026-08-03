@@ -15,4 +15,8 @@ export { deudasDeGasto, calcularDeudas, type MatrizDeuda } from './deudas';
 export { calcularSaldos } from './saldos';
 export { derivarMovimientos, derivarMovimientosDelGrupo, type GenerarId } from './movimientos';
 export { puedeAnularPago, pagosDeMovimientos, HORAS_PARA_ANULAR_PAGO } from './pagos';
-export { repartirEnPartesIguales, repartirProporcional, type Asignacion } from './redondeo';
+export type { Asignacion } from './redondeo';
+
+// `redondeo.ts` no se re-exporta: repartir enteros preservando sumas es un
+// detalle de cómo estos algoritmos evitan perder unidades, no algo que una
+// pantalla deba llamar por su cuenta. Sus tests lo importan directo.

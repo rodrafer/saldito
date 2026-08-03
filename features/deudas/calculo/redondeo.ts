@@ -113,7 +113,7 @@ export function repartirProporcional(
   return Object.fromEntries(out);
 }
 
-/** Matriz de enteros `fila → columna → monto`. */
+/** Matriz de enteros `fila → columna → monto`. Interna al módulo de cálculo. */
 export type Matriz = Record<UsuarioId, Record<UsuarioId, number>>;
 
 /**
