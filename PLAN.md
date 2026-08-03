@@ -120,12 +120,16 @@ Decided before starting the phase:
 
 - **The CSS vocabulary stays as delivered; English stops at the TypeScript boundary.** Token
   and class names (`--sd-text-atenuado`, `.sd-btn--primario`) keep the handoff's spelling,
-  Spanish included. They are the design system's published API: both `.dc.html` files and
-  every future handoff revision are written against them, and those files are the thing our
-  screenshots get compared to. Renaming would buy consistency with the rest of the repo and
-  cost the ability to diff against the reference — the same reason the language rule already
-  exempts reference material. React components, props, and types are ours, so they go to
-  English, and `docs/glossary.md` carries the mapping.
+  Spanish included. React components, props, and types are ours, so they go to English, and
+  `docs/glossary.md` carries the mapping.
+
+  > **Reversed after the phase shipped.** The reasoning above rested on the two `.dc.html`
+  > files being written against the token names. They aren't: the prototype never mentions
+  > `--sd-*` at all — it is inline hex end to end — and the design-system page mentions it
+  > twice, once in prose and once as the caption of a single swatch. With that gone there is
+  > no case for a half-translated codebase, and the glossary table was evidence of the
+  > problem rather than a fix for it. The rename is in "Cross-cutting work" below.
+
 - **The app shell is a `100dvh` container that scrolls internally**, not a page that grows.
   The handoff anchors every overlay with `position: absolute` against the app container
   rather than the viewport; that only behaves if the container is the viewport's size. It
@@ -141,12 +145,6 @@ Decided before starting the phase:
   none is given the title still has to exist, just not visibly.
 
 ### Phase 3 — Supabase: schema, RLS, and auth
-
-- **Playwright as a devDependency, with the screenshot run scripted in the repo.** Phase 2's
-  captures came from a throwaway Node script driving headless Chrome over CDP, which works
-  but lives in a scratchpad and dies with the session. Every phase from here on has visible
-  output, so the run is worth committing: same viewports, same shots, same names, diffable
-  between phases.
 
 - Migrations for every entity. Debts, balances, and the exchange rate are **not**
   persisted.
@@ -220,6 +218,21 @@ Empty states, skeletons shaped like the real content, error handling, accessibil
 against the prototype, and deploy.
 
 ---
+
+## Cross-cutting work
+
+Things that have to happen but belong to no phase: tooling, conventions, and debts that cut
+across the whole repo. A phase is a shippable slice of product with a place in the order;
+these have neither, and forcing them into the nearest phase is how they end up somewhere
+that has nothing to do with them.
+
+Each one carries **when it has to land** — that's what stops this becoming a list nobody
+reads. Anything with no trigger doesn't belong here; it belongs in nobody's plan.
+
+| What                                                                                                                                                                                                                                                        | Trigger                                                      |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| **Playwright as a devDependency, with the screenshot run scripted in the repo.** Phase 2's captures came from a throwaway CDP script that lives in a scratchpad and dies with the session. Same viewports, same shots, same names, diffable between phases. | Before phase 3's screenshots                                 |
+| **Translate the CSS vocabulary to English** — tokens, class names, and the Tailwind theme keys. See the reversal note under phase 2. Mechanical, and it only gets more expensive as screens are written against the current names.                          | Before phase 3, so nothing new is built on the Spanish names |
 
 ## Identified risks
 
