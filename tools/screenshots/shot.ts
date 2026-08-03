@@ -1,3 +1,4 @@
+import { existsSync, statSync } from 'node:fs';
 import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { test as base, type Page } from '@playwright/test';
@@ -9,9 +10,34 @@ import { test as base, type Page } from '@playwright/test';
  */
 const outDir = resolve(process.env.SHOTS_OUT ?? '.screenshots');
 
+/**
+ * The two sides of the 900px breakpoint, for `test.use(…)` at the top of a file
+ * or of a `describe` block.
+ *
+ * A viewport is a property of a shot, not of a file: a set is a subject, and
+ * most subjects have something to show on both sides. Naming files by viewport
+ * would split every subject in two and make each of those files "the list" for
+ * that width, which is the thing every PR would then have to edit.
+ */
+export const DESKTOP = { viewport: { width: 1280, height: 800 } };
+export const MOBILE = { viewport: { width: 390, height: 760 } };
+
+/**
+ * When this run began, so a shot can tell a file it is overwriting from one
+ * this same run already wrote. Numbers restart in every set, so two sets landing
+ * in one directory collide on the slug alone — and the loser of that race just
+ * isn't there, with a green run and no gap anyone would notice until the PR.
+ */
+const runStartedAt = Number(process.env.SHOTS_RUN_STARTED_AT ?? Date.now());
+
 /** A capture is named once, here, and that name is what the PR heading points at. */
 export async function shot(page: Page, name: string, clip?: Clip) {
   await mkdir(outDir, { recursive: true });
+
+  const path = resolve(outDir, `${name}.png`);
+  if (existsSync(path) && statSync(path).mtimeMs >= runStartedAt) {
+    throw new Error(`two shots in this run are both called ${name}.png`);
+  }
 
   /* Park the pointer before capturing. It stays wherever the last click left
      it, which is how the actions sheet came out with a gold hover on the row
@@ -22,7 +48,7 @@ export async function shot(page: Page, name: string, clip?: Clip) {
   if (viewport) await page.mouse.move(viewport.width - 1, 1);
 
   await page.screenshot({
-    path: resolve(outDir, `${name}.png`),
+    path,
     /* Overlays animate in. Without this the shot can land mid-transition,
        which reads as a wrong opacity or a wrong offset rather than as a
        timing artifact. */

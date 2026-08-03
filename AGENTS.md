@@ -252,21 +252,28 @@ screen with an overlay, an empty state and a mobile envelope is four or five. **
 to a previous PR is not a reason to take it**; the reason to re-run an old set is that this
 PR could plausibly have changed what it shows.
 
-Shots are code, in `tools/screenshots/`, grouped one set per file:
+Shots are code, in `tools/screenshots/`, one file per **subject**:
 
-- `<slug>.desktop.ts` runs at 1280×800, `<slug>.mobile.ts` at 390×760, both written at 2×.
-  The suffix is the whole registration mechanism — a new file is picked up by existing.
-- A single viewport is the honest amount of evidence when the change looks the same on both
-  sides of the 900px breakpoint. Two files means two claims.
+- `<subject>.shots.ts` — `shell.shots.ts`, `kitchen-sink.shots.ts`, later `expenses.shots.ts`.
+  The suffix is the whole registration mechanism: a new file is picked up by existing. A PR
+  adds its own file instead of editing someone else's.
+- **The viewport is a property of a shot, not of a file.** A file declares it with
+  `test.use(DESKTOP)` or `test.use(MOBILE)` — 1280×800 and 390×760, both written at 2× —
+  and a subject with something to show on both sides of the 900px breakpoint puts both in
+  one file, in `describe` blocks. Capturing at one viewport is the honest amount of evidence
+  when the change looks the same at the other.
+- **Numbers restart in every file.** They are that set's running order — the order it goes
+  into the PR body — and mean nothing outside it. A run refuses to write two shots under one
+  name rather than let the second quietly replace the first.
 - A bare argument after the output directory filters by filename, so
-  `npm run shots -- <dir> auth` runs `auth.desktop.ts` and `auth.mobile.ts` and nothing
-  else. `-g '03'` narrows to one shot inside a file, `--project=mobile` to one viewport.
-  Everything after the directory is forwarded to Playwright untouched.
-- Files from finished PRs stay only while they still pay for themselves. `design-system.*`
-  is kept on purpose: it is what re-checks the shell and the primitives, and it is the
-  worked example of the four techniques that aren't obvious — opening an overlay, framing a
-  shot a click would otherwise scroll into a corner, capturing keyboard focus, clipping to
-  a band. Copy from it rather than rediscovering them.
+  `npm run shots -- <dir> shell` runs `shell.shots.ts` and nothing else, and `-g '02'` cuts
+  that to one shot. Everything after the directory is forwarded to Playwright untouched.
+- Files from finished PRs stay only while they still pay for themselves; deleting the set
+  for a screen is part of the PR that rewrites the screen. `shell` and `kitchen-sink` are
+  kept on purpose — they re-check what every later screen sits on, and they are the worked
+  example of the four techniques that aren't obvious: opening an overlay, framing a shot a
+  click would otherwise scroll into a corner, capturing keyboard focus, clipping to a band.
+  Copy from them rather than rediscovering them.
 
 **Where the copies end up, and how each one is presented in the PR, is step 8 of the
 workflow above.**
@@ -276,6 +283,9 @@ development.
 
 **This is not the e2e suite and it is not in CI.** Nothing here asserts anything — the
 captures are for a reviewer to look at, and a failing capture run should not block a merge.
+Comparing one run against another is visual regression testing, which is a different tool
+with a different cost (baselines in the repo, an approval flow, its own flakiness). If it
+ever lands it lands with the e2e item, not here.
 
 ## Before calling something done
 

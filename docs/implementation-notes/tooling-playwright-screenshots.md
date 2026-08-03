@@ -21,10 +21,31 @@ judgement: enough to show the thing being built works, and to have believed it w
 building. A margin fix is one shot. Nothing is owed to a shot from a previous PR; the reason
 to re-run an old set is that this PR could plausibly have changed what it shows.
 
-So sets are files, named `<slug>.desktop.ts` / `<slug>.mobile.ts`, with the suffix as the
-entire registration mechanism, and a filename filter to run one set. Phase 2's stays as
-`design-system.*` — the thing to re-run when the shell changes, and the worked example of
-the four techniques that aren't obvious.
+So sets are files, with the suffix as the entire registration mechanism and a filename
+filter to run one set. Phase 2's captures stay as `shell` and `kitchen-sink` — what
+re-checks the ground every later screen stands on, and the worked example of the four
+techniques that aren't obvious.
+
+**The first attempt at that fix organised the files by viewport** (`<slug>.desktop.ts` /
+`<slug>.mobile.ts`), which only moved the problem: the viewport was already a Playwright
+project, so repeating it in the name split every subject in two and made each file _the
+list_ for that width — the thing a PR would have to edit rather than add to. Three things
+went with it, and they are the concrete shape of the rigid reading:
+
+- **Files by viewport.** Now by subject, with `test.use(DESKTOP)` / `test.use(MOBILE)`
+  inside. The `projects` block is gone: a viewport is a property of a shot.
+- **Global numbering, `01-` through `11-`.** The number said "position in the one list", so
+  phase 4 would either renumber everything or append at 12 forever. It restarts per file and
+  means "order in this set's story".
+- **Documentation that asserted the rigid model** — `PLAN.md`'s "same shots, same names,
+  diffable between phases", `AGENTS.md`'s "five of the eleven shots". That "diffable between
+  phases" was visual regression testing without the name: a different tool, with baselines
+  and an approval flow, and if it ever arrives it goes with the e2e item. Conflating the two
+  is what produced the rigid framing in the first place.
+
+Restarting the numbering made a new silent failure possible — two sets writing one directory
+now collide on the slug alone, and the loser simply isn't there. A shot refuses to overwrite
+a file this same run already wrote.
 
 ## Why a name that isn't `phase-<n>-`
 
@@ -35,29 +56,29 @@ tooling under the design system, where nobody looking for it would think to chec
 
 ## Shape
 
-`@playwright/test` as the runner rather than the bare `playwright` library. Four things it
+`@playwright/test` as the runner rather than the bare `playwright` library. Three things it
 brings that would otherwise be hand-written: `webServer` starts `next dev` and tears it
-down, `projects` carry the two viewports without any shot file knowing about the other,
-`testMatch` turns a filename suffix into the whole registration story for a new set, and
-`--project` / `-g` / a filename filter make it cheap to run one shot while iterating.
+down, `testMatch` turns a filename suffix into the whole registration story for a new set,
+and a filename filter plus `-g` make it cheap to run one shot while iterating. `test.use`
+carries the viewport, which is why there are no `projects`.
 
 The destination directory can't be a Playwright argument — its CLI reads bare arguments as
 test-file filters — so `tools/screenshots/run.mjs` takes it, exports it as `SHOTS_OUT`, and
 forwards everything after it untouched. It also expands a leading `~`, which the shell won't
 do inside the quotes the convention's `#` in the folder name forces.
 
-Shot names are English now (`02-desktop-rail-expanded`, not `02-desktop-rail-expandido`).
-Phase 2's PR predates the vocabulary migration; the numbering and the framing are unchanged,
-so the two sets still line up shot for shot.
+Shot names are English now (`02-rail-expanded`, not `02-desktop-rail-expandido`). Phase 2's
+PR predates the vocabulary migration, and its numbering was global across all eleven; the
+framing of each capture is unchanged, so the images still line up one for one.
 
 ## Findings
 
-**`deviceScaleFactor` in the shared `use` block is silently discarded.** A project's `use`
-merges over the shared one key by key, and every `devices[…]` preset sets
-`deviceScaleFactor` itself — so spreading a preset inside a project resets it to 1 with no
-warning. The run looked correct and produced 1280×800 PNGs where phase 2's were 2560×1600.
-Nothing in the output says which of the two you got; the only tell is the file dimensions.
-It now lives on each project, past the spread.
+**A `devices[…]` preset silently resets `deviceScaleFactor`.** `use` blocks merge key by
+key, and every preset sets the scale factor itself — so spreading one after the value
+overwrites it back to 1 with no warning. The run looked correct and produced 1280×800 PNGs
+where phase 2's were 2560×1600. Nothing in the output says which of the two you got; the
+only tell is the file dimensions. It now goes after the spread, and with the viewports moved
+into `test.use` there is one `use` block left for it to be wrong in.
 
 **The pointer stays where the last click left it, and hover states go into the shot.** The
 mobile actions sheet opened under the FAB, which left the cursor resting on its third row:
@@ -66,8 +87,8 @@ the capture came out with one row in the gold hover state, a combination no user
 been worse than doing nothing — that is the rail's hover zone, and it would have expanded
 the rail in every desktop shot.
 
-**Programmatic focus can't produce the shot that proves keyboard focus.** Shot 02 exists to
-show the gold ring on the rail. The ring is `:focus-visible`, which Chromium grants on
+**Programmatic focus can't produce the shot that proves keyboard focus.** `02-rail-expanded`
+exists to show the gold ring on the rail. The ring is `:focus-visible`, which Chromium grants on
 keyboard-driven focus and withholds from `element.focus()` — so the obvious way to write it
 yields an expanded rail with no ring, and the shot quietly stops proving its own caption.
 It presses Tab until the rail item is `document.activeElement`.
@@ -83,19 +104,21 @@ Every finding above is the same failure mode: **the run stays green and the pict
 being true.** There are no assertions here, so nothing else notices. The review went looking
 for the rest of that class and found three:
 
-- The Tab loop in shot 02 gave up after five presses and captured whatever it had, which is
-  a collapsed rail with no ring — a picture of the bug the shot exists to prove is fixed. It
-  now throws.
+- The Tab loop in `02-rail-expanded` gave up after five presses and captured whatever it
+  had, which is a collapsed rail with no ring — a picture of the bug the shot exists to
+  prove is fixed. It now throws.
 - A page that threw mid-capture produced a normal-looking PNG. Errors are collected per shot
   and fail it.
-- Shot 10's clip repeated `390` and `760` as literals while the viewport is set in the
-  config, so changing one would have silently cropped the other. It measures.
+- The clip in `05-mobile-bottom-bar-fab` repeated `390` and `760` as literals while the
+  viewport is declared elsewhere, so changing one would have silently cropped the other. It
+  measures.
 
 ## Left for later
 
-- Old sets accumulate, and nothing prunes them. `design-system.*` earns its place today
-  because the shell it captures is the one every screen sits in; a set for a screen that
-  later gets rewritten does not, and deleting it is part of the PR that rewrites the screen.
-- Nothing compares two runs. Playwright ships `toHaveScreenshot` with a diff report, which
-  would turn this into visual regression testing — a different commitment, and one that
-  needs a baseline in the repo. Not now, and not without deciding where the PNGs live.
+- Old sets accumulate, and nothing prunes them. `shell` and `kitchen-sink` earn their place
+  today because every later screen stands on what they capture; a set for a screen that gets
+  rewritten does not, and deleting it is part of the PR that rewrites the screen.
+- Nothing compares two runs, deliberately. Playwright ships `toHaveScreenshot` with a diff
+  report, which would turn this into visual regression testing: baselines committed to the
+  repo, an approval flow, and a class of flakiness this has none of. It is filed under the
+  e2e item in `PLAN.md`, not here.
