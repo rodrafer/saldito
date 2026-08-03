@@ -149,9 +149,9 @@ export function KitchenSink() {
               [
                 ['display-lg · 48/600', 'text-display-lg', formatAmount(184200)],
                 ['display · 40/600', 'text-display', formatAmount(32400)],
-                ['titulo-lg · 24/600', 'text-title-lg', 'Deudas del grupo'],
-                ['titulo · 19/600', 'text-title', 'Gastos'],
-                ['subtitulo · 15/600', 'text-subtitle', '¿Qué querés hacer?'],
+                ['title-lg · 24/600', 'text-title-lg', 'Deudas del grupo'],
+                ['title · 19/600', 'text-title', 'Gastos'],
+                ['subtitle · 15/600', 'text-subtitle', '¿Qué querés hacer?'],
                 ['body-lg · 14/600', 'text-body-lg', 'Ferretería — canilla cocina'],
                 ['body · 13/600', 'text-body', 'Registrar un pago'],
                 ['label · 12/600', 'text-label', 'Pagó Rocío · hace 2 días'],
