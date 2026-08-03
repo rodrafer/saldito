@@ -103,13 +103,33 @@ inside `.map()` during render, which the React Compiler lint rule rejects outrig
 runtime, it never exists. Confirmed against `next build`, which lists four routes and no
 `/dev`. Typecheck and lint still cover the file.
 
-## What could not be verified
+### Reading the reference is not the same as rendering it
 
-**Neither `.dc.html` renders.** `support.js` is missing from the handoff — `<x-dc>` is a
-custom element it defines, and every `{{ … }}` binding needs its runtime. Both files were
-compared by reading their source, which is exact for values (the design-system page is plain
-inline styles, and the prototype's markup and its style strings are both legible) but is not
-the same as putting the two side by side. Flagged in HANDOFF_NOTES.md; worth exporting.
+For most of the phase neither `.dc.html` would render: `support.js` was missing from the
+import, and without it `<x-dc>` is an unknown element and every `{{ … }}` binding is inert.
+So the entire arbitration between the handoff's three layers was done by reading source —
+which is exact for values, since the design-system page is plain inline styles and the
+prototype's style strings are legible.
+
+Exact, and still wrong three times. Once the runtime arrived and both files rendered:
+
+- The **sheet** is flat `--sd-surface` with no shadow, not the elevated gradient. Reading had
+  found this and dismissed it as a leftover from before the token layer. Rendering the
+  desktop modals showed all eight of them _do_ use the elevated gradient, which turns the
+  flat sheet from an oversight into a deliberate split between the two envelopes.
+- The **action row** inside a sheet is darker than its container, not lighter. On the card
+  gradient it read as a raised card floating over the sheet; the prototype sinks it into the
+  surface. Obvious side by side, invisible in a list of hex values.
+- **Modal padding** is 26px across the prototype, not the 22 in `components.css`.
+
+The pattern in all three: reading gives you values, and values compare fine one at a time.
+What it doesn't give you is the _relationship_ between two surfaces — which one is lighter,
+what sits on what. That only shows up rendered.
+
+The bottom bar's missing captions, the one call flagged as most worth confirming, held up.
+
+`.claude/launch.json` now carries a `handoff-reference` config that serves the folder over
+HTTP, because `file://` can't load the runtime from a relative `<script src>`.
 
 ## Verified by hand
 

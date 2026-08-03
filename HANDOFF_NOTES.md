@@ -31,40 +31,54 @@ ported to `components/ui/`.
 Places where the three layers of the handoff — the README, `components.css`, and the
 prototype — disagree with each other. The rule used throughout: **the prototype wins when
 the difference is structural and would show up in a screenshot; `components.css` wins on
-values it expresses as tokens and the prototype hardcodes.** Worth a designer's call.
+values it expresses as tokens and the prototype hardcodes.**
+
+All of these were checked against **both `.dc.html` files rendered**, once `support.js`
+arrived. Serve the folder and open them — `.claude/launch.json` has a `handoff-reference`
+config that does exactly that.
 
 ### Taken from the prototype
 
 - **`BottomNav` has no captions.** `components.css` defines `.sd-bottomnav__label` and the
   design-system page draws a 10.5px caption under each icon; the prototype's bar is icons
-  only, `flex: 1`, 44px tall, 22px glyphs. The handoff's own tiebreaker is explicit —
-  _"ante cualquier duda, manda el prototipo"_ — so the caption became the accessible name
-  instead of visible text, and `.sd-bottomnav__label` was dropped rather than left as dead
-  CSS. **This is the one worth confirming**: it's the most visible difference between the
-  two documents, and the design-system page is not obviously the older of the two.
+  only. Confirmed against the render — items are `flex: 1 1 0%`, 44px tall, 22px glyphs,
+  radius 16, with no text node at all — and confirmed as intended for mobile. The caption
+  became the accessible name, and `.sd-bottomnav__label` was dropped rather than left as
+  dead CSS.
 - **Rail padding is 10px and its items are 6px apart**, not the 8px `components.css` had.
-  The prototype and the design-system page agree with each other here.
+  The render confirms 10px padding, 8px between rail groups, 6px within the item list, and
+  a 44px icon box.
 - **The FAB sits `-24px` above the bar with 8px of air on each side.** `components.css` said
-  `margin-top: -26px` and nothing horizontal. Since the whole bar follows the prototype, so
-  does this; the offset moved to `.sd-bottomnav__fab` so `.sd-fab` doesn't carry its own
-  position.
+  `margin-top: -26px` and nothing horizontal. The offset moved to `.sd-bottomnav__fab` so
+  `.sd-fab` doesn't carry its own position.
+- **The sheet is flat `--sd-surface` with no shadow**, against both the README and the
+  design-system page, which assign the elevated gradient to "modales · sheets · menús".
+  Rendering settled it: every one of the eight desktop modals in the prototype _does_ use
+  the elevated gradient, so the flat sheet is a deliberate distinction between the two
+  envelopes rather than an oversight. The handle stays on `--sd-border-fuerte`; the
+  prototype's `#3A3740` is not a token and is three units away.
+- **`.sd-row--accion` sits on `--sd-surface-input`.** It was on the card gradient, which
+  inside a sheet inverts the relationship: the rows read as raised cards over the sheet
+  instead of wells sunk into it. That inversion is plainly visible side by side. The
+  design-system page's standalone sample does use the gradient, but it sits on a card, not
+  in a sheet.
+- **Modal padding is 26px.** `components.css` said 22. Five of the eight modals in the
+  prototype use 26 and the rest 24.
 
 ### Kept from `components.css`
 
-- **The sheet uses the elevated gradient**, not the flat `#1B1A1F` the prototype paints. The
-  design-system page names that gradient for "modales · sheets · menús" explicitly, and the
-  prototype's sheet also drops the shadow and uses a non-token handle colour (`#3A3740`) —
-  three signs it predates the token layer.
 - **`sd-sheet-up` runs 220ms on `cubic-bezier(.16,1,.3,1)`.** The prototype's inline style
   says 280ms on `(.2,.8,.2,1)`, but both the README and the design-system page publish the
   220ms figure, and there are tokens for it. Motion doesn't show in a screenshot, so the
   documented value wins.
-- **`.sd-row--accion` keeps the surface gradient.** The prototype's action rows in the FAB
-  sheet are flat `#111013`; the design-system page's action row uses the gradient.
+- **The modal radius stays 16px.** All eight modals in the prototype use 18, but the radius
+  scale documents "16 · modal" and there is no 18px token that isn't the rail's. Two pixels
+  on a 480px corner. **Worth a designer's call**: it's the one place where the prototype is
+  unanimous and was still overruled.
 - **Near-miss colours were rounded to their token.** The prototype uses `#2A2831` for the
-  rail border, `#2C2A31` for the bar's, and `#23222A` for the rail's footer rule — all
-  within a couple of units of `--sd-border` / `--sd-border-fuerte`, none of them tokens. The
-  no-hardcoded-hex rule wins over a difference nobody can see.
+  rail border, `#2C2A31` for the bar's, and `#23222A` for the rail's footer rule — none of
+  them tokens, all within a few units. The bar's border did move from `--sd-border-fuerte`
+  to `--sd-border`, which is twice as close to what the prototype actually paints.
 - **Rail labels are 14px**, the `--sd-fs-body-lg` token. Both prototype and design-system
   page say 13.5px, which is not on the type scale at all.
 
@@ -78,12 +92,16 @@ values it expresses as tokens and the prototype hardcodes.** Worth a designer's 
 - **Focus is a 2px gold outline at 2px offset.** The README asks for "foco visible con borde
   dorado" and reserves `--sd-border-acento` for it, but no file in the handoff draws one.
 
-## Still missing from the import
+## The import is complete
 
-- **`support.js`** — without it neither `.dc.html` renders: `<x-dc>` is a custom element that
-  script defines, and every `{{ … }}` binding needs its runtime. Both files were compared by
-  reading their source instead, which is exact for the design-system page (plain inline
-  styles) and for the prototype's markup, but means **nobody has yet seen the reference
-  rendered side by side with the build**. Worth exporting from the Claude Design project.
-- `tokens/tokens.json` — tokens as data, for generators. Not used: `tokens.css` is the
-  source of truth.
+`support.js` arrived during phase 2 and both `.dc.html` files render. That matters more than
+it sounds: the whole arbitration above had been done by reading source, and rendering
+overturned three of the calls — the sheet's surface, the action row's, and the modal's
+padding. Anything decided against the prototype from now on should be decided with it open.
+
+To open them: `preview_start` the `handoff-reference` config in `.claude/launch.json`, which
+serves `design_handoff_saldito/` over HTTP. `file://` won't do — the runtime is loaded with a
+relative `<script src="./support.js">`.
+
+The only piece still absent is `tokens/tokens.json`, tokens as data for generators, and that
+one is deliberate: `tokens.css` is the source of truth.

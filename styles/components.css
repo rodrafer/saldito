@@ -239,8 +239,12 @@
 .sd-row--estatico:hover {
   background: none;
 }
+/* Más oscura que la superficie que la contiene: adentro de un sheet la fila de
+   acción se lee como un pozo, no como una tarjeta elevada. components.css la
+   traía con el degradado de tarjeta, que sobre el sheet invierte la relación.
+   El prototipo renderizado la pinta plana sobre el fondo de input. */
 .sd-row--accion {
-  background: var(--sd-surface-grad);
+  background: var(--sd-surface-input);
   border: 1px solid var(--sd-border);
   border-radius: var(--sd-r-xl);
   padding: var(--sd-sp-6);
@@ -409,12 +413,15 @@
   right: 0;
   bottom: 0;
   z-index: 51;
-  background: var(--sd-surface-grad-elevada);
+  /* Plano y sin sombra, contra lo que dicen el README y la página del sistema.
+     El prototipo renderizado lo pinta así, y el modal desktop —que sí usa el
+     degradado elevado— confirma que es una distinción deliberada entre los dos
+     envases, no un descuido. Ver HANDOFF_NOTES.md. */
+  background: var(--sd-surface);
   border: 1px solid var(--sd-border);
   border-bottom: none;
   border-radius: var(--sd-r-3xl) var(--sd-r-3xl) 0 0;
   padding: var(--sd-sp-4) var(--sd-sp-8) 30px;
-  box-shadow: var(--sd-sh-sheet);
 }
 .sd-sheet[data-state='open'] {
   animation: sd-sheet-up var(--sd-dur-normal) var(--sd-ease-salida) both;
@@ -447,7 +454,11 @@
   background: var(--sd-surface-grad-elevada);
   border: 1px solid var(--sd-border);
   border-radius: var(--sd-r-2xl);
-  padding: var(--sd-sp-10);
+  /* Los ocho modales del prototipo van a 26px, no a los 22 que traía
+     components.css. El radio se queda en 16: el prototipo usa 18, pero la
+     escala de radios documenta 16 para modal y no hay token de 18 que no sea
+     el del rail. */
+  padding: var(--sd-sp-12);
   box-shadow: var(--sd-sh-modal);
 }
 /* El modal ya está centrado con translate: la animación tiene que arrastrarlo
@@ -501,7 +512,9 @@
   background: var(--sd-overlay-nav);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border: 1px solid var(--sd-border-fuerte);
+  /* El prototipo usa #2C2A31, que no es token y cae más cerca de --sd-border
+     que de --sd-border-fuerte. */
+  border: 1px solid var(--sd-border);
   border-radius: var(--sd-r-nav);
   box-shadow: var(--sd-sh-nav);
 }
