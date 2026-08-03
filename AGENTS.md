@@ -74,6 +74,13 @@ In this order:
 Steps 7 and 8 produce new commits, so CI runs again on its own. If the review found
 nothing, that's said explicitly instead of skipping the step.
 
+**Every screenshot in a PR carries a heading and a line saying what to look at.** A wall of
+images is work for the reviewer: they have to infer what each one is meant to prove and
+whether it proves it. The heading names the state — which screen, which viewport, which
+overlay open — and the line points at the specific thing that changed, so a reviewer can
+tell agreement from oversight without reading the diff first. The body of the PR carries
+those headings before the screenshots exist, each with a marker where the image goes.
+
 Step 10 is not a formality: merging is the one step in this list that can't be undone
 quietly, and it's the last chance to catch something the automated checks can't see. A green
 pipeline says the code runs, not that it's the right code.

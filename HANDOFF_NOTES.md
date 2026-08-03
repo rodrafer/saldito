@@ -73,8 +73,9 @@ config that does exactly that.
   documented value wins.
 - **The modal radius stays 16px.** All eight modals in the prototype use 18, but the radius
   scale documents "16 · modal" and there is no 18px token that isn't the rail's. Two pixels
-  on a 480px corner. **Worth a designer's call**: it's the one place where the prototype is
-  unanimous and was still overruled.
+  on a 480px corner. Raised for a designer's call and **confirmed at 16**: the token scale
+  wins over an unanimous prototype when the gap is smaller than the cost of a token that
+  exists only to hold it.
 - **Near-miss colours were rounded to their token.** The prototype uses `#2A2831` for the
   rail border, `#2C2A31` for the bar's, and `#23222A` for the rail's footer rule — none of
   them tokens, all within a few units. The bar's border did move from `--sd-border-fuerte`

@@ -65,17 +65,28 @@ scope fires _before_ it moves focus into the dialog, so `document.activeElement`
 opener at that point — and restoring it in `onCloseAutoFocus`. No effects, no ordering to get
 wrong.
 
-### The shell has to be exactly one viewport tall
+### The shell has to be exactly one viewport tall — and its children have to be told
 
 The handoff anchors every overlay with `position: absolute` against the app container. That
 only behaves if the container is the viewport's size, so `.sd-app` is `100dvh` with
 `overflow: hidden` and the content column scrolls inside it. It also mirrors the prototype,
 whose content area is its own scroll region.
 
-The first version gave `.sd-contenido` only `flex: 1`, which distributes _width_ in the
-shell's row and says nothing about height. Outside the shell — the kitchen sink, which has no
-`AppShell` — the column grew to its content and `.sd-app` clipped it: a 2900px page with no
-way to scroll. It needs `height: 100%` as well.
+The consequence bit twice, in two places that looked unrelated:
+
+- `.sd-contenido` had only `flex: 1`, which distributes _width_ in the shell's row and says
+  nothing about height. Outside the shell — the kitchen sink, which has no `AppShell` — the
+  column grew to its content and `.sd-app` clipped it: a 2900px page with no way to scroll.
+  It needs `height: 100%` too.
+- `.sd-sidebar-hueco` is the 76px gap the rail is absolutely positioned against, and it gets
+  its height the same way: by being stretched as a flex child. The kitchen sink's demo box
+  wasn't a flex container, so the gap collapsed to zero height and the rail rendered as a
+  sliver.
+
+Both are the same mistake. An absolutely positioned element is sized by its containing
+block, and in this layout every containing block gets its height from a flex parent rather
+than from its own content. Drop one of these components somewhere that isn't the shell and
+it will look broken in a way that has nothing to do with the component.
 
 ### Hover-only expansion was a CSS problem, not a state problem
 
@@ -148,7 +159,12 @@ Keyboard, at 1280×800 and 390×760:
 One caveat on how this was checked: in a hidden browser tab Chrome doesn't dispatch
 `animationend`, so `Presence` stays suspended and an overlay looks stuck open. It isn't —
 forcing a paint completes the unmount. Anything timing-dependent has to be verified against a
-tab that is actually rendering.
+tab that is actually rendering. This cost an hour of chasing a bug that wasn't there.
+
+The screenshots came from a throwaway Node script driving headless Chrome over CDP — no
+dependencies, since Node 22 has a global `WebSocket`. It works and it is not worth keeping:
+it lives in a scratchpad and dies with the session, which is why Playwright is queued in
+PLAN.md before phase 3's captures.
 
 ## Left for later
 
