@@ -16,7 +16,10 @@ specific to this project is further below.
 ## Language
 
 **The repo is written in English**: identifiers, comments, documentation, commit messages,
-and PR descriptions. That's what lets anyone read the repo without friction.
+and PR titles and descriptions. That's what lets anyone read the repo without friction.
+
+This covers the PR even when the conversation that produced it happened in another language,
+which is the case it actually gets missed in.
 
 Two exceptions:
 
@@ -61,7 +64,9 @@ In this order:
    if there is one.
 3. **Fix** whatever comes up in 1 and 2.
 4. **Write the implementation notes.**
-5. **Open the PR**, with a matching description and a link to those notes.
+5. **Open the PR**, with a matching description, a link to those notes, and **assigned to
+   me** — an unassigned PR has nobody waiting on it, and it's the assignee list that says
+   whose turn it is.
 6. **Self-review the PR** — read your own diff as if it were someone else's.
 7. **Fix** whatever comes out of the review, and **update the notes** if something worth
    recording changed.
