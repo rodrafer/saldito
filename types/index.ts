@@ -1,212 +1,212 @@
-/** Tipos de dominio del Saldito.
- *  Alineados con ESPECIFICACION_FUNCIONAL.md (secciones 1 y 2).
- *  IMPORTANTE: Deuda y Saldos son DERIVADOS de los gastos. Nunca se persisten. */
+/** Saldito domain types.
+ *  Aligned with ESPECIFICACION_FUNCIONAL.md (sections 1 and 2). See docs/glossary.md
+ *  for the Spanish spec term ↔ English code term mapping.
+ *  IMPORTANT: Debt and Balances are DERIVED from expenses. Never persisted. */
 
-export type MonedaId = 'ARS' | 'USD';
+export type CurrencyId = 'ARS' | 'USD';
 
-/** Alias de legibilidad: las firmas de los algoritmos hablan de personas,
- *  no de strings sueltos. */
-export type UsuarioId = string;
+/** Readability alias: algorithm signatures talk about people, not loose strings. */
+export type UserId = string;
 
-export const MONEDAS: readonly MonedaId[] = ['ARS', 'USD'];
+export const CURRENCIES: readonly CurrencyId[] = ['ARS', 'USD'];
 
-export type ModoPago = 'iguales' | 'montos';
-export type ModoReparto = 'iguales' | 'porcentaje' | 'montos';
+export type PaymentMode = 'equal' | 'amounts';
+export type SplitMode = 'equal' | 'percentage' | 'amounts';
 
-export interface Usuario {
+export interface User {
   id: string;
-  nombre: string;
+  name: string;
   email: string;
-  /** Alias o CBU para recibir transferencias. */
+  /** Alias or CBU to receive transfers. */
   alias: string;
-  appPago: string;
-  monedaPreferida: MonedaId;
-  tarjetas: Tarjeta[];
+  paymentApp: string;
+  preferredCurrency: CurrencyId;
+  cards: Card[];
 }
 
-export interface Tarjeta {
+export interface Card {
   id: string;
-  usuarioId: string;
-  nombre: string;
-  /** Formato MM/AA. */
-  vencimiento: string;
+  userId: string;
+  name: string;
+  /** Format MM/YY. */
+  expiry: string;
 }
 
-export interface Integrante {
-  usuarioId: string;
-  grupoId: string;
-  rol: 'admin' | 'miembro';
-  /** Un inactivo sigue en los históricos pero no en selectores nuevos. */
-  activo: boolean;
-  desactivadoEl?: string;
+export interface Member {
+  userId: string;
+  groupId: string;
+  role: 'admin' | 'member';
+  /** An inactive member stays in history but not in new selectors. */
+  active: boolean;
+  deactivatedAt?: string;
 }
 
-export interface Grupo {
+export interface Group {
   id: string;
-  nombre: string;
-  creadoPor: string;
-  creadoEl: string;
+  name: string;
+  createdBy: string;
+  createdAt: string;
 }
 
-export interface Categoria {
+export interface Category {
   id: string;
-  grupoId: string | null;
-  nombre: string;
-  /** Emoji. La app no usa librería de íconos. */
-  icono: string;
+  groupId: string | null;
+  name: string;
+  /** Emoji. The app doesn't use an icon library. */
+  icon: string;
   color: string;
-  fondo: string;
+  background: string;
 }
 
-export interface EdicionGasto {
-  fecha: string;
-  autorId: string;
-  cambios: Record<string, { antes: unknown; despues: unknown }>;
+export interface ExpenseEdit {
+  date: string;
+  authorId: string;
+  changes: Record<string, { before: unknown; after: unknown }>;
 }
 
-export interface Gasto {
+export interface Expense {
   id: string;
-  grupoId: string;
-  titulo: string;
-  categoriaId: string;
-  moneda: MonedaId;
-  /** Entero positivo, sin centavos. */
-  monto: number;
-  fecha: string;
+  groupId: string;
+  title: string;
+  categoryId: string;
+  currency: CurrencyId;
+  /** Positive integer, no cents. */
+  amount: number;
+  date: string;
 
-  /** Quién puso la plata. La suma de contribuciones es exactamente `monto`. */
-  modoPago: ModoPago;
-  contribuciones: Record<string, number>;
+  /** Who put in the money. The sum of contributions is exactly `amount`. */
+  paymentMode: PaymentMode;
+  contributions: Record<string, number>;
 
-  /** Entre quiénes se reparte. La suma del reparto es exactamente `monto`. */
-  modoReparto: ModoReparto;
-  participantes: string[];
-  reparto?: Record<string, number>;
+  /** Among whom it's split. The sum of the split is exactly `amount`. */
+  splitMode: SplitMode;
+  participants: string[];
+  split?: Record<string, number>;
 
-  /** Baja lógica: nunca se borra un gasto. */
-  anulado: boolean;
-  anuladoPor?: string;
-  anuladoEl?: string;
-  editadoEl?: string;
-  historial: EdicionGasto[];
+  /** Logical deletion: an expense is never deleted. */
+  voided: boolean;
+  voidedBy?: string;
+  voidedAt?: string;
+  editedAt?: string;
+  history: ExpenseEdit[];
 
-  /** Si nació de una recurrencia y todavía no se confirmó, es borrador. */
-  recurrenciaId?: string;
-  borrador?: boolean;
-  /** Pagadores que ya confirmaron que pusieron lo declarado. */
-  confirmadoPor?: string[];
+  /** If it was born from a recurrence and hasn't been confirmed yet, it's a draft. */
+  recurrenceId?: string;
+  draft?: boolean;
+  /** Payers who already confirmed they put in what was declared. */
+  confirmedBy?: string[];
 }
 
-export interface Recurrencia {
+export interface Recurrence {
   id: string;
-  grupoId: string;
-  titulo: string;
-  categoriaId: string;
-  moneda: MonedaId;
-  /** Referencia del mes anterior. Nunca se aplica sin confirmación humana. */
-  montoSugerido?: number;
-  /** 1–28. No hay lógica de último día del mes. */
-  diaDelMes: number;
-  modoPago: ModoPago;
-  contribuciones: Record<string, number>;
-  modoReparto: ModoReparto;
-  participantes: string[];
-  reparto?: Record<string, number>;
-  activa: boolean;
-  creadaPor: string;
-  ultimaGeneracion?: string;
+  groupId: string;
+  title: string;
+  categoryId: string;
+  currency: CurrencyId;
+  /** Reference from the previous month. Never applied without human confirmation. */
+  suggestedAmount?: number;
+  /** 1–28. No last-day-of-month logic. */
+  dayOfMonth: number;
+  paymentMode: PaymentMode;
+  contributions: Record<string, number>;
+  splitMode: SplitMode;
+  participants: string[];
+  split?: Record<string, number>;
+  active: boolean;
+  createdBy: string;
+  lastGeneratedAt?: string;
 }
 
-export interface Pago {
+export interface Payment {
   id: string;
-  grupoId: string;
-  deudorId: string;
-  acreedorId: string;
-  moneda: MonedaId;
-  monto: number;
-  fecha: string;
-  registradoPor: string;
-  /** false cuando lo declaró el deudor y el acreedor todavía no lo confirmó. */
-  confirmado: boolean;
+  groupId: string;
+  debtorId: string;
+  creditorId: string;
+  currency: CurrencyId;
+  amount: number;
+  date: string;
+  recordedBy: string;
+  /** false when the debtor declared it and the creditor hasn't confirmed it yet. */
+  confirmed: boolean;
 }
 
-export interface Movimiento {
+export interface Transfer {
   id: string;
-  deudorId: string;
-  acreedorId: string;
-  moneda: MonedaId;
-  monto: number;
-  hecho: boolean;
-  hechoPor?: string;
-  hechoEl?: string;
+  debtorId: string;
+  creditorId: string;
+  currency: CurrencyId;
+  amount: number;
+  done: boolean;
+  doneBy?: string;
+  doneAt?: string;
 }
 
-export type EstadoPlan = 'idle' | 'running' | 'completed';
+export type SettlementPlanStatus = 'idle' | 'running' | 'completed';
 
-export interface Plan {
+export interface SettlementPlan {
   id: string;
-  grupoId: string;
-  estado: EstadoPlan;
-  /** Congelados al iniciar. Pueden mezclar monedas. */
-  movimientos: Movimiento[];
-  gastoIds: string[];
-  iniciadoPor: string;
-  iniciadoEl: string;
+  groupId: string;
+  status: SettlementPlanStatus;
+  /** Frozen when started. Can mix currencies. */
+  transfers: Transfer[];
+  expenseIds: string[];
+  startedBy: string;
+  startedAt: string;
 }
 
-export type TipoNotificacion =
-  | 'gastoNuevo'
-  | 'pagadorAsignado'
-  | 'gastoEditado'
-  | 'gastoAnulado'
-  | 'pagoDeclarado'
-  | 'pagoConfirmado'
-  | 'recurrentePendiente'
-  | 'planIniciado'
-  | 'movimientoMarcado'
-  | 'planCancelado'
-  | 'planCompletado'
-  | 'recordatorio'
-  | 'grupo';
+export type NotificationType =
+  | 'newExpense'
+  | 'payerAssigned'
+  | 'expenseEdited'
+  | 'expenseVoided'
+  | 'paymentDeclared'
+  | 'paymentConfirmed'
+  | 'recurrencePending'
+  | 'planStarted'
+  | 'transferMarked'
+  | 'planCancelled'
+  | 'planCompleted'
+  | 'reminder'
+  | 'group';
 
-export interface Notificacion {
+export interface Notification {
   id: string;
-  usuarioId: string;
-  tipo: TipoNotificacion;
+  userId: string;
+  type: NotificationType;
   actorId?: string;
-  texto: string;
-  entidadId?: string;
-  fecha: string;
-  leida: boolean;
+  text: string;
+  entityId?: string;
+  date: string;
+  read: boolean;
 }
 
-/** Deuda neta entre dos personas, en una moneda. Derivada, nunca persistida.
- *  Cuando un gasto tuvo varios pagadores, cada participante le debe a cada pagador
- *  en proporción a lo que ese pagador puso (ver especificación 1.4 y 2.3). */
-export interface Deuda {
-  deudorId: string;
-  acreedorId: string;
-  moneda: MonedaId;
-  monto: number;
-  /** Gastos que originaron esta deuda, para mostrar el detalle. */
-  gastoIds: string[];
+/** Net debt between two people, in a currency. Derived, never persisted.
+ *  When an expense had several payers, each participant owes each payer in
+ *  proportion to what that payer put in (see spec 1.4 and 2.3). */
+export interface Debt {
+  debtorId: string;
+  creditorId: string;
+  currency: CurrencyId;
+  amount: number;
+  /** Expenses that originated this debt, to show its detail. */
+  expenseIds: string[];
 }
 
-/** Saldo neto por integrante, separado por moneda. Derivado, nunca persistido.
- *  Invariantes: para cada moneda la suma de todos los saldos del grupo es cero,
- *  y el saldo de cada persona coincide con la suma de sus deudas por par. */
-export type Saldos = Record<MonedaId, Record<string, number>>;
+/** Net balance per member, split by currency. Derived, never persisted.
+ *  Invariants: for each currency the sum of all balances in the group is zero,
+ *  and each person's balance matches the sum of their debts by pair. */
+export type Balances = Record<CurrencyId, Record<string, number>>;
 
-/** No hay pantalla de recurrentes: se administran inline dentro de Grupo. */
-export type Pantalla =
-  | 'inicio'
-  | 'gastos'
-  | 'gastoDetalle'
-  | 'nuevoGasto'
-  | 'editarGasto'
-  | 'confirmarBorrador'
-  | 'deudas'
-  | 'grupo'
-  | 'perfil'
-  | 'notificaciones'
-  | 'categorias';
+/** There's no recurrences screen: they're managed inline within Group. */
+export type Screen =
+  | 'home'
+  | 'expenses'
+  | 'expenseDetail'
+  | 'newExpense'
+  | 'editExpense'
+  | 'confirmDraft'
+  | 'debts'
+  | 'group'
+  | 'profile'
+  | 'notifications'
+  | 'categories';

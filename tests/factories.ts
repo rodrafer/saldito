@@ -1,108 +1,108 @@
-import type { Gasto, Grupo, Integrante, MonedaId, Pago, UsuarioId } from '@/types';
+import type { Expense, Group, Member, CurrencyId, Payment, UserId } from '@/types';
 
-export const GRUPO_ID = 'g1';
+export const GROUP_ID = 'g1';
 
-export function grupo(over: Partial<Grupo> = {}): Grupo {
+export function group(over: Partial<Group> = {}): Group {
   return {
-    id: GRUPO_ID,
-    nombre: 'Casa',
-    creadoPor: 'ana',
-    creadoEl: '2026-01-01T00:00:00.000Z',
+    id: GROUP_ID,
+    name: 'Casa',
+    createdBy: 'ana',
+    createdAt: '2026-01-01T00:00:00.000Z',
     ...over,
   };
 }
 
-export function integrantes(ids: readonly UsuarioId[], grupoId = GRUPO_ID): Integrante[] {
-  return ids.map((usuarioId, i) => ({
-    usuarioId,
-    grupoId,
-    rol: i === 0 ? 'admin' : 'miembro',
-    activo: true,
+export function members(ids: readonly UserId[], groupId = GROUP_ID): Member[] {
+  return ids.map((userId, i) => ({
+    userId,
+    groupId,
+    role: i === 0 ? 'admin' : 'member',
+    active: true,
   }));
 }
 
 let seq = 0;
 
-export function gasto(over: Partial<Gasto> = {}): Gasto {
+export function expense(over: Partial<Expense> = {}): Expense {
   seq += 1;
   return {
-    id: `gasto-${seq}`,
-    grupoId: GRUPO_ID,
-    titulo: 'Gasto',
-    categoriaId: 'c1',
-    moneda: 'ARS',
-    monto: 1000,
-    fecha: '2026-06-01T12:00:00.000Z',
-    modoPago: 'iguales',
-    contribuciones: { ana: 1000 },
-    modoReparto: 'iguales',
-    participantes: ['ana'],
-    anulado: false,
-    historial: [],
+    id: `expense-${seq}`,
+    groupId: GROUP_ID,
+    title: 'Expense',
+    categoryId: 'c1',
+    currency: 'ARS',
+    amount: 1000,
+    date: '2026-06-01T12:00:00.000Z',
+    paymentMode: 'equal',
+    contributions: { ana: 1000 },
+    splitMode: 'equal',
+    participants: ['ana'],
+    voided: false,
+    history: [],
     ...over,
   };
 }
 
-export function pago(over: Partial<Pago> = {}): Pago {
+export function payment(over: Partial<Payment> = {}): Payment {
   seq += 1;
   return {
-    id: `pago-${seq}`,
-    grupoId: GRUPO_ID,
-    deudorId: 'beto',
-    acreedorId: 'ana',
-    moneda: 'ARS',
-    monto: 100,
-    fecha: '2026-06-02T12:00:00.000Z',
-    registradoPor: 'ana',
-    confirmado: true,
+    id: `payment-${seq}`,
+    groupId: GROUP_ID,
+    debtorId: 'beto',
+    creditorId: 'ana',
+    currency: 'ARS',
+    amount: 100,
+    date: '2026-06-02T12:00:00.000Z',
+    recordedBy: 'ana',
+    confirmed: true,
     ...over,
   };
 }
 
 /**
- * Parte `total` en `n` enteros no negativos que suman exactamente `total`.
+ * Splits `total` into `n` non-negative integers that sum to exactly `total`.
  *
- * Usa cortes en un segmento, a propósito: es un algoritmo **independiente** del
- * de producción. Si generáramos las particiones con `repartirProporcional` los
- * tests estarían validando el código contra sí mismo.
+ * Uses cuts along a segment, deliberately: it's an algorithm **independent**
+ * of the production one. If we generated the partitions with
+ * `splitProportionally` the tests would be validating the code against
+ * itself.
  */
-export function particion(total: number, n: number, cortesRaw: readonly number[]): number[] {
+export function partition(total: number, n: number, rawCuts: readonly number[]): number[] {
   if (n <= 0) return [];
   if (n === 1) return [total];
 
-  const cortes = cortesRaw
+  const cuts = rawCuts
     .slice(0, n - 1)
     .map((c) => Math.floor(c * total))
     .sort((a, b) => a - b);
 
-  while (cortes.length < n - 1) cortes.push(total);
+  while (cuts.length < n - 1) cuts.push(total);
 
-  const puntos = [0, ...cortes, total];
-  return Array.from({ length: n }, (_, i) => puntos[i + 1] - puntos[i]);
+  const points = [0, ...cuts, total];
+  return Array.from({ length: n }, (_, i) => points[i + 1] - points[i]);
 }
 
-/** Suma de los valores de una asignación. */
-export function suma(asignacion: Record<string, number>): number {
-  return Object.values(asignacion).reduce((a, b) => a + b, 0);
+/** Sum of the values of an allocation. */
+export function sum(allocation: Record<string, number>): number {
+  return Object.values(allocation).reduce((a, b) => a + b, 0);
 }
 
 /**
- * Saldo de una persona calculado directo desde los gastos: lo que puso menos lo
- * que consumió. Es la segunda vía de cálculo contra la que se contrasta el
- * resultado de `calcularSaldos`.
+ * A person's balance calculated directly from the expenses: what they put in
+ * minus what they consumed. It's the second calculation path that
+ * `calculateBalances`'s result is contrasted against.
  */
-export function saldoDirecto(
-  gastos: readonly Gasto[],
-  moneda: MonedaId,
-  usuarioId: UsuarioId,
-  contribucionesDeGasto: (g: Gasto) => Record<string, number>,
-  repartoDeGasto: (g: Gasto) => Record<string, number>,
+export function directBalance(
+  expenses: readonly Expense[],
+  currency: CurrencyId,
+  userId: UserId,
+  contributionsOfExpense: (e: Expense) => Record<string, number>,
+  splitOfExpense: (e: Expense) => Record<string, number>,
 ): number {
-  return gastos
-    .filter((g) => g.moneda === moneda && !g.anulado && !g.borrador)
+  return expenses
+    .filter((e) => e.currency === currency && !e.voided && !e.draft)
     .reduce(
-      (acc, g) =>
-        acc + (contribucionesDeGasto(g)[usuarioId] ?? 0) - (repartoDeGasto(g)[usuarioId] ?? 0),
+      (acc, e) => acc + (contributionsOfExpense(e)[userId] ?? 0) - (splitOfExpense(e)[userId] ?? 0),
       0,
     );
 }
