@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#111013;font-family:'Archivo',sans-serif;color:#F0EFEA}
+a{color:#EFC75E;text-decoration:none}a:hover{color:#F4D77C}
+::-webkit-scrollbar{width:0;height:0}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:radial-gradient(140% 68% at 50% 85%, rgba(239,199,94,.15) 0%, rgba(220,166,55,.06) 45%, rgba(17,16,19,0) 78%), radial-gradient(85% 45% at 8% -6%, rgba(227,135,153,.20) 0%, rgba(17,16,19,0) 62%), #111013;background-attachment:fixed;padding:64px 48px 120px;box-sizing:border-box">
+<div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:80px">
+
+  <header style="display:flex;flex-direction:column;gap:20px;padding-bottom:12px">
+    <div style="font-size:12px;font-weight:600;color:#88858C;text-transform:uppercase;letter-spacing:.06em">Sistema de diseño · v1.0</div>
+    <div style="font-size:48px;font-weight:600;letter-spacing:-.02em;line-height:1.05;max-width:14ch">Saldito</div>
+    <div style="font-size:15px;color:#C7C4CC;max-width:62ch;line-height:1.6;text-wrap:pretty">Lenguaje visual único, oscuro y cálido, para <b style="color:#F0EFEA;font-weight:600">Saldito</b> — la app de gastos compartidos entre convivientes y grupos. Esta guía documenta los tokens, componentes y reglas que rigen tanto la versión mobile como la desktop.</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
+      <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:100px;padding:7px 14px;font-size:12px;font-weight:600;color:#88858C">Archivo · 400–700</div>
+      <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:100px;padding:7px 14px;font-size:12px;font-weight:600;color:#88858C">Modo oscuro único</div>
+      <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:100px;padding:7px 14px;font-size:12px;font-weight:600;color:#88858C">es-AR</div>
+      <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:100px;padding:7px 14px;font-size:12px;font-weight:600;color:#88858C">React + TS + Next</div>
+    </div>
+  </header>
+
+  <!-- ============ PRINCIPIOS ============ -->
+  <section style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:1px solid #28262D;padding-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:#EFC75E">01</div>
+      <div style="font-size:24px;font-weight:600">Principios</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+      <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:15px;font-weight:600">Oscuro con luz cálida</div>
+        <div style="font-size:13px;color:#88858C;line-height:1.6;text-wrap:pretty">Un solo tema. El color entra por acento dorado o por señal semántica, nunca como decoración.</div>
+      </div>
+      <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:15px;font-weight:600">Profundidad por degradado</div>
+        <div style="font-size:13px;color:#88858C;line-height:1.6;text-wrap:pretty">Toda superficie lleva un degradado a 155°, más claro arriba-izquierda. Los bordes son estructura, no jerarquía.</div>
+      </div>
+      <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:15px;font-weight:600">El dorado es escaso</div>
+        <div style="font-size:13px;color:#88858C;line-height:1.6;text-wrap:pretty">Marca acción primaria, selección y foco. Como máximo un elemento con dorado sólido por vista.</div>
+      </div>
+      <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:15px;font-weight:600">Densidad con jerarquía de peso</div>
+        <div style="font-size:13px;color:#88858C;line-height:1.6;text-wrap:pretty">Tipografía chica en pesos 600/700 antes que tamaños grandes. Sólo los montos crecen.</div>
+      </div>
+      <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:15px;font-weight:600">Mismo contenido, distinto envase</div>
+        <div style="font-size:13px;color:#88858C;line-height:1.6;text-wrap:pretty">Cada flujo tiene forma mobile (sheet, barra flotante) y desktop (modal, sidebar). Nada exclusivo de una.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COLOR ============ -->
+  <section style="display:flex;flex-direction:column;gap:28px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:1px solid #28262D;padding-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:#EFC75E">02</div>
+      <div style="font-size:24px;font-weight:600">Color</div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:12px;font-weight:600;color:#88858C;text-transform:uppercase;letter-spacing:.06em">Superficies con degradado</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px">
+        <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;padding:18px;height:120px;display:flex;flex-direction:column;justify-content:flex-end;gap:5px">
+          <div style="font-size:13.5px;font-weight:600">Tarjeta estándar</div>
+          <div style="font-size:11px;color:#88858C;font-family:ui-monospace,monospace">--sd-surface-grad</div>
+        </div>
+        <div style="background:linear-gradient(155deg,#26232E 0%,#19181E 48%,#0E0D12 100%);border:1px solid #28262D;border-radius:12px;padding:18px;height:120px;display:flex;flex-direction:column;justify-content:flex-end;gap:5px;box-shadow:0 6px 16px rgba(0,0,0,.45)">
+          <div style="font-size:13.5px;font-weight:600">Elevada</div>
+          <div style="font-size:11px;color:#88858C;font-family:ui-monospace,monospace">modales · sheets · menús</div>
+        </div>
+        <div style="background:linear-gradient(155deg,#40371D 0%,#2B2515 50%,#1B1709 100%);border:1px solid #57491F;border-radius:12px;padding:18px;height:120px;display:flex;flex-direction:column;justify-content:flex-end;gap:5px">
+          <div style="font-size:13.5px;font-weight:600;color:#EFC75E">Dorada</div>
+          <div style="font-size:11px;color:#C9B87A;font-family:ui-monospace,monospace">seleccionado · hover acción</div>
+        </div>
+        <div style="background:linear-gradient(155deg,#341C24 0%,#211317 50%,#140A0E 100%);border:1px solid #8C2F41;border-radius:12px;padding:18px;height:120px;display:flex;flex-direction:column;justify-content:flex-end;gap:5px">
+          <div style="font-size:13.5px;font-weight:600;color:#E38799">Rosa</div>
+          <div style="font-size:11px;color:#9C8288;font-family:ui-monospace,monospace">deudor · alerta suave</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:12px;font-weight:600;color:#88858C;text-transform:uppercase;letter-spacing:.06em">Acento dorado</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px">
+        <div style="border-radius:12px;overflow:hidden;border:1px solid #28262D">
+          <div style="height:74px;background:linear-gradient(135deg,#F4D77C,#DCA637)"></div>
+          <div style="padding:12px 14px;background:#1B1A1F"><div style="font-size:12.5px;font-weight:600">Acción</div><div style="font-size:11px;color:#88858C;font-family:ui-monospace,monospace;margin-top:3px">135deg #F4D77C→#DCA637</div></div>
+        </div>
+        <div style="border-radius:12px;overflow:hidden;border:1px solid #28262D">
+          <div style="height:74px;background:#EFC75E"></div>
+          <div style="padding:12px 14px;background:#1B1A1F"><div style="font-size:12.5px;font-weight:600">Dorado</div><div style="font-size:11px;color:#88858C;font-family:ui-monospace,monospace;margin-top:3px">#EFC75E</div></div>
+        </div>
+        <div style="border-radius:12px;overflow:hidden;border:1px solid #28262D">
+          <div style="height:74px;background:#DCA637"></div>
+          <div style="padding:12px 14px;background:#1B1A1F"><div style="font-size:12.5px;font-weight:600">Profundo</div><div style="font-size:11px;color:#88858C;font-family:ui-monospace,monospace;margin-top:3px">#DCA637</div></div>
+        </div>
+        <div style="border-radius:12px;overflow:hidden;border:1px solid #28262D">
+          <div style="height:74px;background:#57491F"></div>
+          <div style="padding:12px 14px;background:#1B1A1F"><div style="font-size:12.5px;font-weight:600">Tenue</div><div style="font-size:11px;color:#88858C;font-family:ui-monospace,monospace;margin-top:3px">#57491F</div></div>
+        </div>
+        <div style="border-radius:12px;overflow:hidden;border:1px solid #28262D">
+          <div style="height:74px;background:#211804"></div>
+          <div style="padding:12px 14px;background:#1B1A1F"><div style="font-size:12.5px;font-weight:600">Sobre dorado</div><div style="font-size:11px;color:#88858C;font-family:ui-monospace,monospace;margin-top:3px">#211804</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="font-size:12px;font-weight:600;color:#88858C;text-transform:uppercase;letter-spacing:.06em">Texto</div>
+        <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;overflow:hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid #28262D"><div style="font-size:14px;font-weight:600;color:#F0EFEA">Primario</div><div style="font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">#F0EFEA</div></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid #28262D"><div style="font-size:14px;font-weight:600;color:#C7C4CC">Secundario</div><div style="font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">#C7C4CC</div></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid #28262D"><div style="font-size:14px;font-weight:600;color:#88858C">Atenuado</div><div style="font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">#88858C</div></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 16px"><div style="font-size:14px;font-weight:600;color:#56535C">Deshabilitado</div><div style="font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">#56535C</div></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="font-size:12px;font-weight:600;color:#88858C;text-transform:uppercase;letter-spacing:.06em">Semánticos y bordes</div>
+        <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;overflow:hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid #28262D"><div style="display:flex;align-items:center;gap:10px"><div style="width:14px;height:14px;border-radius:4px;background:#7BB47A"></div><div style="font-size:14px;font-weight:600">Positivo · te deben</div></div><div style="font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">#7BB47A</div></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid #28262D"><div style="display:flex;align-items:center;gap:10px"><div style="width:14px;height:14px;border-radius:4px;background:#E38799"></div><div style="font-size:14px;font-weight:600">Negativo · debés</div></div><div style="font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">#E38799</div></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid #28262D"><div style="display:flex;align-items:center;gap:10px"><div style="width:14px;height:14px;border-radius:4px;background:#28262D"></div><div style="font-size:14px;font-weight:600">Borde default</div></div><div style="font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">#28262D</div></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 16px"><div style="display:flex;align-items:center;gap:10px"><div style="width:14px;height:14px;border-radius:4px;background:#34323A"></div><div style="font-size:14px;font-weight:600">Borde fuerte · flotantes</div></div><div style="font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">#34323A</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:12px;font-weight:600;color:#88858C;text-transform:uppercase;letter-spacing:.06em">Luminiscencia ambiente</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px">
+        <div style="border:1px solid #28262D;border-radius:12px;overflow:hidden">
+          <div style="height:150px;background:radial-gradient(140% 68% at 50% 85%, rgba(239,199,94,.15) 0%, rgba(220,166,55,.06) 45%, rgba(17,16,19,0) 78%), #111013"></div>
+          <div style="padding:14px 16px;background:#1B1A1F"><div style="font-size:13px;font-weight:600">Bloom dorado</div><div style="font-size:11.5px;color:#88858C;line-height:1.5;margin-top:4px">Centrado al 85% de la altura, se derrama por los laterales y se disuelve cerca del centro.</div></div>
+        </div>
+        <div style="border:1px solid #28262D;border-radius:12px;overflow:hidden">
+          <div style="height:150px;background:radial-gradient(85% 45% at 8% -6%, rgba(227,135,153,.20) 0%, rgba(17,16,19,0) 62%), #111013"></div>
+          <div style="padding:14px 16px;background:#1B1A1F"><div style="font-size:13px;font-weight:600">Bloom rosa</div><div style="font-size:11.5px;color:#88858C;line-height:1.5;margin-top:4px">Entra desde la esquina superior izquierda. Va en el contenedor raíz, nunca por pantalla.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TIPOGRAFIA ============ -->
+  <section style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:1px solid #28262D;padding-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:#EFC75E">03</div>
+      <div style="font-size:24px;font-weight:600">Tipografía</div>
+    </div>
+    <div style="font-size:14px;color:#C7C4CC;max-width:64ch;line-height:1.6;text-wrap:pretty">Una sola familia: <strong style="color:#F0EFEA">Archivo</strong>, en pesos 400, 500, 600 y 700. La jerarquía se construye con peso y color antes que con tamaño; los montos son lo único que escala.</div>
+    <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;overflow:hidden">
+      <div style="display:flex;align-items:baseline;gap:24px;padding:20px 22px;border-bottom:1px solid #28262D"><div style="width:130px;flex:none;font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">display-lg · 48/600</div><div style="font-size:48px;font-weight:600;letter-spacing:-.02em">$184.200</div></div>
+      <div style="display:flex;align-items:baseline;gap:24px;padding:20px 22px;border-bottom:1px solid #28262D"><div style="width:130px;flex:none;font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">display · 40/600</div><div style="font-size:40px;font-weight:600;letter-spacing:-.02em">$32.400</div></div>
+      <div style="display:flex;align-items:baseline;gap:24px;padding:18px 22px;border-bottom:1px solid #28262D"><div style="width:130px;flex:none;font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">titulo-lg · 24/600</div><div style="font-size:24px;font-weight:600">Deudas del grupo</div></div>
+      <div style="display:flex;align-items:baseline;gap:24px;padding:16px 22px;border-bottom:1px solid #28262D"><div style="width:130px;flex:none;font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">titulo · 19/600</div><div style="font-size:19px;font-weight:600">Gastos</div></div>
+      <div style="display:flex;align-items:baseline;gap:24px;padding:15px 22px;border-bottom:1px solid #28262D"><div style="width:130px;flex:none;font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">subtitulo · 15/600</div><div style="font-size:15px;font-weight:600">¿Qué querés hacer?</div></div>
+      <div style="display:flex;align-items:baseline;gap:24px;padding:14px 22px;border-bottom:1px solid #28262D"><div style="width:130px;flex:none;font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">body-lg · 14/600</div><div style="font-size:14px;font-weight:600">Ferretería — canilla cocina</div></div>
+      <div style="display:flex;align-items:baseline;gap:24px;padding:14px 22px;border-bottom:1px solid #28262D"><div style="width:130px;flex:none;font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">body · 13/600</div><div style="font-size:13px;font-weight:600">Registrar un pago</div></div>
+      <div style="display:flex;align-items:baseline;gap:24px;padding:14px 22px;border-bottom:1px solid #28262D"><div style="width:130px;flex:none;font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">label · 12/600</div><div style="font-size:12px;font-weight:600;color:#88858C">Pagó Rocío · hace 2 días</div></div>
+      <div style="display:flex;align-items:baseline;gap:24px;padding:14px 22px"><div style="width:130px;flex:none;font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">caption · 11.5/700</div><div style="font-size:11.5px;font-weight:700;color:#7BB47A">+$12.400</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;background:linear-gradient(155deg,#40371D 0%,#2B2515 50%,#1B1709 100%);border:1px solid #57491F;border-radius:12px;padding:16px 18px">
+      <div style="font-size:12.5px;color:#C9B87A;line-height:1.55;text-wrap:pretty">Los labels de sección van en mayúsculas, 12px/600, color atenuado y <span style="font-family:ui-monospace,monospace">letter-spacing: .06em</span>. Los montos se formatean con <span style="font-family:ui-monospace,monospace">toLocaleString('es-AR')</span> y sin decimales, salvo USD.</div>
+    </div>
+  </section>
+
+  <!-- ============ ESPACIADO / RADIOS / SOMBRAS ============ -->
+  <section style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:1px solid #28262D;padding-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:#EFC75E">04</div>
+      <div style="font-size:24px;font-weight:600">Espaciado, radios y sombras</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px">
+
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="font-size:12px;font-weight:600;color:#88858C;text-transform:uppercase;letter-spacing:.06em">Escala de espaciado</div>
+        <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:12px"><div style="width:34px;font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">4</div><div style="height:12px;width:4px;background:#EFC75E;border-radius:2px"></div></div>
+          <div style="display:flex;align-items:center;gap:12px"><div style="width:34px;font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">8</div><div style="height:12px;width:8px;background:#EFC75E;border-radius:2px"></div></div>
+          <div style="display:flex;align-items:center;gap:12px"><div style="width:34px;font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">12</div><div style="height:12px;width:12px;background:#EFC75E;border-radius:2px"></div></div>
+          <div style="display:flex;align-items:center;gap:12px"><div style="width:34px;font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">14</div><div style="height:12px;width:14px;background:#EFC75E;border-radius:2px"></div></div>
+          <div style="display:flex;align-items:center;gap:12px"><div style="width:34px;font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">20</div><div style="height:12px;width:20px;background:#EFC75E;border-radius:2px"></div></div>
+          <div style="display:flex;align-items:center;gap:12px"><div style="width:34px;font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">22</div><div style="height:12px;width:22px;background:#EFC75E;border-radius:2px"></div></div>
+          <div style="display:flex;align-items:center;gap:12px"><div style="width:34px;font-size:11.5px;color:#88858C;font-family:ui-monospace,monospace">40</div><div style="height:12px;width:40px;background:#EFC75E;border-radius:2px"></div></div>
+          <div style="font-size:11.5px;color:#88858C;line-height:1.55;margin-top:4px">Padding de tarjeta 14 · sección mobile 22 horizontal · desktop 36 / 40.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="font-size:12px;font-weight:600;color:#88858C;text-transform:uppercase;letter-spacing:.06em">Radios</div>
+        <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;padding:18px;display:flex;flex-wrap:wrap;gap:14px">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:7px"><div style="width:52px;height:52px;background:#28262D;border-radius:8px"></div><div style="font-size:11px;color:#88858C">8 · btn sm</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:7px"><div style="width:52px;height:52px;background:#28262D;border-radius:10px"></div><div style="font-size:11px;color:#88858C">10 · input</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:7px"><div style="width:52px;height:52px;background:#28262D;border-radius:12px"></div><div style="font-size:11px;color:#EFC75E">12 · tarjeta</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:7px"><div style="width:52px;height:52px;background:#28262D;border-radius:14px"></div><div style="font-size:11px;color:#88858C">14 · menú</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:7px"><div style="width:52px;height:52px;background:#28262D;border-radius:16px"></div><div style="font-size:11px;color:#88858C">16 · modal</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:7px"><div style="width:52px;height:52px;background:#28262D;border-radius:24px"></div><div style="font-size:11px;color:#88858C">24 · sheet</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:7px"><div style="width:52px;height:52px;background:#28262D;border-radius:100px"></div><div style="font-size:11px;color:#88858C">100 · píldora</div></div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="font-size:12px;font-weight:600;color:#88858C;text-transform:uppercase;letter-spacing:.06em">Elevación</div>
+        <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;padding:26px 18px;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:9px"><div style="width:64px;height:44px;background:#1B1A1F;border:1px solid #28262D;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.6)"></div><div style="font-size:11px;color:#88858C">sutil</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:9px"><div style="width:64px;height:44px;background:#1B1A1F;border:1px solid #28262D;border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,.45)"></div><div style="font-size:11px;color:#88858C">card</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:9px"><div style="width:64px;height:44px;background:#16151A;border:1px solid #34323A;border-radius:10px;box-shadow:0 20px 40px rgba(0,0,0,.5)"></div><div style="font-size:11px;color:#88858C">dropdown</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:9px"><div style="width:64px;height:44px;background:#16151A;border:1px solid #28262D;border-radius:10px;box-shadow:0 24px 60px rgba(0,0,0,.5)"></div><div style="font-size:11px;color:#88858C">modal</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:9px"><div style="width:44px;height:44px;background:linear-gradient(135deg,#F4D77C,#DCA637);border-radius:50%;box-shadow:0 8px 22px rgba(239,199,94,.38),0 0 0 5px rgba(24,23,28,.9)"></div><div style="font-size:11px;color:#88858C">fab</div></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ COMPONENTES ============ -->
+  <section style="display:flex;flex-direction:column;gap:28px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:1px solid #28262D;padding-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:#EFC75E">05</div>
+      <div style="font-size:24px;font-weight:600">Componentes</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:20px">
+
+      <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px">
+        <div><div style="font-size:15px;font-weight:600">Botones</div><div style="font-size:12px;color:#88858C;margin-top:4px;line-height:1.5">Un solo primario por vista. Hover: brillo +8% y −1px.</div></div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+          <div style="background:linear-gradient(135deg,#F4D77C,#DCA637);color:#211804;border-radius:10px;padding:12px 18px;font-size:14px;font-weight:700;cursor:pointer;transition:transform .15s ease,filter .15s ease" style-hover="filter:brightness(1.08);transform:translateY(-1px)" style-active="transform:scale(.97)">Guardar gasto</div>
+          <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;color:#F0EFEA;border-radius:10px;padding:12px 18px;font-size:14px;font-weight:600;cursor:pointer;transition:border-color .15s ease,color .15s ease" style-hover="border-color:#EFC75E;color:#EFC75E">Cancelar</div>
+          <div style="color:#88858C;padding:12px 8px;font-size:14px;font-weight:600;cursor:pointer;transition:color .15s ease" style-hover="color:#EFC75E">Ver todo</div>
+          <div style="background:rgba(140,47,65,.18);border:1px solid #8C2F41;color:#E38799;border-radius:10px;padding:12px 18px;font-size:14px;font-weight:600;cursor:pointer">Eliminar</div>
+        </div>
+      </div>
+
+      <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px">
+        <div><div style="font-size:15px;font-weight:600">Chips de filtro</div><div style="font-size:12px;color:#88858C;margin-top:4px;line-height:1.5">La fila nunca hace wrap: en mobile va en una sola línea con scroll horizontal.</div></div>
+        <div style="display:flex;gap:8px;overflow-x:auto">
+          <div style="flex:none;background:linear-gradient(135deg,#F4D77C,#DCA637);color:#211804;border-radius:100px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">Todos</div>
+          <div style="flex:none;background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;color:#88858C;border-radius:100px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:filter .15s ease" style-hover="filter:brightness(1.15)">Categoría</div>
+          <div style="flex:none;background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;color:#88858C;border-radius:100px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:filter .15s ease" style-hover="filter:brightness(1.15)">Pagó</div>
+          <div style="flex:none;background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;color:#88858C;border-radius:100px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:filter .15s ease" style-hover="filter:brightness(1.15)">Moneda</div>
+        </div>
+        <div style="display:flex;gap:6px;background:#1B1A1F;border:1px solid #28262D;border-radius:10px;padding:4px;width:300px;max-width:100%;box-sizing:border-box">
+          <div style="flex:1;background:#28262D;color:#F0EFEA;border-radius:7px;padding:7px 0;text-align:center;font-size:12px;font-weight:700;cursor:pointer">Por persona</div>
+          <div style="flex:1;color:#88858C;border-radius:7px;padding:7px 0;text-align:center;font-size:12px;font-weight:600;cursor:pointer">Plan simplificado</div>
+        </div>
+      </div>
+
+      <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px">
+        <div><div style="font-size:15px;font-weight:600">Filas de lista</div><div style="font-size:12px;color:#88858C;margin-top:4px;line-height:1.5">Alto mínimo 44px. La variante de acción vira a dorado completo y se desplaza 3px.</div></div>
+        <div style="background:#111013;border:1px solid #28262D;border-radius:12px;overflow:hidden">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid #28262D;cursor:pointer;transition:background .15s ease" style-hover="background:rgba(239,199,94,.08)">
+            <div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(155deg,#341C24 0%,#211317 50%,#140A0E 100%);display:grid;place-items:center;font-size:15px;flex:none">🔧</div>
+            <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600">Ferretería — canilla</div><div style="font-size:12px;color:#88858C;margin-top:2px">Pagó Rocío · hace 2 días</div></div>
+            <div style="font-size:14px;font-weight:700">$32.400</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;transition:background .15s ease" style-hover="background:rgba(239,199,94,.08)">
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(155deg,#40371D 0%,#2B2515 50%,#1B1709 100%);border:1px solid #57491F;color:#EFC75E;display:grid;place-items:center;font-size:13px;font-weight:700;flex:none">A</div>
+            <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600">Agustín</div><div style="font-size:12px;color:#88858C;margin-top:2px">3 gastos este mes</div></div>
+            <div style="background:rgba(123,180,122,.10);color:#7BB47A;border-radius:100px;padding:3px 10px;font-size:11.5px;font-weight:700">+$12.400</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:14px;padding:14px;cursor:pointer;transition:transform .15s ease,background .15s ease,border-color .15s ease,color .15s ease" style-hover="background:linear-gradient(155deg,#40371D 0%,#2B2515 50%,#1B1709 100%);border-color:#EFC75E;color:#EFC75E;transform:translateX(3px)">
+          <div style="font-size:18px">💸</div>
+          <div style="flex:1"><div style="font-size:14px;font-weight:600">Registrar un pago</div><div style="font-size:12px;color:#88858C;margin-top:2px">Variante acción — pasá el mouse</div></div>
+          <div>→</div>
+        </div>
+      </div>
+
+      <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px">
+        <div><div style="font-size:15px;font-weight:600">Campos y menús</div><div style="font-size:12px;color:#88858C;margin-top:4px;line-height:1.5">El foco se marca sólo con borde dorado. Los menús se anclan al disparador, no a la fila.</div></div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:#88858C;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Descripción</div>
+          <div style="background:#111013;border:1px solid #EFC75E;border-radius:10px;padding:12px 14px;font-size:14px;color:#F0EFEA">Ferretería — canilla cocina</div>
+        </div>
+        <div style="background:linear-gradient(155deg,#26232E 0%,#19181E 48%,#0E0D12 100%);border:1px solid #34323A;border-radius:14px;box-shadow:0 20px 40px rgba(0,0,0,.5);overflow:hidden;width:100%;max-width:300px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:10px 14px;font-size:13px;font-weight:600;color:#EFC75E;cursor:pointer">🔧 Mejoras<div>✓</div></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:10px 14px;font-size:13px;font-weight:600;color:#88858C;cursor:pointer;transition:background .15s ease,color .15s ease" style-hover="background:rgba(239,199,94,.08);color:#F0EFEA">🧾 Impuestos</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:10px 14px;font-size:13px;font-weight:600;color:#88858C;cursor:pointer;transition:background .15s ease,color .15s ease" style-hover="background:rgba(239,199,94,.08);color:#F0EFEA">💡 Servicios</div>
+        </div>
+      </div>
+
+      <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px">
+        <div><div style="font-size:15px;font-weight:600">Gráficos</div><div style="font-size:12px;color:#88858C;margin-top:4px;line-height:1.5">Un solo gráfico: donut en SVG con segmentos separados y extremos redondeados. Al pasar el mouse el segmento engorda, el resto se atenúa y aparece un tooltip con categoría, monto, porcentaje y período. No hay vista de barras.</div></div>
+        <div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap">
+          <div style="width:110px;height:110px;flex:none;position:relative">
+            <div style="position:absolute;inset:18%;border-radius:50%;background:radial-gradient(circle at 34% 28%, #24222A 0%, #1A181E 55%, #131217 100%);box-shadow:0 2px 8px rgba(0,0,0,.6), inset 0 1px 4px rgba(0,0,0,.8);display:grid;place-items:center;text-align:center">
+              <div><div style="font-size:14px;font-weight:700">$184k</div><div style="font-size:10.5px;color:#88858C">total</div></div>
+            </div>
+            <svg viewBox="0 0 100 100" style="position:relative;width:100%;height:100%;display:block;overflow:visible;filter:drop-shadow(0 4px 9px rgba(0,0,0,.55))">
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#211F26" stroke-width="11"></circle>
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#EFC75E" stroke-width="11" stroke-linecap="round" stroke-dasharray="88.56 162.77" stroke-dashoffset="-8.5" transform="rotate(-90 50 50)"></circle>
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#E38799" stroke-width="11" stroke-linecap="round" stroke-dasharray="48.35 202.98" stroke-dashoffset="-114.06" transform="rotate(-90 50 50)"></circle>
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#7BB47A" stroke-width="11" stroke-linecap="round" stroke-dasharray="28.24 223.09" stroke-dashoffset="-179.4" transform="rotate(-90 50 50)"></circle>
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#DCA637" stroke-width="11" stroke-linecap="round" stroke-dasharray="18.19 233.14" stroke-dashoffset="-224.64" transform="rotate(-90 50 50)"></circle>
+            </svg>
+          </div>
+          <div style="width:110px;flex:none;position:relative;padding-top:52px">
+            <div style="position:absolute;left:0;top:0;background:#16151A;border:1px solid #34323A;border-radius:10px;padding:8px 11px;white-space:nowrap;box-shadow:0 14px 32px rgba(0,0,0,.6);z-index:8">
+              <div style="display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700"><span style="width:8px;height:8px;border-radius:50%;background:#E38799;flex:none"></span>Impuestos</div>
+              <div style="font-size:11.5px;font-weight:700;color:#EFC75E;margin-top:3px">$47.840 · 26%</div>
+              <div style="font-size:10.5px;color:#88858C;margin-top:2px">Julio 2026</div>
+            </div>
+            <div style="width:110px;height:110px;position:relative">
+              <div style="position:absolute;inset:18%;border-radius:50%;background:radial-gradient(circle at 34% 28%, #24222A 0%, #1A181E 55%, #131217 100%);box-shadow:0 2px 8px rgba(0,0,0,.6), inset 0 1px 4px rgba(0,0,0,.8)"></div>
+              <svg viewBox="0 0 100 100" style="position:relative;width:100%;height:100%;display:block;overflow:visible;filter:drop-shadow(0 4px 9px rgba(0,0,0,.55))">
+                <circle cx="50" cy="50" r="40" fill="none" stroke="#211F26" stroke-width="11"></circle>
+                <circle cx="50" cy="50" r="40" fill="none" stroke="#EFC75E" stroke-width="11" stroke-linecap="round" stroke-dasharray="88.56 162.77" stroke-dashoffset="-8.5" transform="rotate(-90 50 50)" opacity=".26"></circle>
+                <circle cx="50" cy="50" r="40" fill="none" stroke="#E38799" stroke-width="14" stroke-linecap="round" stroke-dasharray="48.35 202.98" stroke-dashoffset="-114.06" transform="rotate(-90 50 50)"></circle>
+                <circle cx="50" cy="50" r="40" fill="none" stroke="#7BB47A" stroke-width="11" stroke-linecap="round" stroke-dasharray="28.24 223.09" stroke-dashoffset="-179.4" transform="rotate(-90 50 50)" opacity=".26"></circle>
+                <circle cx="50" cy="50" r="40" fill="none" stroke="#DCA637" stroke-width="11" stroke-linecap="round" stroke-dasharray="18.19 233.14" stroke-dashoffset="-224.64" transform="rotate(-90 50 50)" opacity=".26"></circle>
+              </svg>
+            </div>
+            <div style="font-size:10.5px;color:#5F5C64;text-align:center;margin-top:8px">hover</div>
+          </div>
+          <div style="flex:1;min-width:170px;display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;border-radius:50%;background:#EFC75E;flex:none"></span>Mejoras</span><span style="color:#88858C">42%</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;border-radius:50%;background:#E38799;flex:none"></span>Impuestos</span><span style="color:#88858C">26%</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;border-radius:50%;background:#7BB47A;flex:none"></span>Servicios</span><span style="color:#88858C">18%</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;border-radius:50%;background:#DCA637;flex:none"></span>Súper</span><span style="color:#88858C">14%</span></div>
+            <div style="font-size:11px;color:#5F5C64;margin-top:3px;line-height:1.5">Espesor 11 y separación 17 en unidades del viewBox de 100. Hub con degradado radial: no lo quites, es lo que da profundidad.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px">
+        <div><div style="font-size:15px;font-weight:600">Navegación</div><div style="font-size:12px;color:#88858C;margin-top:4px;line-height:1.5">Mobile: píldora flotante con blur y FAB elevado. Desktop: rail de 64px despegado 8px del borde del lienzo, se expande a 212px al pasar el mouse superponiéndose al contenido — el hueco del layout queda fijo en 76px, así no hay reflow. El ítem activo se distingue sólo por el degradado dorado diagonal, sin borde.</div></div>
+        <div style="background:#111013;border:1px solid #28262D;border-radius:14px;padding:16px 14px">
+          <div style="display:flex;justify-content:space-around;align-items:center;padding:10px 6px;background:rgba(24,23,28,.82);border:1px solid #2C2A31;border-radius:28px;box-shadow:0 14px 34px rgba(0,0,0,.55)">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 12px;border-radius:16px;color:#EFC75E;background:rgba(239,199,94,.10)"><div style="font-size:18px">⌂</div><div style="font-size:10.5px;font-weight:600">Inicio</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 12px;border-radius:16px;color:#56535C"><div style="font-size:18px">≡</div><div style="font-size:10.5px;font-weight:600">Gastos</div></div>
+            <div style="width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#F4D77C,#DCA637);color:#211804;display:grid;place-items:center;font-size:26px;font-weight:600;margin-top:-26px;box-shadow:0 8px 22px rgba(239,199,94,.38),0 0 0 5px rgba(24,23,28,.9);cursor:pointer">+</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 12px;border-radius:16px;color:#56535C"><div style="font-size:18px">⇄</div><div style="font-size:10.5px;font-weight:600">Deudas</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 12px;border-radius:16px;color:#56535C"><div style="font-size:18px">◎</div><div style="font-size:10.5px;font-weight:600">Grupo</div></div>
+          </div>
+        </div>
+        <div style="background:#111013;border:1px solid #28262D;border-radius:14px;padding:16px;display:flex;gap:20px;align-items:flex-start">
+          <div style="display:flex;flex-direction:column;gap:8px;align-items:center">
+            <div style="width:64px;background:linear-gradient(155deg,#26232E 0%,#19181E 48%,#0E0D12 100%);border:1px solid #2A2831;border-radius:18px;padding:10px;display:flex;flex-direction:column;gap:6px;box-shadow:0 10px 26px rgba(0,0,0,.35)">
+              <div style="height:44px;display:flex;align-items:center;border-radius:13px;background:linear-gradient(135deg,rgba(244,215,124,.30) 0%,rgba(220,166,55,.13) 52%,rgba(27,26,31,.55) 100%);color:#F0EFEA"><span style="width:42px;text-align:center;font-size:17px">⌂</span></div>
+              <div style="height:44px;display:flex;align-items:center;border-radius:13px;color:#88858C"><span style="width:42px;text-align:center;font-size:17px">≣</span></div>
+              <div style="height:44px;display:flex;align-items:center;border-radius:13px;color:#88858C"><span style="width:42px;text-align:center;font-size:17px">⇄</span></div>
+            </div>
+            <div style="font-size:10.5px;color:#5F5C64">64px</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;align-items:center">
+            <div style="width:212px;background:linear-gradient(155deg,#26232E 0%,#19181E 48%,#0E0D12 100%);border:1px solid #2A2831;border-radius:18px;padding:10px;display:flex;flex-direction:column;gap:6px;box-shadow:0 26px 64px rgba(0,0,0,.6)">
+              <div style="height:44px;display:flex;align-items:center;border-radius:13px;background:linear-gradient(135deg,rgba(244,215,124,.30) 0%,rgba(220,166,55,.13) 52%,rgba(27,26,31,.55) 100%);color:#F0EFEA"><span style="width:42px;text-align:center;font-size:17px">⌂</span><span style="font-size:13.5px;font-weight:600">Dashboard</span></div>
+              <div style="height:44px;display:flex;align-items:center;border-radius:13px;color:#88858C"><span style="width:42px;text-align:center;font-size:17px">≣</span><span style="font-size:13.5px;font-weight:600">Gastos</span></div>
+              <div style="height:44px;display:flex;align-items:center;border-radius:13px;color:#88858C"><span style="width:42px;text-align:center;font-size:17px">⇄</span><span style="font-size:13.5px;font-weight:600">Deudas</span></div>
+            </div>
+            <div style="font-size:10.5px;color:#5F5C64">212px · hover</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ MOVIMIENTO ============ -->
+  <section style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:1px solid #28262D;padding-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:#EFC75E">06</div>
+      <div style="font-size:24px;font-weight:600">Movimiento</div>
+    </div>
+    <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;overflow:hidden">
+      <div style="display:grid;grid-template-columns:1.1fr .7fr 1.4fr 2fr;gap:16px;padding:12px 18px;border-bottom:1px solid #28262D;font-size:11.5px;font-weight:600;color:#88858C;text-transform:uppercase;letter-spacing:.06em"><div>Nombre</div><div>Duración</div><div>Easing</div><div>Uso</div></div>
+      <div style="display:grid;grid-template-columns:1.1fr .7fr 1.4fr 2fr;gap:16px;padding:13px 18px;border-bottom:1px solid #28262D;font-size:13px"><div style="font-weight:600">hover</div><div style="color:#C7C4CC">150ms</div><div style="color:#88858C;font-family:ui-monospace,monospace;font-size:11.5px">ease</div><div style="color:#88858C">color · fondo · borde · transform</div></div>
+      <div style="display:grid;grid-template-columns:1.1fr .7fr 1.4fr 2fr;gap:16px;padding:13px 18px;border-bottom:1px solid #28262D;font-size:13px"><div style="font-weight:600">fade-in</div><div style="color:#C7C4CC">180ms</div><div style="color:#88858C;font-family:ui-monospace,monospace;font-size:11.5px">ease</div><div style="color:#88858C">overlays</div></div>
+      <div style="display:grid;grid-template-columns:1.1fr .7fr 1.4fr 2fr;gap:16px;padding:13px 18px;border-bottom:1px solid #28262D;font-size:13px"><div style="font-weight:600">pop-in</div><div style="color:#C7C4CC">180ms</div><div style="color:#88858C;font-family:ui-monospace,monospace;font-size:11.5px">(.16,1,.3,1)</div><div style="color:#88858C">dropdowns · modales</div></div>
+      <div style="display:grid;grid-template-columns:1.1fr .7fr 1.4fr 2fr;gap:16px;padding:13px 18px;border-bottom:1px solid #28262D;font-size:13px"><div style="font-weight:600">screen-in</div><div style="color:#C7C4CC">220ms</div><div style="color:#88858C;font-family:ui-monospace,monospace;font-size:11.5px">(.16,1,.3,1)</div><div style="color:#88858C">cambio de pantalla · fade + 8px</div></div>
+      <div style="display:grid;grid-template-columns:1.1fr .7fr 1.4fr 2fr;gap:16px;padding:13px 18px;border-bottom:1px solid #28262D;font-size:13px"><div style="font-weight:600">sheet-up</div><div style="color:#C7C4CC">220ms</div><div style="color:#88858C;font-family:ui-monospace,monospace;font-size:11.5px">(.16,1,.3,1)</div><div style="color:#88858C">bottom sheet</div></div>
+      <div style="display:grid;grid-template-columns:1.1fr .7fr 1.4fr 2fr;gap:16px;padding:13px 18px;font-size:13px"><div style="font-weight:600">toast-in</div><div style="color:#C7C4CC">220ms</div><div style="color:#88858C;font-family:ui-monospace,monospace;font-size:11.5px">(.16,1,.3,1)</div><div style="color:#88858C">confirmaciones</div></div>
+    </div>
+  </section>
+
+  <!-- ============ LAYOUT ============ -->
+  <section style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:1px solid #28262D;padding-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:#EFC75E">07</div>
+      <div style="font-size:24px;font-weight:600">Layout</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px">
+      <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px">
+        <div style="font-size:15px;font-weight:600">Mobile · 390 × 760</div>
+        <div style="font-size:13px;color:#88858C;line-height:1.6;text-wrap:pretty">Contenido con 22px de padding horizontal y 96px de reserva inferior por la barra flotante. Cada pantalla entra con <span style="font-family:ui-monospace,monospace;font-size:12px">screen-in</span>. Los overlays se anclan al contenedor de la app, no al viewport.</div>
+        <div style="background:#111013;border:1px solid #28262D;border-radius:10px;padding:12px;display:flex;gap:8px;align-items:stretch;height:120px">
+          <div style="width:22px;background:rgba(239,199,94,.10);border-radius:4px"></div>
+          <div style="flex:1;background:#1B1A1F;border-radius:6px"></div>
+          <div style="width:22px;background:rgba(239,199,94,.10);border-radius:4px"></div>
+        </div>
+      </div>
+      <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px">
+        <div style="font-size:15px;font-weight:600">Desktop · sidebar + grid 1fr / 300px</div>
+        <div style="font-size:13px;color:#88858C;line-height:1.6;text-wrap:pretty">Regla firme: <strong style="color:#EFC75E">toda pantalla desktop usa <span style="font-family:ui-monospace,monospace;font-size:12px">grid-template-columns: 1fr 300px</span></strong> con gap de 20px, incluso si la columna derecha queda vacía. El encabezado comparte el mismo grid, de modo que los controles de la derecha se alinean exactamente con el panel de abajo.</div>
+        <div style="background:#111013;border:1px solid #28262D;border-radius:10px;padding:12px;display:flex;gap:10px;height:120px">
+          <div style="width:44px;background:#1B1A1F;border-radius:6px;flex:none"></div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+            <div style="display:grid;grid-template-columns:1fr 72px;gap:8px;height:22px"><div style="background:#1B1A1F;border-radius:4px"></div><div style="background:rgba(239,199,94,.20);border-radius:4px"></div></div>
+            <div style="display:grid;grid-template-columns:1fr 72px;gap:8px;flex:1"><div style="background:#1B1A1F;border-radius:6px"></div><div style="background:rgba(239,199,94,.10);border:1px dashed #57491F;border-radius:6px"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px">
+      <div style="flex:1;min-width:220px;background:linear-gradient(155deg,#40371D 0%,#2B2515 50%,#1B1709 100%);border:1px solid #57491F;border-radius:12px;padding:16px 18px"><div style="font-size:13px;font-weight:600;color:#EFC75E;margin-bottom:5px">Target táctil</div><div style="font-size:12.5px;color:#C9B87A;line-height:1.55">Nunca por debajo de 44px de alto en elementos accionables.</div></div>
+      <div style="flex:1;min-width:220px;background:linear-gradient(155deg,#40371D 0%,#2B2515 50%,#1B1709 100%);border:1px solid #57491F;border-radius:12px;padding:16px 18px"><div style="font-size:13px;font-weight:600;color:#EFC75E;margin-bottom:5px">Tamaño mínimo de texto</div><div style="font-size:12.5px;color:#C9B87A;line-height:1.55">10.5px, reservado a los labels de la barra inferior.</div></div>
+      <div style="flex:1;min-width:220px;background:linear-gradient(155deg,#40371D 0%,#2B2515 50%,#1B1709 100%);border:1px solid #57491F;border-radius:12px;padding:16px 18px"><div style="font-size:13px;font-weight:600;color:#EFC75E;margin-bottom:5px">Un menú a la vez</div><div style="font-size:12.5px;color:#C9B87A;line-height:1.55">Abrir un dropdown cierra el anterior. Escape cierra cualquier overlay.</div></div>
+    </div>
+  </section>
+
+  <!-- ============ REGLAS ============ -->
+  <section style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:1px solid #28262D;padding-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:#EFC75E">08</div>
+      <div style="font-size:24px;font-weight:600">Reglas de uso</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px">
+      <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:13px;font-weight:700;color:#7BB47A;text-transform:uppercase;letter-spacing:.06em">Sí</div>
+        <div style="font-size:13px;color:#C7C4CC;line-height:1.6">Usar <span style="font-family:ui-monospace,monospace;font-size:12px">var(--sd-*)</span> siempre; los tokens son la única fuente de verdad.</div>
+        <div style="font-size:13px;color:#C7C4CC;line-height:1.6">Dar profundidad con el degradado de superficie y la sombra correspondiente al nivel.</div>
+        <div style="font-size:13px;color:#C7C4CC;line-height:1.6">Derivar deudas y plan simplificado del listado de gastos, nunca guardarlos.</div>
+        <div style="font-size:13px;color:#C7C4CC;line-height:1.6">Mantener la columna de 300px aunque esté vacía.</div>
+      </div>
+      <div style="background:linear-gradient(155deg,#341C24 0%,#211317 50%,#140A0E 100%);border:1px solid #8C2F41;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:13px;font-weight:700;color:#E38799;text-transform:uppercase;letter-spacing:.06em">No</div>
+        <div style="font-size:13px;color:#C7C4CC;line-height:1.6">Más de un elemento con degradado dorado sólido por vista.</div>
+        <div style="font-size:13px;color:#C7C4CC;line-height:1.6">Bordes dorados o tildes para indicar selección: alcanza con el degradado.</div>
+        <div style="font-size:13px;color:#C7C4CC;line-height:1.6">Filas de filtros que pasen a un segundo renglón en mobile.</div>
+        <div style="font-size:13px;color:#C7C4CC;line-height:1.6">Introducir una segunda familia tipográfica o una librería de íconos.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ENTREGABLES ============ -->
+  <section style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:1px solid #28262D;padding-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:#EFC75E">09</div>
+      <div style="font-size:24px;font-weight:600">Paquete de entrega</div>
+    </div>
+    <div style="font-size:14px;color:#C7C4CC;max-width:64ch;line-height:1.6;text-wrap:pretty">Todo lo documentado acá está en <span style="font-family:ui-monospace,monospace;font-size:13px;color:#EFC75E">design_handoff_saldito/</span>, listo para entregar a Claude Code junto con el prototipo.</div>
+    <div style="background:linear-gradient(155deg,#2A2732 0%,#1C1A21 48%,#101015 100%);border:1px solid #28262D;border-radius:12px;overflow:hidden">
+      <div style="display:grid;grid-template-columns:minmax(200px,1fr) 2fr;gap:20px;padding:13px 18px;border-bottom:1px solid #28262D"><div style="font-family:ui-monospace,monospace;font-size:12.5px;color:#EFC75E">README.md</div><div style="font-size:13px;color:#88858C">Guía completa de implementación: pantallas, estado, accesibilidad</div></div>
+      <div style="display:grid;grid-template-columns:minmax(200px,1fr) 2fr;gap:20px;padding:13px 18px;border-bottom:1px solid #28262D"><div style="font-family:ui-monospace,monospace;font-size:12.5px;color:#EFC75E">tokens/tokens.css</div><div style="font-size:13px;color:#88858C">Variables CSS. Se importa primero</div></div>
+      <div style="display:grid;grid-template-columns:minmax(200px,1fr) 2fr;gap:20px;padding:13px 18px;border-bottom:1px solid #28262D"><div style="font-family:ui-monospace,monospace;font-size:12.5px;color:#EFC75E">tokens/components.css</div><div style="font-size:13px;color:#88858C">Clases de componente que consumen los tokens</div></div>
+      <div style="display:grid;grid-template-columns:minmax(200px,1fr) 2fr;gap:20px;padding:13px 18px;border-bottom:1px solid #28262D"><div style="font-family:ui-monospace,monospace;font-size:12.5px;color:#EFC75E">tokens/tokens.json</div><div style="font-size:13px;color:#88858C">Los mismos tokens como datos, para generadores</div></div>
+      <div style="display:grid;grid-template-columns:minmax(200px,1fr) 2fr;gap:20px;padding:13px 18px;border-bottom:1px solid #28262D"><div style="font-family:ui-monospace,monospace;font-size:12.5px;color:#EFC75E">tokens/tailwind.config.ts</div><div style="font-size:13px;color:#88858C">Mapeo a Tailwind, apuntando a las mismas variables</div></div>
+      <div style="display:grid;grid-template-columns:minmax(200px,1fr) 2fr;gap:20px;padding:13px 18px;border-bottom:1px solid #28262D"><div style="font-family:ui-monospace,monospace;font-size:12.5px;color:#EFC75E">components/ui/*.tsx</div><div style="font-size:13px;color:#88858C">18 primitivas React + TypeScript, con barrel export</div></div>
+      <div style="display:grid;grid-template-columns:minmax(200px,1fr) 2fr;gap:20px;padding:13px 18px;border-bottom:1px solid #28262D"><div style="font-family:ui-monospace,monospace;font-size:12.5px;color:#EFC75E">types/index.ts</div><div style="font-size:13px;color:#88858C">Tipos de dominio: Gasto, Deuda, Integrante, Grupo, Categoría</div></div>
+      <div style="display:grid;grid-template-columns:minmax(200px,1fr) 2fr;gap:20px;padding:13px 18px;border-bottom:1px solid #28262D"><div style="font-family:ui-monospace,monospace;font-size:12.5px;color:#EFC75E">lib/</div><div style="font-size:13px;color:#88858C">Formato de moneda es-AR y utilidad de classNames</div></div>
+      <div style="display:grid;grid-template-columns:minmax(200px,1fr) 2fr;gap:20px;padding:13px 18px"><div style="font-family:ui-monospace,monospace;font-size:12.5px;color:#EFC75E">Prototipo.dc.html</div><div style="font-size:13px;color:#88858C">Prototipo interactivo. Ante cualquier duda, manda el prototipo</div></div>
+    </div>
+  </section>
+
+</div>
+</div>
+</x-dc>
+</body>
+</html>

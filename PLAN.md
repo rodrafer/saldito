@@ -16,6 +16,7 @@ Sources of truth:
 | Tailwind                | v4, CSS-first. The handoff's `tailwind.config.ts` is translated to `@theme inline`     |
 | First deliverable scope | Core: calculation → expenses → debts → plan (phases 0–7)                               |
 | Auth                    | Email + password **and** Google OAuth                                                  |
+| Screenshots             | **Playwright, from the next PR on.** Phase 2's were driven by a throwaway CDP script   |
 
 ## Assumptions (flag if any don't work)
 
@@ -98,12 +99,50 @@ it to Tailwind v4 via `@theme inline`.
 ### Phase 2 — Design system
 
 - `tokens.css` + `components.css` + `theme.css`; Archivo font via `next/font`.
+- **Radix as the behavioral layer, styling stays ours.** The design is hi-fi and final, so a
+  styled library (MUI, Ant Design) would be fought rather than used. What a headless library
+  does buy is the part no screenshot can verify: focus trap, focus restoration, scroll lock,
+  stacked dismissable layers, keyboard navigation.
+  - `react-dialog` → `Modal` and `Sheet`
+  - `react-popover` → filter menus, which carry a search field
+  - `react-dropdown-menu` → pure action menus, no text input
+  - `react-toggle-group` / `react-toggle` → `SegmentedControl` and chips
+  - `Button`, `Card`, `Badge`, `Avatar`, `ListRow`, `DonutChart` and `AmbientBackground` stay
+    hand-rolled: a library adds nothing there.
 - Port the 16 primitives, adapting them to the repo's conventions.
 - `AmbientBackground` in the root layout (single use) with its mobile and desktop blooms.
 - Shell: collapsible side rail (64px → 212px on hover, fixed 76px gap, active without
   border) and a floating bottom bar with a FAB.
 - Helper for the firm `1fr 300px` grid with a 20px gap, mandatory on every desktop screen.
 - `/dev/kitchen-sink` route (dev only) to compare against `Sistema de diseño.dc.html`.
+
+Decided before starting the phase:
+
+- **The CSS vocabulary stays as delivered; English stops at the TypeScript boundary.** Token
+  and class names (`--sd-text-atenuado`, `.sd-btn--primario`) keep the handoff's spelling,
+  Spanish included. React components, props, and types are ours, so they go to English, and
+  `docs/glossary.md` carries the mapping.
+
+  > **Reversed after the phase shipped.** The reasoning above rested on the two `.dc.html`
+  > files being written against the token names. They aren't: the prototype never mentions
+  > `--sd-*` at all — it is inline hex end to end — and the design-system page mentions it
+  > twice, once in prose and once as the caption of a single swatch. With that gone there is
+  > no case for a half-translated codebase, and the glossary table was evidence of the
+  > problem rather than a fix for it. The rename is in "Cross-cutting work" below.
+
+- **The app shell is a `100dvh` container that scrolls internally**, not a page that grows.
+  The handoff anchors every overlay with `position: absolute` against the app container
+  rather than the viewport; that only behaves if the container is the viewport's size. It
+  also matches the prototype, whose content column is its own scroll area. This is what
+  Radix's `container` prop gets pointed at.
+- **On `BottomNav`, the prototype overrides `components.css`.** The prototype's bar is icons
+  only; `components.css` and the design-system page draw a label under each icon. The
+  handoff's own tiebreaker is explicit — "ante cualquier duda, manda el prototipo" — so the
+  labels become accessible names rather than visible text, and `components.css` is corrected
+  to match.
+- **`@radix-ui/react-visually-hidden` joins the five packages above.** `Dialog.Title` is
+  mandatory for accessibility, but the handoff's `Sheet` treats its title as optional; when
+  none is given the title still has to exist, just not visibly.
 
 ### Phase 3 — Supabase: schema, RLS, and auth
 
@@ -179,6 +218,22 @@ Empty states, skeletons shaped like the real content, error handling, accessibil
 against the prototype, and deploy.
 
 ---
+
+## Cross-cutting work
+
+Things that have to happen but belong to no phase: tooling, conventions, and debts that cut
+across the whole repo. A phase is a shippable slice of product with a place in the order;
+these have neither, and forcing them into the nearest phase is how they end up somewhere
+that has nothing to do with them.
+
+Each one carries **when it has to land** — that's what stops this becoming a list nobody
+reads. Anything with no trigger doesn't belong here; it belongs in nobody's plan.
+
+| What                                                                                                                                                                                                                                                                                                                                                                                                                                  | Trigger                                                      |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| **Playwright as a devDependency, with the screenshot run scripted in the repo.** Phase 2's captures came from a throwaway CDP script that lives in a scratchpad and dies with the session. Same viewports, same shots, same names, diffable between phases.                                                                                                                                                                           | Before phase 3's screenshots                                 |
+| **E2E tests on the same Playwright, wired into CI.** Different commitment from the screenshots and worth keeping separate: it adds CI time, a class of flakiness the suite doesn't have today, and a budget every later phase has to carry. It also changes the shipping workflow, which grows an e2e step — that edit to `AGENTS.md` lands with the tests, not before, so the convention never describes a suite that doesn't exist. | Phase 3, with auth: the first flow worth driving end to end  |
+| **Translate the CSS vocabulary to English** — tokens, class names, and the Tailwind theme keys. See the reversal note under phase 2. Mechanical, and it only gets more expensive as screens are written against the current names.                                                                                                                                                                                                    | Before phase 3, so nothing new is built on the Spanish names |
 
 ## Identified risks
 

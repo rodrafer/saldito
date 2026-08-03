@@ -1,0 +1,123 @@
+/* ============================================================
+   Saldito — Puente a Tailwind v4
+
+   Traducción del `tailwind.config.ts` del handoff al CSS-first de Tailwind v4.
+   Todo apunta a `var(--sd-*)`, así que tokens.css sigue siendo la única fuente
+   de verdad y no hay un segundo lugar donde un color pueda quedar desfasado.
+
+   `inline` es lo que evita la indirección: Tailwind escribe el `var(--sd-*)`
+   dentro de la utilidad en vez de emitir una variable propia que lo copie.
+
+   Los nombres de las claves son los que eligió el handoff (`texto`, `borde`,
+   `dorado`): son la fachada del sistema de diseño, igual que los tokens.
+   ============================================================ */
+
+@theme inline {
+  /* ---------- Color ---------- */
+  --color-app: var(--sd-bg-app);
+
+  --color-surface: var(--sd-surface);
+  --color-surface-elevada: var(--sd-surface-elevada);
+  --color-surface-sutil: var(--sd-surface-sutil);
+  --color-surface-input: var(--sd-surface-input);
+
+  --color-borde: var(--sd-border);
+  --color-borde-fuerte: var(--sd-border-fuerte);
+  --color-borde-sutil: var(--sd-border-sutil);
+  --color-borde-acento: var(--sd-border-acento);
+
+  --color-texto: var(--sd-text);
+  --color-texto-secundario: var(--sd-text-secundario);
+  --color-texto-atenuado: var(--sd-text-atenuado);
+  --color-texto-deshabilitado: var(--sd-text-deshabilitado);
+  --color-texto-dorado: var(--sd-text-sobre-dorado);
+
+  --color-dorado: var(--sd-dorado);
+  --color-dorado-claro: var(--sd-dorado-claro);
+  --color-dorado-profundo: var(--sd-dorado-profundo);
+  --color-dorado-tenue: var(--sd-dorado-tenue);
+
+  --color-positivo: var(--sd-positivo);
+  --color-negativo: var(--sd-negativo);
+  --color-negativo-profundo: var(--sd-negativo-profundo);
+
+  /* ---------- Tipografía ---------- */
+  --font-sans: var(--sd-font);
+
+  --text-micro: var(--sd-fs-micro);
+  --text-caption: var(--sd-fs-caption);
+  --text-label: var(--sd-fs-label);
+  --text-body-sm: var(--sd-fs-body-sm);
+  --text-body: var(--sd-fs-body);
+  --text-body-lg: var(--sd-fs-body-lg);
+  --text-subtitulo: var(--sd-fs-subtitulo);
+  --text-titulo-sm: var(--sd-fs-titulo-sm);
+  --text-titulo: var(--sd-fs-titulo);
+  --text-titulo-lg: var(--sd-fs-titulo-lg);
+  --text-display-sm: var(--sd-fs-display-sm);
+  --text-display: var(--sd-fs-display);
+  --text-display-lg: var(--sd-fs-display-lg);
+
+  --tracking-ancho: var(--sd-track-ancho);
+  --tracking-titular: var(--sd-track-titular);
+
+  /* ---------- Radios ---------- */
+  --radius-xs: var(--sd-r-xs);
+  --radius-sm: var(--sd-r-sm);
+  --radius-md: var(--sd-r-md);
+  --radius-lg: var(--sd-r-lg);
+  --radius-xl: var(--sd-r-xl);
+  --radius-2xl: var(--sd-r-2xl);
+  --radius-3xl: var(--sd-r-3xl);
+  --radius-nav: var(--sd-r-nav);
+  --radius-rail: var(--sd-r-rail);
+  --radius-pill: var(--sd-r-pill);
+
+  /* ---------- Sombras ---------- */
+  --shadow-sutil: var(--sd-sh-sutil);
+  --shadow-card: var(--sd-sh-card);
+  --shadow-dropdown: var(--sd-sh-dropdown);
+  --shadow-modal: var(--sd-sh-modal);
+  --shadow-sheet: var(--sd-sh-sheet);
+  --shadow-nav: var(--sd-sh-nav);
+  --shadow-fab: var(--sd-sh-fab);
+
+  /* ---------- Movimiento ---------- */
+  --ease-salida: var(--sd-ease-salida);
+  --animate-screen-in: sd-screen-in var(--sd-dur-normal) var(--sd-ease-salida) both;
+  --animate-sheet-up: sd-sheet-up var(--sd-dur-normal) var(--sd-ease-salida) both;
+  --animate-pop-in: sd-pop-in var(--sd-dur-rapido) var(--sd-ease-salida) both;
+  --animate-fade-in: sd-fade-in var(--sd-dur-rapido) ease both;
+  --animate-toast-in: sd-toast-in var(--sd-dur-normal) var(--sd-ease-salida) both;
+
+  /* ---------- Layout ----------
+     El handoff no fija un breakpoint: separa "mobile 390×760" de "desktop", y
+     el prototipo alterna entre los dos con un toggle. 900px es el punto donde
+     el grid firme entra sin apretarse — 76 de rail + 40+40 de aire + 300 de
+     columna derecha + 20 de gap dejan ~424px para la columna principal. */
+  --breakpoint-desktop: 900px;
+}
+
+/* Tailwind v4 no tiene namespace para background-image, así que los degradados
+   del handoff entran como utilidades propias. */
+@utility bg-surface-grad {
+  background-image: var(--sd-surface-grad);
+}
+@utility bg-surface-grad-elevada {
+  background-image: var(--sd-surface-grad-elevada);
+}
+@utility bg-surface-grad-dorada {
+  background-image: var(--sd-surface-grad-dorada);
+}
+@utility bg-surface-grad-rosa {
+  background-image: var(--sd-surface-grad-rosa);
+}
+@utility bg-dorado-grad {
+  background-image: var(--sd-dorado-grad);
+}
+@utility bg-bloom-dorado {
+  background-image: var(--sd-bloom-dorado);
+}
+@utility bg-bloom-rosa {
+  background-image: var(--sd-bloom-rosa);
+}

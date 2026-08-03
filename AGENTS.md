@@ -16,7 +16,10 @@ specific to this project is further below.
 ## Language
 
 **The repo is written in English**: identifiers, comments, documentation, commit messages,
-and PR descriptions. That's what lets anyone read the repo without friction.
+and PR titles and descriptions. That's what lets anyone read the repo without friction.
+
+This covers the PR even when the conversation that produced it happened in another language,
+which is the case it actually gets missed in.
 
 Two exceptions:
 
@@ -61,16 +64,31 @@ In this order:
    if there is one.
 3. **Fix** whatever comes up in 1 and 2.
 4. **Write the implementation notes.**
-5. **Open the PR**, with a matching description and a link to those notes.
+5. **Open the PR**, with a matching description, a link to those notes, and **assigned to
+   me** — an unassigned PR has nobody waiting on it, and it's the assignee list that says
+   whose turn it is.
 6. **Self-review the PR** — read your own diff as if it were someone else's.
 7. **Fix** whatever comes out of the review, and **update the notes** if something worth
    recording changed.
 8. **Save the screenshots** where they belong and flag it so they get pasted into the PR.
 9. **Final CI check** green.
-10. **Squash & Merge.**
+10. **Ask for explicit approval to merge**, and wait for it. Never merge on your own
+    initiative, however green everything looks.
+11. **Squash & Merge**, once that approval is given.
 
 Steps 7 and 8 produce new commits, so CI runs again on its own. If the review found
 nothing, that's said explicitly instead of skipping the step.
+
+**Every screenshot in a PR carries a heading and a line saying what to look at.** A wall of
+images is work for the reviewer: they have to infer what each one is meant to prove and
+whether it proves it. The heading names the state — which screen, which viewport, which
+overlay open — and the line points at the specific thing that changed, so a reviewer can
+tell agreement from oversight without reading the diff first. The body of the PR carries
+those headings before the screenshots exist, each with a marker where the image goes.
+
+Step 10 is not a formality: merging is the one step in this list that can't be undone
+quietly, and it's the last chance to catch something the automated checks can't see. A green
+pipeline says the code runs, not that it's the right code.
 
 ## Implementation notes
 
@@ -88,6 +106,20 @@ anticipated. That's lost as soon as the session ends if it doesn't get written d
 
 They don't repeat what the code already says. If something is clear from reading the diff,
 it doesn't go here.
+
+**Notes are not where scope changes get recorded.** A decision taken _before_ the work —
+adding a dependency, dropping something from the phase, changing the approach — belongs in
+the planning document, because that's what the next session reads to know what to build. A
+plan that only gets corrected in hindsight is stale from the moment the work starts.
+
+The line is when the decision happened, not how important it was:
+
+- **Decided in advance** → planning document, stated as scope. The notes then carry the
+  reasoning and whatever the implementation actually revealed about it.
+- **Discovered while implementing** → notes. That's a finding.
+
+When a decision changes the scope of a phase, say so and update the plan before writing
+code, rather than letting the notes absorb it later.
 
 ## Model and effort
 
