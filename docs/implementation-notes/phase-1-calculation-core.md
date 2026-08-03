@@ -1,139 +1,136 @@
-# Fase 1 — Núcleo de cálculo
+# Phase 1 — Calculation core
 
-**PR:** [#2](https://github.com/rodrafer/saldito/pull/2) · 63 tests · sin UI
+**PR:** [#2](https://github.com/rodrafer/saldito/pull/2) · 63 tests · no UI
 
-Los algoritmos de la sección 2 de la especificación funcional, en
-`features/deudas/calculo/`. TypeScript puro: no importa nada de Next ni de Supabase, así
-que corre idéntico en los tests, en el servidor al renderizar y en el cliente para los
-updates optimistas.
-
----
-
-## ⚠️ El pseudocódigo de la especificación 2.3 rompe su propio invariante
-
-**Esto hay que avisárselo a quien escribió la especificación.**
-
-El algoritmo de `deudasDeGasto` tal como está en el documento viola la igualdad que el mismo
-documento señala como _"la mejor red de seguridad del sistema"_: que el saldo neto de cada
-persona coincida con `puso − consumió`.
-
-### El caso que lo rompe
-
-Lo encontró el property testing. No se nos habría ocurrido escribirlo a mano:
-
-> Un gasto de **2**. Caro y Dani ponen **1 cada uno** y lo consumen entre los dos por partes
-> iguales, **1 cada uno**. Nadie debería quedar debiendo nada.
-
-El pseudocódigo procesa una fila por vez:
-
-| Fila        | Reparto entre pagadores | Sobrante                            | Se descarta la porción propia | Resultado             |
-| ----------- | ----------------------- | ----------------------------------- | ----------------------------- | --------------------- |
-| Caro debe 1 | empate 0,5 / 0,5        | va al primero de la lista: **Caro** | sí, era de Caro               | Caro no debe nada     |
-| Dani debe 1 | empate 0,5 / 0,5        | va al primero de la lista: **Caro** | no, era de Caro               | Dani le debe 1 a Caro |
-
-Resultado: Dani queda debiendo 1 y Caro cobrando 1, cuando `puso − consumió` da cero para
-los dos.
-
-### La causa
-
-Redondear fila por fila garantiza que cada **fila** cierre exacto contra el reparto, pero
-deja las **columnas** a la deriva respecto de lo que puso cada uno. Y el saldo neto de una
-persona es exactamente `su columna − su fila`.
-
-Con un solo pagador el problema no existe, porque la única columna se lleva todo. Por eso el
-prototipo nunca lo mostró: aparece recién ahora, que la especificación agregó multi-pagador.
-
-### Cómo se resolvió
-
-`repartirMatriz`, en `features/deudas/calculo/redondeo.ts`, redondea la matriz completa
-preservando **los dos márgenes**:
-
-1. Piso de cada celda, y el sobrante de cada fila por mayor parte fraccionaria. Las filas
-   quedan exactas.
-2. Corrección de columnas: mientras una columna esté por encima de su total y otra por
-   debajo, se mueve una unidad entre ellas **dentro de una misma fila**, que es lo único que
-   no rompe lo ya ajustado en el paso 1.
-
-El paso 2 siempre puede avanzar: una columna que está por encima de su total tiene suma
-mayor a cero, así que alguna de sus celdas vale al menos uno.
-
-Con las columnas exactas, descartar la porción propia deja el invariante intacto. El
-resultado sigue siendo la atribución proporcional que pide la sección 1.4, y la pantalla
-Deudas no cambia.
+The algorithms from section 2 of the functional spec, in `features/debts/calculation/`.
+Pure TypeScript: doesn't import anything from Next or Supabase, so it runs identically in
+tests, on the server when rendering, and on the client for optimistic updates.
 
 ---
 
-## Ids que se leen a través de la cadena de prototipos
+## ⚠️ The pseudocode in spec section 2.3 breaks its own invariant
 
-Segundo bug encontrado por property testing. Con un id llamado `valueOf`, `toString` o
-`__proto__`, el patrón `out[id] ?? 0` sobre un objeto plano devuelve la función heredada de
-`Object.prototype` en vez de cero, y el acumulador queda mal.
+**This needs to be flagged to whoever wrote the spec.**
 
-Los acumuladores pasaron a ser `Map`, con conversión a objeto recién al final vía
-`Object.fromEntries` —que define propiedades propias, sin pasar por el setter de
-`__proto__`— y las lecturas de registros provistos por el usuario van por `montoDe`, que
-verifica `Object.hasOwn` y que el valor sea numérico.
+The `debtsOfExpense` algorithm as written in the document violates the equality the same
+document calls out as _"the system's best safety net"_: that each person's net balance
+matches `paid in − consumed`.
 
-Hoy los ids van a ser UUIDs de Supabase, así que en la práctica no se dispara. Igual no es
-una clase de bug que convenga dejar viva en el módulo que reparte plata.
+### The case that breaks it
 
----
+Found by property testing. We wouldn't have thought to write it by hand:
 
-## Desvíos deliberados del pseudocódigo
+> An expense of **2**. Caro and Dani put in **1 each** and consume it between the two of
+> them in equal parts, **1 each**. Neither should end up owing anything.
 
-### `calcularDeudas` recibe los integrantes como parámetro
+The pseudocode processes one row at a time:
 
-El pseudocódigo hace `grupo.integrantes.map(...)`, pero el tipo `Grupo` del handoff no tiene
-ese campo: `Integrante` es una entidad propia con su `grupoId`, igual que van a estar las
-tablas. Pasarlos aparte mantiene las funciones puras sin obligar a armar un objeto compuesto
-sólo para llamarlas.
+| Row         | Split among payers | Remainder                           | Own portion discarded | Result              |
+| ----------- | ------------------ | ----------------------------------- | --------------------- | ------------------- |
+| Caro owes 1 | tied 0.5 / 0.5     | goes to the first in list: **Caro** | yes, it was Caro's    | Caro owes nothing   |
+| Dani owes 1 | tied 0.5 / 0.5     | goes to the first in list: **Caro** | no, it was Caro's     | Dani owes 1 to Caro |
 
-### Los gastos que originan cada deuda se acumulan por moneda
+Result: Dani ends up owing 1 and Caro collecting 1, when `paid in − consumed` gives zero for
+both.
 
-El pseudocódigo acumula `origen[deudor][acreedor]` sin distinguir moneda. Como un mismo par
-puede deberse plata en ARS y en USD por gastos distintos, cada deuda terminaría mostrando en
-su detalle los gastos de la otra moneda.
+### The cause
 
-### `derivarMovimientos` recibe el generador de ids
+Rounding row by row guarantees each **row** closes exactly against the split, but leaves the
+**columns** adrift relative to what each one put in. And a person's net balance is exactly
+`their column − their row`.
 
-El pseudocódigo llama a un `uid()` global. Inyectarlo (con `crypto.randomUUID` por defecto)
-mantiene la función determinista y deja que los tests comparen el resultado completo, no
-sólo su forma.
+With a single payer the problem doesn't exist, because the one column takes everything. That's
+why the prototype never showed it: it only appears now that the spec added multi-payer
+expenses.
 
----
+### How it was resolved
 
-## Sobre los tests
+`splitMatrix`, in `features/debts/calculation/rounding.ts`, rounds the whole matrix preserving
+**both margins**:
 
-Las particiones de los fixtures se generan con un **algoritmo de cortes independiente** del
-de producción. Si se armaran con `repartirProporcional`, los tests estarían validando el
-código contra sí mismo y los dos bugs de arriba habrían pasado desapercibidos.
+1. Floor of each cell, and each row's remainder by largest fractional part. Rows end up exact.
+2. Column correction: while one column is above its total and another is below, a unit is
+   moved between them **within the same row**, which is the only thing that doesn't break what
+   step 1 already adjusted.
 
-Los invariantes cubiertos, todos con property testing:
+Step 2 can always proceed: a column that's above its total has a sum greater than zero, so at
+least one of its cells is worth at least one.
 
-- las contribuciones y el reparto suman **exactamente** el monto;
-- por moneda, la suma de todos los saldos del grupo es **cero**;
-- el saldo de cada persona coincide con `puso − consumió` **y** con la suma de sus deudas
-  por par;
-- el plan salda exacto, con a lo sumo `n − 1` movimientos por moneda.
-
-El segundo invariante de la lista es el que atrapó el bug de la sección 2.3: contrasta el
-camino largo —deuda por par, con su redondeo proporcional— contra el cálculo directo desde
-los gastos.
+With the columns exact, discarding the own portion leaves the invariant intact. The result is
+still the proportional attribution section 1.4 calls for, and the Debts screen doesn't change.
 
 ---
 
-## Decisiones menores
+## Ids read through the prototype chain
 
-**`deudasDeGasto` devuelve la matriz bruta, sin netear.** El neteo por par es tarea de
-`calcularDeudas`, tal como separa la especificación entre 2.3 y 2.4. Un gasto donde cada uno
-puso lo que consumió devuelve dos deudas enfrentadas que recién se cancelan al netear.
+Second bug found by property testing. With an id called `valueOf`, `toString`, or
+`__proto__`, the `out[id] ?? 0` pattern on a plain object returns the function inherited from
+`Object.prototype` instead of zero, and the accumulator ends up wrong.
 
-**Se cuentan los integrantes inactivos.** Nadie se va del grupo debiendo (sección 6.7): si
-sus deudas desaparecieran del cálculo, la regla que bloquea la salida no tendría con qué
-frenarlo.
+The accumulators became `Map`s, converted to an object only at the end via
+`Object.fromEntries` —which defines own properties, without going through the `__proto__`
+setter— and reads of user-provided records go through `amountOf`, which checks
+`Object.hasOwn` and that the value is numeric.
 
-**Los pagos declarados sin confirmar reducen la deuda igual.** Lo pide la sección 2.7: la
-confirmación del acreedor es un aviso, no una condición.
+Today the ids will be Supabase UUIDs, so in practice this doesn't trigger. Still, it's not a
+class of bug worth leaving alive in the module that splits money.
 
-**En modo porcentaje el reparto es proporcional a los porcentajes**, no calculado contra 100. Si por un dato viejo los porcentajes no sumaran exactamente 100, el reparto igual
-cierra contra el monto y el saldo del grupo no se rompe.
+---
+
+## Deliberate deviations from the pseudocode
+
+### `calculateDebts` receives the members as a parameter
+
+The pseudocode does `group.members.map(...)`, but the handoff's `Group` type doesn't have that
+field: `Member` is its own entity with its `groupId`, just as the tables will be. Passing them
+separately keeps the functions pure without forcing a composite object to be built just to
+call them.
+
+### The expenses that originate each debt are accumulated by currency
+
+The pseudocode accumulates `origin[debtor][creditor]` without distinguishing currency. Since
+the same pair can owe money in ARS and in USD from different expenses, each debt would end up
+showing expenses from the other currency in its detail.
+
+### `deriveTransfers` receives the id generator
+
+The pseudocode calls a global `uid()`. Injecting it (defaulting to `crypto.randomUUID`) keeps
+the function deterministic and lets the tests compare the full result, not just its shape.
+
+---
+
+## About the tests
+
+The fixtures' partitions are generated with a **cut algorithm independent** of the production
+one. If they were built with `splitProportionally`, the tests would be validating the code
+against itself and the two bugs above would have gone unnoticed.
+
+The invariants covered, all with property testing:
+
+- contributions and the split sum to **exactly** the amount;
+- per currency, the sum of all balances in the group is **zero**;
+- each person's balance matches `paid in − consumed` **and** the sum of their debts by pair;
+- the plan settles exactly, with at most `n − 1` transfers per currency.
+
+The second invariant in the list is the one that caught the section 2.3 bug: it contrasts the
+long path —debt by pair, with its proportional rounding— against the direct calculation from
+the expenses.
+
+---
+
+## Minor decisions
+
+**`debtsOfExpense` returns the raw matrix, without netting.** Netting by pair is
+`calculateDebts`'s job, just as the spec separates 2.3 from 2.4. An expense where each one put
+in what they consumed returns two debts facing each other that only cancel out when netting
+the pair.
+
+**Inactive members are counted.** No one leaves the group owing money (section 6.7): if their
+debts disappeared from the calculation, the rule that blocks leaving would have nothing to
+stop it with.
+
+**Declared, unconfirmed payments reduce the debt just the same.** Section 2.7 calls for it:
+the creditor's confirmation is a notice, not a condition.
+
+**In percentage mode the split is proportional to the percentages**, not calculated against 100. If old data left the percentages not summing exactly to 100, the split still closes
+against the amount and the group's balance doesn't break.
