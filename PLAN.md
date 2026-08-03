@@ -16,6 +16,7 @@ Sources of truth:
 | Tailwind                | v4, CSS-first. The handoff's `tailwind.config.ts` is translated to `@theme inline`     |
 | First deliverable scope | Core: calculation → expenses → debts → plan (phases 0–7)                               |
 | Auth                    | Email + password **and** Google OAuth                                                  |
+| Screenshots             | **Playwright, from the next PR on.** Phase 2's were driven by a throwaway CDP script   |
 
 ## Assumptions (flag if any don't work)
 
@@ -140,6 +141,12 @@ Decided before starting the phase:
   none is given the title still has to exist, just not visibly.
 
 ### Phase 3 — Supabase: schema, RLS, and auth
+
+- **Playwright as a devDependency, with the screenshot run scripted in the repo.** Phase 2's
+  captures came from a throwaway Node script driving headless Chrome over CDP, which works
+  but lives in a scratchpad and dies with the session. Every phase from here on has visible
+  output, so the run is worth committing: same viewports, same shots, same names, diffable
+  between phases.
 
 - Migrations for every entity. Debts, balances, and the exchange rate are **not**
   persisted.
