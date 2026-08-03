@@ -13,6 +13,11 @@
 # testing
 /coverage
 
+# screenshots: the default destination of `npm run shots`. The copies that
+# outlive a session go outside the repo — see AGENTS.md.
+/.screenshots/
+/test-results/
+
 # next.js
 /.next/
 /out/
