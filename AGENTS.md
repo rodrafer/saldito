@@ -67,10 +67,16 @@ In this order:
    recording changed.
 8. **Save the screenshots** where they belong and flag it so they get pasted into the PR.
 9. **Final CI check** green.
-10. **Squash & Merge.**
+10. **Ask for explicit approval to merge**, and wait for it. Never merge on your own
+    initiative, however green everything looks.
+11. **Squash & Merge**, once that approval is given.
 
 Steps 7 and 8 produce new commits, so CI runs again on its own. If the review found
 nothing, that's said explicitly instead of skipping the step.
+
+Step 10 is not a formality: merging is the one step in this list that can't be undone
+quietly, and it's the last chance to catch something the automated checks can't see. A green
+pipeline says the code runs, not that it's the right code.
 
 ## Implementation notes
 
