@@ -14,7 +14,10 @@ anticipated. That's lost as soon as the session ends if it doesn't get written d
 
 ## Convention
 
-- One file per phase: `phase-<n>-<slug>.md`.
+- One file per phase: `phase-<n>-<slug>.md`. Work from the "Cross-cutting work" table in
+  `PLAN.md` belongs to no phase and is named for what it is instead —
+  `tooling-<slug>.md` — rather than being filed under whichever phase it happened to
+  follow.
 - Written before opening the PR, and the PR links it.
 - Doesn't repeat what the code or the spec already says. If something is clear from reading
   the diff, it doesn't go here.

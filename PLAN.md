@@ -10,14 +10,14 @@ Sources of truth:
 
 ## Decisions made
 
-| Topic                   | Decision                                                                               |
-| ----------------------- | -------------------------------------------------------------------------------------- |
-| Data layer              | Hybrid: reads in RSC, mutations via Server Actions, realtime only on Plan and balances |
-| Tailwind                | v4, CSS-first. The handoff's `tailwind.config.ts` is translated to `@theme inline`     |
-| First deliverable scope | Core: calculation → expenses → debts → plan (phases 0–7)                               |
-| Auth                    | Email + password **and** Google OAuth                                                  |
-| Screenshots             | **Playwright, from the next PR on.** Phase 2's were driven by a throwaway CDP script   |
-| URL paths               | **Stay in Spanish** (`/gastos`, `/deudas`, `/grupo`) — they are text the user reads    |
+| Topic                   | Decision                                                                                |
+| ----------------------- | --------------------------------------------------------------------------------------- |
+| Data layer              | Hybrid: reads in RSC, mutations via Server Actions, realtime only on Plan and balances  |
+| Tailwind                | v4, CSS-first. The handoff's `tailwind.config.ts` is translated to `@theme inline`      |
+| First deliverable scope | Core: calculation → expenses → debts → plan (phases 0–7)                                |
+| Auth                    | Email + password **and** Google OAuth                                                   |
+| Screenshots             | **Playwright**, scripted in `tools/screenshots/`. Phase 2's were a throwaway CDP script |
+| URL paths               | **Stay in Spanish** (`/gastos`, `/deudas`, `/grupo`) — they are text the user reads     |
 
 ## Assumptions (flag if any don't work)
 
@@ -243,7 +243,7 @@ reads. Anything with no trigger doesn't belong here; it belongs in nobody's plan
 
 | What                                                                                                                                                                                                                                                                                                                                                                                                                                  | Trigger                                                     |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| **Playwright as a devDependency, with the screenshot run scripted in the repo.** Phase 2's captures came from a throwaway CDP script that lives in a scratchpad and dies with the session. Same viewports, same shots, same names, diffable between phases.                                                                                                                                                                           | Before phase 3's screenshots                                |
+| ~~**Playwright as a devDependency, with the screenshot run scripted in the repo.** Phase 2's captures came from a throwaway CDP script that lives in a scratchpad and dies with the session. Same viewports, same shots, same names, diffable between phases.~~ **Done** before phase 3: `npm run shots -- <dir>` in `tools/screenshots/`, phase 2's eleven shots as the starting set. How to run it is in `AGENTS.md`.               | ~~Before phase 3's screenshots~~ — landed                   |
 | **E2E tests on the same Playwright, wired into CI.** Different commitment from the screenshots and worth keeping separate: it adds CI time, a class of flakiness the suite doesn't have today, and a budget every later phase has to carry. It also changes the shipping workflow, which grows an e2e step — that edit to `AGENTS.md` lands with the tests, not before, so the convention never describes a suite that doesn't exist. | Phase 3, with auth: the first flow worth driving end to end |
 | ~~**Translate the CSS vocabulary to English** — tokens, class names, and the Tailwind theme keys. See the reversal note under phase 2.~~ **Done**, along with every TS and CSS comment, before phase 3. Mapping back to the handoff is in `docs/glossary.md`.                                                                                                                                                                         | ~~Before phase 3~~ — landed                                 |
 

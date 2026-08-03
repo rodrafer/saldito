@@ -234,6 +234,30 @@ per currency, separately. Amounts are integers: there are no cents.
 
 Visual verification starts in Phase 2, comparing against `Prototipo.dc.html`.
 
+## Generating the screenshots
+
+```bash
+npm run shots -- <output-dir>
+```
+
+Playwright starts `next dev` on its own, walks the shots and writes
+`<output-dir>/NN-<name>.png`, overwriting what is there. The browser binary isn't a
+dependency — `npx playwright install chromium`, once per machine.
+
+The shots live in `tools/screenshots/`: `desktop.shots.ts` at 1280×800 and
+`mobile.shots.ts` at 390×760, both written at 2×. Adding one means adding it there, so the
+next phase re-runs the same set and the two are comparable. **Where the copies end up, and
+how each one is presented in the PR, is step 8 of the workflow above.**
+
+Two flags earn their keep while iterating on a single shot: `--project=mobile` and
+`-g '07'`. Both are forwarded to Playwright untouched.
+
+It has to run against `next dev`, not a build: `/dev/kitchen-sink` is a page only in
+development, and five of the eleven shots are on it.
+
+**This is not the e2e suite and it is not in CI.** Nothing here asserts anything — the
+captures are for a reviewer to look at, and a failing capture run should not block a merge.
+
 ## Before calling something done
 
 ```bash
