@@ -7,6 +7,12 @@ Scope decisions taken before the work are in [PLAN.md](../../PLAN.md). Divergenc
 handoff are in [HANDOFF_NOTES.md](../../HANDOFF_NOTES.md). What follows is what the
 implementation itself turned up.
 
+> Token and class names below are the ones this phase shipped, in Spanish. They were renamed
+> to English before phase 3 — see
+> [phase-2b-css-vocabulary-english.md](phase-2b-css-vocabulary-english.md) and the table in
+> [docs/glossary.md](../glossary.md). The names are left as written so this stays a record of
+> what happened rather than a retelling of it.
+
 ## Findings
 
 ### `asChild` fails silently when the child doesn't forward props
