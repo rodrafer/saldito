@@ -95,6 +95,20 @@ anticipated. That's lost as soon as the session ends if it doesn't get written d
 They don't repeat what the code already says. If something is clear from reading the diff,
 it doesn't go here.
 
+**Notes are not where scope changes get recorded.** A decision taken _before_ the work —
+adding a dependency, dropping something from the phase, changing the approach — belongs in
+the planning document, because that's what the next session reads to know what to build. A
+plan that only gets corrected in hindsight is stale from the moment the work starts.
+
+The line is when the decision happened, not how important it was:
+
+- **Decided in advance** → planning document, stated as scope. The notes then carry the
+  reasoning and whatever the implementation actually revealed about it.
+- **Discovered while implementing** → notes. That's a finding.
+
+When a decision changes the scope of a phase, say so and update the plan before writing
+code, rather than letting the notes absorb it later.
+
 ## Model and effort
 
 **At the start of every session**, before anything else, check the active model against

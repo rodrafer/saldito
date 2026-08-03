@@ -98,6 +98,16 @@ it to Tailwind v4 via `@theme inline`.
 ### Phase 2 — Design system
 
 - `tokens.css` + `components.css` + `theme.css`; Archivo font via `next/font`.
+- **Radix as the behavioral layer, styling stays ours.** The design is hi-fi and final, so a
+  styled library (MUI, Ant Design) would be fought rather than used. What a headless library
+  does buy is the part no screenshot can verify: focus trap, focus restoration, scroll lock,
+  stacked dismissable layers, keyboard navigation.
+  - `react-dialog` → `Modal` and `Sheet`
+  - `react-popover` → filter menus, which carry a search field
+  - `react-dropdown-menu` → pure action menus, no text input
+  - `react-toggle-group` / `react-toggle` → `SegmentedControl` and chips
+  - `Button`, `Card`, `Badge`, `Avatar`, `ListRow`, `DonutChart` and `AmbientBackground` stay
+    hand-rolled: a library adds nothing there.
 - Port the 16 primitives, adapting them to the repo's conventions.
 - `AmbientBackground` in the root layout (single use) with its mobile and desktop blooms.
 - Shell: collapsible side rail (64px → 212px on hover, fixed 76px gap, active without
