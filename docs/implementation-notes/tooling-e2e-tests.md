@@ -184,17 +184,26 @@ This one does not: `verify` takes 39s and the e2e job 1m15s, so the e2e job _is_
 path now and the pipeline went from ~40s to ~1m15s. Parallelism buys back `verify`'s 39s, not
 the e2e run's own.
 
-The measured breakdown, from the first CI run:
+The measured breakdown — both runs, because the first estimate of the second was wrong too:
 
-| Step                  | Time                                    |
-| --------------------- | --------------------------------------- |
-| setup-node + `npm ci` | 20s                                     |
-| Chromium install      | 19s — cold cache; ~0s once it is warmed |
-| **The tests**         | **30s** (26s locally)                   |
+| Step                  | Cold cache | Warm cache |
+| --------------------- | ---------- | ---------- |
+| setup-node + `npm ci` | 20s        | 14s        |
+| Cache restore         | 3s         | 3s         |
+| Chromium install      | 19s        | **11s**    |
+| **The tests**         | **30s**    | **29s**    |
+| **Whole job**         | **1m15s**  | **1m2s**   |
 
-So the steady-state cost is about **56s of pipeline**, half of it the suite itself. Worth
-knowing before adding to it: the run is currently `workers: 1`, which is headroom if the
-suite grows enough to matter.
+The warm Chromium step is 11s, not the ~0s predicted, because
+`playwright install --with-deps` runs its `apt` step whether or not the binary is cached: the
+cache saves the ~130MB download, not the dependency check. Dropping `--with-deps` would buy
+that back — ubuntu-latest ships most of those libraries anyway — at the cost of the run
+failing on a missing shared object the day the image changes. Kept deliberately: 11s is
+cheaper than a CI failure nobody can reproduce locally.
+
+So the steady state is **~1m2s of pipeline against `verify`'s 42s**, and under half of it is
+the suite. Worth knowing before adding to it — the run is `workers: 1`, which is the headroom
+if it ever grows enough to matter.
 
 ## The workflow change
 

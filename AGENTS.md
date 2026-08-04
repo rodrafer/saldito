@@ -354,10 +354,10 @@ Against `next dev`, because sheet, modal and filter menu have no caller outside
 phases 4 and 5 ship real filter rows and real modals, move the suite onto
 `next build && next start`** and test what actually ships.
 
-The whole run is ~26s locally including the dev server's own start-up, and 30s in CI. It runs
-as a job parallel to `verify` so it does not queue behind it, but it is the slower of the two
-and therefore the pipeline's critical path: ~56s of wall clock with a warm browser cache,
-against `verify`'s 39s. **No retries**, here or
+The whole run is ~26s locally including the dev server's own start-up, and ~29s in CI. It
+runs as a job parallel to `verify` so it does not queue behind it, but it is the slower of
+the two and therefore the pipeline's critical path: **~1m2s of wall clock against `verify`'s
+42s**, of which under half is the suite. **No retries**, here or
 in the capture config: a test that passes on the second try is one nobody can read a result
 from. Traces are kept on failure instead, and CI uploads the report.
 

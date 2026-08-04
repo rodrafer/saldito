@@ -44,9 +44,9 @@ jobs:
   # indistinguishable from the checks list.
   #
   # It does not come free: this job is the slower of the two, so it becomes the
-  # pipeline's critical path. ~40s -> ~1m15s on the first run, and ~56s once the
-  # browser cache is warm. Parallelism buys back `verify`'s 39s, not the e2e
-  # run's own.
+  # pipeline's critical path. ~42s -> 1m2s warm, 1m15s on a cold browser cache,
+  # of which 29s is the suite. Parallelism buys back `verify`'s time, not this
+  # job's own.
   e2e:
     runs-on: ubuntu-latest
     steps:
