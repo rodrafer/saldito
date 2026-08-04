@@ -234,6 +234,48 @@ per currency, separately. Amounts are integers: there are no cents.
 
 Visual verification starts in Phase 2, comparing against `Prototipo.dc.html`.
 
+## Generating the screenshots
+
+```bash
+npm run shots -- <output-dir> [playwright flags]
+```
+
+Playwright starts `next dev` on its own, runs whatever shot files are present and writes
+`<output-dir>/<name>.png`. The browser binary isn't a dependency — `npx playwright install
+chromium`, once per machine.
+
+**What to capture is decided per PR.** There is no standard set to reproduce and no fixed
+list of dimensions to walk. Take the shots that show the thing this PR builds actually
+working — plus whatever you needed rendered to believe it while building, which is usually
+the same set arrived at from the other direction. A tightened margin is one shot. A new
+screen with an overlay, an empty state and a mobile envelope is four or five.
+
+**The shot files are not tracked.** `tools/screenshots/*.shots.ts` is gitignored: the session
+that needs captures writes them, runs them, and lets them go. Nothing in CI runs these, so a
+tracked shot file would rot silently — it scrolls to a heading by name, or opens an overlay
+through a button that later moves — and the person who finds out is whoever tried to reuse it
+months later. What a capture proves belongs to the PR that took it, and the images are
+already in that PR's description.
+
+What _is_ tracked is the harness, because it isn't per-PR and doesn't rot:
+`playwright.config.ts` and `tools/screenshots/shot.ts`. `shot.ts` opens with the four
+techniques that aren't obvious — arriving at focus by keyboard so `:focus-visible` applies,
+framing before clicking, waiting on an overlay by role and name, and clipping to a band —
+and carries `settle`, `tabTo` and `clipOf`. Read it before writing a shot file; the shape is
+`test.use(DESKTOP)` or `test.use(MOBILE)`, `goto`, `settle`, `shot`.
+
+**Where the copies end up, and how each one is presented in the PR, is step 8 of the workflow
+above.**
+
+It has to run against `next dev`, not a build: `/dev/kitchen-sink` is a page only in
+development.
+
+**This is not the e2e suite and it is not in CI.** Nothing here asserts anything — the
+captures are for a reviewer to look at, and a failing capture run should not block a merge.
+Comparing one run against another is visual regression testing, which is a different tool
+with a different cost (baselines in the repo, an approval flow, its own flakiness). If it
+ever lands it lands with the e2e item, not here.
+
 ## Before calling something done
 
 ```bash

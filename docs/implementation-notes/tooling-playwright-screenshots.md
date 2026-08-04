@@ -1,0 +1,153 @@
+# Tooling — Playwright and the scripted screenshot run
+
+Cross-cutting item from `PLAN.md`, due before phase 3's captures. Phase 2's shots came from
+a throwaway Node script driving Chrome over CDP; it lived in a session scratchpad and no
+longer exists, so this is a rewrite against the same eleven states, not a move.
+
+**This is not the e2e suite.** Nothing asserts anything and nothing runs in CI. E2E stays a
+separate item in the plan, landing with phase 3's auth.
+
+## What is fixed and what isn't
+
+The first cut of this treated phase 2's eleven as _the_ set — one desktop file, one mobile
+file, both permanent, every phase re-running all of them and adding more. That reading
+survived into the file names and into `AGENTS.md` before it was caught, and it is wrong in a
+way worth writing down, because it is the natural mistake: the eleven were the only concrete
+thing available to build against, so they got mistaken for the requirement.
+
+What the driver owns is the **how** — the two viewports, the scale factor, the naming, the
+things every capture must do before it fires. **Which** shots a PR takes is that PR's
+judgement: enough to show the thing being built works, and to have believed it while
+building. A margin fix is one shot. Nothing is owed to a shot from a previous PR; the reason
+to re-run an old set is that this PR could plausibly have changed what it shows.
+
+So sets are files, with the suffix as the entire registration mechanism and a filename
+filter to run one set. Phase 2's captures stay as `shell` and `kitchen-sink` — what
+re-checks the ground every later screen stands on, and the worked example of the four
+techniques that aren't obvious.
+
+**The first attempt at that fix organised the files by viewport** (`<slug>.desktop.ts` /
+`<slug>.mobile.ts`), which only moved the problem: the viewport was already a Playwright
+project, so repeating it in the name split every subject in two and made each file _the
+list_ for that width — the thing a PR would have to edit rather than add to. Three things
+went with it, and they are the concrete shape of the rigid reading:
+
+- **Files by viewport.** Now by subject, with `test.use(DESKTOP)` / `test.use(MOBILE)`
+  inside. The `projects` block is gone: a viewport is a property of a shot.
+- **Global numbering, `01-` through `11-`.** The number said "position in the one list", so
+  phase 4 would either renumber everything or append at 12 forever. It restarts per file and
+  means "order in this set's story".
+- **Documentation that asserted the rigid model** — `PLAN.md`'s "same shots, same names,
+  diffable between phases", `AGENTS.md`'s "five of the eleven shots". That "diffable between
+  phases" was visual regression testing without the name: a different tool, with baselines
+  and an approval flow, and if it ever arrives it goes with the e2e item. Conflating the two
+  is what produced the rigid framing in the first place.
+
+Restarting the numbering made a new silent failure possible — two sets writing one directory
+now collide on the slug alone, and the loser simply isn't there. A shot refuses to overwrite
+a file this same run already wrote.
+
+## Why a name that isn't `phase-<n>-`
+
+The notes convention is one file per phase. This belongs to no phase — that is the whole
+point of the "Cross-cutting work" table — and filing it as `phase-2c-` would put screenshot
+tooling under the design system, where nobody looking for it would think to check.
+`docs/implementation-notes/README.md` now names the cross-cutting case explicitly.
+
+## Shape
+
+`@playwright/test` as the runner rather than the bare `playwright` library. Three things it
+brings that would otherwise be hand-written: `webServer` starts `next dev` and tears it
+down, `testMatch` turns a filename suffix into the whole registration story for a new set,
+and a filename filter plus `-g` make it cheap to run one shot while iterating. `test.use`
+carries the viewport, which is why there are no `projects`.
+
+The destination directory can't be a Playwright argument — its CLI reads bare arguments as
+test-file filters — so `tools/screenshots/run.mjs` takes it, exports it as `SHOTS_OUT`, and
+forwards everything after it untouched. It also expands a leading `~`, which the shell won't
+do inside the quotes the convention's `#` in the folder name forces.
+
+## What is tracked, and what deliberately isn't
+
+The harness is tracked. The shot files are not — `tools/screenshots/*.shots.ts` is
+gitignored, and the session that needs captures writes them, runs them and lets them go.
+
+This landed the other way round first: phase 2's eleven shots were committed, reorganised by
+subject, and defended in `AGENTS.md` on two grounds — that they re-check what later screens
+sit on, and that they are a worked example of the techniques that aren't obvious.
+
+Neither survived the question _what runs them?_ Nothing does, by design: this isn't in CI.
+So a tracked set rots in silence — `kitchen-sink.shots.ts` scrolled to headings by their
+text, `shell.shots.ts` opened the actions sheet through a FAB whose rows phases 4 and 5 will
+rewire — and the person who finds out is whoever tries to reuse it months later and ends up
+debugging a screenshot script instead of working. And the re-check argument dissolves on
+inspection: a PR that changes the shell captures the shell as its own evidence, which is the
+same image, taken deliberately rather than inherited.
+
+The second argument was real but pointed at the wrong container. The knowledge _was_ worth
+keeping; executable-but-never-executed example code is just the worst place to keep it,
+because it looks authoritative and decays without a signal. It moved into `shot.ts`: the two
+techniques that name no screen became `tabTo` and `clipOf`, and the two that are judgement
+became the doc block the file opens with.
+
+What's left tracked is the part that isn't per-PR and can't rot, because none of it mentions
+a screen: the viewports, the 2× scale, font readiness, animation freezing, pointer parking,
+the duplicate-name guard, and the four techniques. Every one of those was learned by getting
+it wrong, and every one fails by producing a plausible image rather than an error — which is
+the worst failure mode there is for something whose whole job is to be evidence.
+
+Shot names are English now (`02-rail-expanded`, not `02-desktop-rail-expandido`), which is
+visible in phase 2's PR body; that PR predates the vocabulary migration and its numbering was
+global across all eleven.
+
+## Findings
+
+**A `devices[…]` preset silently resets `deviceScaleFactor`.** `use` blocks merge key by
+key, and every preset sets the scale factor itself — so spreading one after the value
+overwrites it back to 1 with no warning. The run looked correct and produced 1280×800 PNGs
+where phase 2's were 2560×1600. Nothing in the output says which of the two you got; the
+only tell is the file dimensions. It now goes after the spread, and with the viewports moved
+into `test.use` there is one `use` block left for it to be wrong in.
+
+**The pointer stays where the last click left it, and hover states go into the shot.** The
+mobile actions sheet opened under the FAB, which left the cursor resting on its third row:
+the capture came out with one row in the gold hover state, a combination no user is ever in.
+`shot()` parks the pointer at the top-right corner before capturing. Top-_left_ would have
+been worse than doing nothing — that is the rail's hover zone, and it would have expanded
+the rail in every desktop shot.
+
+**Programmatic focus can't produce the shot that proves keyboard focus.** `02-rail-expanded`
+exists to show the gold ring on the rail. The ring is `:focus-visible`, which Chromium grants on
+keyboard-driven focus and withholds from `element.focus()` — so the obvious way to write it
+yields an expanded rail with no ring, and the shot quietly stops proving its own caption.
+It presses Tab until the rail item is `document.activeElement`.
+
+**Clicking is not framing.** Playwright scrolls only far enough to click, which for the
+filter menu meant a viewport cut through the middle of the card above and the popover
+wherever it happened to land. Any shot whose subject is reached by clicking needs its own
+`scrollIntoView` first; the click then finds the element already on screen and moves nothing.
+
+## What the self-review changed
+
+Every finding above is the same failure mode: **the run stays green and the picture stops
+being true.** There are no assertions here, so nothing else notices. The review went looking
+for the rest of that class and found three:
+
+- The Tab loop in `02-rail-expanded` gave up after five presses and captured whatever it
+  had, which is a collapsed rail with no ring — a picture of the bug the shot exists to
+  prove is fixed. It now throws.
+- A page that threw mid-capture produced a normal-looking PNG. Errors are collected per shot
+  and fail it.
+- The clip in `05-mobile-bottom-bar-fab` repeated `390` and `760` as literals while the
+  viewport is declared elsewhere, so changing one would have silently cropped the other. It
+  measures.
+
+## Left for later
+
+- Old sets accumulate, and nothing prunes them. `shell` and `kitchen-sink` earn their place
+  today because every later screen stands on what they capture; a set for a screen that gets
+  rewritten does not, and deleting it is part of the PR that rewrites the screen.
+- Nothing compares two runs, deliberately. Playwright ships `toHaveScreenshot` with a diff
+  report, which would turn this into visual regression testing: baselines committed to the
+  repo, an approval flow, and a class of flakiness this has none of. It is filed under the
+  e2e item in `PLAN.md`, not here.

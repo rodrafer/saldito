@@ -13,6 +13,16 @@
 # testing
 /coverage
 
+# screenshots: the default destination of `npm run shots`. The copies that
+# outlive a session go outside the repo — see AGENTS.md.
+/.screenshots/
+/test-results/
+
+# shot files are written by the session that needs them and die with it. What a
+# capture proves belongs in the PR that took it, not in the repo: nothing runs
+# these, so a tracked one rots silently and is found by whoever tries to use it.
+tools/screenshots/*.shots.ts
+
 # next.js
 /.next/
 /out/
