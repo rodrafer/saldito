@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
     "shots": "node tools/screenshots/run.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check ."

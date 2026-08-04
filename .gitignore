@@ -12,6 +12,10 @@
 
 # testing
 /coverage
+# playwright's own output: traces from a failed e2e run, and the HTML report CI
+# builds from them. Both are per-run forensics, not artifacts.
+/playwright-report/
+/blob-report/
 
 # screenshots: the default destination of `npm run shots`. The copies that
 # outlive a session go outside the repo — see AGENTS.md.
