@@ -38,11 +38,15 @@ jobs:
         run: npm run build
 
   # A job of its own rather than a step in `verify`, for two reasons. It needs
-  # `next dev`, not the build, so it has nothing to wait for and runs in
-  # parallel — the e2e run costs no wall clock on a green pipeline. And a red
-  # tick here means "a behaviour broke", which is a different message from a red
-  # `verify`; folded in as a step, the two would be indistinguishable from the
-  # checks list.
+  # `next dev`, not the build, so it has nothing to wait for and does not queue
+  # behind it. And a red tick here means "a behaviour broke", which is a
+  # different message from a red `verify`; folded in as a step, the two would be
+  # indistinguishable from the checks list.
+  #
+  # It does not come free: this job is the slower of the two, so it becomes the
+  # pipeline's critical path. ~40s -> ~1m15s on the first run, and ~56s once the
+  # browser cache is warm. Parallelism buys back `verify`'s 39s, not the e2e
+  # run's own.
   e2e:
     runs-on: ubuntu-latest
     steps:

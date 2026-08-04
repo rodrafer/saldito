@@ -174,9 +174,27 @@ with no flakes, which is the number to compare against if that ever changes.
 
 ### CI gets a job, not a step
 
-The e2e run needs `next dev`, not the build, so it has nothing to wait for and runs parallel
-to `verify` — no wall clock on a green pipeline. It also keeps the two red states legible:
-"a behaviour broke" and "lint failed" should not be the same tick.
+The e2e run needs `next dev`, not the build, so it has nothing to wait for and does not queue
+behind `verify`. It also keeps the two red states legible: "a behaviour broke" and "lint
+failed" should not be the same tick.
+
+**It is not free, and the first draft of this note claimed it was.** "Runs in parallel, so it
+costs no wall clock" is only true of a job that finishes inside the one it runs alongside.
+This one does not: `verify` takes 39s and the e2e job 1m15s, so the e2e job _is_ the critical
+path now and the pipeline went from ~40s to ~1m15s. Parallelism buys back `verify`'s 39s, not
+the e2e run's own.
+
+The measured breakdown, from the first CI run:
+
+| Step                  | Time                                    |
+| --------------------- | --------------------------------------- |
+| setup-node + `npm ci` | 20s                                     |
+| Chromium install      | 19s — cold cache; ~0s once it is warmed |
+| **The tests**         | **30s** (26s locally)                   |
+
+So the steady-state cost is about **56s of pipeline**, half of it the suite itself. Worth
+knowing before adding to it: the run is currently `workers: 1`, which is headroom if the
+suite grows enough to matter.
 
 ## The workflow change
 
