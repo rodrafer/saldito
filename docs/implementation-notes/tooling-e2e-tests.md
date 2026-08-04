@@ -184,26 +184,31 @@ This one does not: `verify` takes 39s and the e2e job 1m15s, so the e2e job _is_
 path now and the pipeline went from ~40s to ~1m15s. Parallelism buys back `verify`'s 39s, not
 the e2e run's own.
 
-The measured breakdown — both runs, because the first estimate of the second was wrong too:
+Measured across the three CI runs this branch produced, rather than quoted from one:
 
-| Step                  | Cold cache | Warm cache |
-| --------------------- | ---------- | ---------- |
-| setup-node + `npm ci` | 20s        | 14s        |
-| Cache restore         | 3s         | 3s         |
-| Chromium install      | 19s        | **11s**    |
-| **The tests**         | **30s**    | **29s**    |
-| **Whole job**         | **1m15s**  | **1m2s**   |
+| Step                  | Run 1 (cold cache) | Run 2 | Run 3 |
+| --------------------- | ------------------ | ----- | ----- |
+| setup-node + `npm ci` | 20s                | 14s   | 18s   |
+| Cache restore         | 3s                 | 3s    | 3s    |
+| Chromium install      | 19s                | 11s   | 20s   |
+| **The tests**         | **30s**            | 29s   | 31s   |
+| **Whole job**         | 1m15s              | 1m2s  | 1m16s |
 
-The warm Chromium step is 11s, not the ~0s predicted, because
-`playwright install --with-deps` runs its `apt` step whether or not the binary is cached: the
-cache saves the ~130MB download, not the dependency check. Dropping `--with-deps` would buy
-that back — ubuntu-latest ships most of those libraries anyway — at the cost of the run
-failing on a missing shared object the day the image changes. Kept deliberately: 11s is
-cheaper than a CI failure nobody can reproduce locally.
+**The suite is the only stable number in that table.** Everything around it swings by up to
+9s between identical runs, and the cold/warm cache distinction explains none of it — run 3
+had a warm cache and the slowest Chromium step of the three. So the honest figures are: the
+tests cost **~30s**, the job costs **~1m–1m15s**, and the pipeline's critical path moves from
+`verify`'s ~45s to roughly that. Anything more precise is reporting runner noise.
 
-So the steady state is **~1m2s of pipeline against `verify`'s 42s**, and under half of it is
-the suite. Worth knowing before adding to it — the run is `workers: 1`, which is the headroom
-if it ever grows enough to matter.
+Worth recording because two earlier drafts of this note got it wrong in the same way — first
+claiming the parallel job was free, then predicting a warm-cache steady state instead of
+waiting for one. A number measured once is an anecdote.
+
+The `--with-deps` flag on the Chromium install is part of that 11–20s: it runs its `apt` step
+whether or not the binary is cached, so the cache saves the ~130MB download and not the
+dependency check. Dropping it would buy some of that back — ubuntu-latest ships most of those
+libraries — at the cost of the run failing on a missing shared object the day the image
+changes. Kept deliberately: that is a failure nobody can reproduce locally.
 
 ## The workflow change
 
