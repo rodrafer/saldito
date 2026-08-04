@@ -14,9 +14,28 @@
  * the modal and the filter menu real callers, these should move onto them.
  */
 import type { Locator, Page } from '@playwright/test';
-import { test, expect, DESKTOP, appContainer, expectFocusTrappedIn, parkPointer } from './support';
+import {
+  test,
+  expect,
+  DESKTOP,
+  appContainer,
+  expectFocusLoopsIn,
+  expectFocusRecapturedFrom,
+  parkPointer,
+} from './support';
 
 test.use(DESKTOP);
+
+/**
+ * A control on the page behind the overlay, to move focus onto from outside.
+ *
+ * A CSS locator and not `getByRole`, which cannot reach it: while a dialog is
+ * open Radix marks the rest of the app `aria-hidden`, and Playwright's role
+ * engine skips `aria-hidden` subtrees exactly as an assistive technology would.
+ * `getByRole('button')` matches nothing back there — which is the inertness
+ * working, and useless when the whole point is to poke at what is behind.
+ */
+const behind = (page: Page) => page.locator('main.sd-content button').first();
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/dev/kitchen-sink');
@@ -89,12 +108,16 @@ test.describe('sheet', () => {
     await expect(trigger).toBeFocused();
   });
 
-  test('focus stays inside while it is open', async ({ page }) => {
+  test('focus is trapped inside while it is open', async ({ page }) => {
     const sheet = await open(page);
 
     /* More presses than the sheet has focusables, so the walk goes past the end
        and proves the cycle wraps instead of escaping to the page behind. */
-    await expectFocusTrappedIn(page, sheet);
+    await expectFocusLoopsIn(page, sheet);
+
+    /* And the other half, which tabbing cannot reach: focus dragged out by
+       anything that is not a Tab has to come back. */
+    await expectFocusRecapturedFrom(sheet, behind(page));
   });
 
   test('the rest of the app is inert while it is open, and recovers on close', async ({ page }) => {
@@ -121,7 +144,7 @@ test.describe('sheet', () => {
        container. Portalled to `document.body` the sheet would still look
        plausible — it would just slide up from the bottom of the document
        instead of the bottom of the app. */
-    await expect(sheet).toHaveJSProperty('parentElement.className', 'sd-app');
+    expect(await sheet.evaluate((el) => el.parentElement?.classList.contains('sd-app'))).toBe(true);
     expect(await appContainer(page).locator('.sd-sheet').count()).toBe(1);
   });
 
@@ -155,16 +178,17 @@ test.describe('modal', () => {
     await expect(trigger).toBeFocused();
   });
 
-  test('focus stays inside while it is open', async ({ page }) => {
+  test('focus is trapped inside while it is open', async ({ page }) => {
     const modal = await open(page);
 
-    await expectFocusTrappedIn(page, modal);
+    await expectFocusLoopsIn(page, modal);
+    await expectFocusRecapturedFrom(modal, behind(page));
   });
 
   test('it portals into .sd-app, not document.body', async ({ page }) => {
     const modal = await open(page);
 
-    await expect(modal).toHaveJSProperty('parentElement.className', 'sd-app');
+    expect(await modal.evaluate((el) => el.parentElement?.classList.contains('sd-app'))).toBe(true);
   });
 
   test('the exit animation runs before it unmounts', async ({ page }) => {

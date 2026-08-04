@@ -325,7 +325,7 @@ anything needing a fixed wait to pass. A test that needs `waitForTimeout` is a t
 hasn't found what it is really waiting for; the web-first assertions retry on their own, and
 if none of them expresses the condition, that is the thing to fix.
 
-### The traps, all three paid for already
+### The traps, all paid for already
 
 - **A hidden tab never dispatches `animationend`**, so Radix's `Presence` stays suspended and
   an overlay looks stuck open with nothing wrong. Headless is fine — every headless page
@@ -338,6 +338,14 @@ if none of them expresses the condition, that is the thing to fix.
 - **Park the pointer.** Playwright leaves the mouse at (0, 0), which on desktop is on top of
   the rail — and the rail expands on `:hover` as readily as on `:focus-within`. A keyboard
   test can pass on a hover it never asked for.
+- **Tabbing does not prove a focus trap.** Radix's `FocusScope` takes `loop` and `trapped` as
+  separate props and runs its Tab handler when either is set, so a dialog that only loops is
+  indistinguishable from one that traps as long as you navigate by Tab. Assert both halves —
+  `expectFocusLoopsIn` and `expectFocusRecapturedFrom`.
+- **`getByRole` cannot see into an `aria-hidden` subtree**, because Playwright's role engine
+  skips them the way an assistive technology does. While an overlay is open that is the whole
+  rest of the app, so anything reaching _behind_ the overlay needs a CSS locator. The role
+  query matching nothing there is the inertness working, not a bug to chase.
 
 ### Where it runs, and what that costs
 

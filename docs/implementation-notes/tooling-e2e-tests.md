@@ -56,17 +56,53 @@ Eighteen passing tests prove nothing on their own — a locator that silently ma
 an assertion on an attribute that is absent either way, and the run is just as green. Each
 load-bearing behaviour was broken on purpose and the suite re-run:
 
-| Mutation                                            | Caught by                     |
-| --------------------------------------------------- | ----------------------------- |
-| `{...returnFocus}` dropped from `Sheet`             | 1 test — focus restoration    |
-| `useOverlayContainer` returns `null` (portal to body) | 3 tests — all three portal tests |
-| `activeHrefFor` frozen at `/`                       | 2 tests — both route walks    |
-| the rail's gap expands with it, pushing content     | 1 test — the reflow assertion |
-| a stray `console.error` in `AppShell`               | 2 tests — via the fixture     |
+| Mutation                                              | Caught by                         |
+| ----------------------------------------------------- | --------------------------------- |
+| `{...returnFocus}` dropped from `Sheet`               | 1 test — focus restoration        |
+| `useOverlayContainer` returns `null` (portal to body) | 3 tests — all three portal tests  |
+| `activeHrefFor` frozen at `/`                         | 2 tests — both route walks        |
+| the rail's gap expands with it, pushing content       | 1 test — the reflow assertion     |
+| a stray `console.error` in `AppShell`                 | 2 tests — via the fixture         |
+| `Sheet`'s dialog made non-modal                       | 2 tests — the trap, and inertness |
 
-All five failed as intended, and only the intended tests failed. This is cheap to do once
-and worth repeating whenever a test is added to the suite: the point of an e2e test here is
-to catch a silent failure, and a test that cannot fail is itself one.
+Only the intended tests failed each time. This is cheap and worth repeating whenever a test
+is added: the point of an e2e test here is to catch a silent failure, and a test that cannot
+fail is itself one.
+
+The last row is why. It was run during the self-review, and the **focus-trap test passed it**
+— the mutation removed the trap and the test did not notice. What follows is the reason.
+
+### `loop` and `trapped` are different props, and tabbing cannot tell them apart
+
+The focus test walked twelve tabs and asserted focus never left the dialog. That passed on a
+dialog with no trap at all, because Radix's `FocusScope` takes `loop` and `trapped`
+separately and its Tab handler runs when **either** is set:
+
+```js
+if (!loop && !trapped) return; // react-focus-scope/dist/index.mjs
+```
+
+A non-modal `Dialog.Content` passes `trapFocus: false` but keeps looping, so Tab still cycles
+at the edges and a Tab-only walk sees exactly what a real trap looks like. What only the trap
+does is install the `focusin` listener that recaptures focus moved by anything else — a stray
+`.focus()` from an effect, a late autofocus, a click on the content behind.
+
+So the check is now two halves, `expectFocusLoopsIn` and `expectFocusRecapturedFrom`, and the
+mutation fails both the trap test and the inertness test. The general lesson is the one the
+mutation run exists to surface: a test can assert a true statement and still be blind to the
+thing it was written for.
+
+### `getByRole` cannot see into an `aria-hidden` subtree
+
+Writing the recapture half turned up a second one immediately. The obvious way to reach a
+control behind the overlay is
+`page.locator('main.sd-content').getByRole('button').first()`, and it matches **nothing**:
+while a dialog is open the rest of the app is `aria-hidden="true"`, and Playwright's role
+engine skips those subtrees exactly as an assistive technology would.
+
+Which is the inertness working, and useless when the whole point is to poke at what is
+behind. A CSS locator gets there; a role locator never will. Worth knowing before spending
+an afternoon on a locator that is behaving correctly.
 
 ### Radix's inertness is three separate mechanisms, and they are worth pinning down
 
@@ -78,7 +114,7 @@ read it. While a dialog is open:
   container;
 - the content lands as a **direct child of `.sd-app`**, with no portal wrapper. The popover
   does have Radix's positioning wrapper, which is why the filter menu's portal test asserts
-  `closest('.sd-app')` while the dialogs assert `parentElement`.
+  `closest('.sd-app')` while the dialogs assert on `parentElement`.
 
 These are Radix implementation details and could move on a major upgrade. That is an
 argument for the tests, not against them: the upgrade that changes them is exactly when

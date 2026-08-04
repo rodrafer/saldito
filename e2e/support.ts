@@ -70,19 +70,43 @@ export async function tabTo(page: Page, target: Locator, maxPresses = 10) {
 }
 
 /**
- * Asserts that focus is somewhere inside `container` after `presses` tabs.
+ * Asserts that focus is still inside `container` after each of `presses` tabs.
  *
- * This is how a focus trap is proven: not by checking one element, but by
- * walking past the end of the container's own focusables and confirming the
- * cycle came back around instead of escaping into the page behind. The count
- * has to exceed what is inside, which is why callers pass a generous one.
+ * Walks past the end of the container's own focusables, so the cycle has to
+ * come back around instead of escaping into the page behind. The count has to
+ * exceed what is inside.
+ *
+ * **This proves the loop, not the trap** — see `expectFocusRecapturedFrom`.
  */
-export async function expectFocusTrappedIn(page: Page, container: Locator, presses = 12) {
+export async function expectFocusLoopsIn(page: Page, container: Locator, presses = 12) {
   for (let i = 0; i < presses; i++) {
     await page.keyboard.press('Tab');
     const inside = await container.evaluate((el) => el.contains(document.activeElement));
     expect(inside, `focus left the container after ${i + 1} tab(s)`).toBe(true);
   }
+}
+
+/**
+ * Asserts that focus moved onto `outside` is pulled back into `container`.
+ *
+ * Radix's `FocusScope` takes `loop` and `trapped` as separate props, and its
+ * Tab handler runs when **either** is set — so a scope that only loops is
+ * indistinguishable from one that traps as long as you navigate by Tab. Only
+ * the trap installs the `focusin` listener that recaptures focus moved any
+ * other way: a stray `.focus()` from an effect, a late-arriving autofocus, a
+ * click on the content behind.
+ *
+ * Without this, `expectFocusLoopsIn` passes on a non-modal dialog, and the
+ * distinction Radix is here to provide goes unchecked.
+ */
+export async function expectFocusRecapturedFrom(container: Locator, outside: Locator) {
+  await outside.focus();
+
+  await expect
+    .poll(() => container.evaluate((el) => el.contains(document.activeElement)), {
+      message: 'focus was moved outside and never came back',
+    })
+    .toBe(true);
 }
 
 /**
