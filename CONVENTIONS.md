@@ -72,11 +72,11 @@ In this order:
 
 1. **Local verification** — the fast checks CI runs: format, lint, types, unit tests, build.
    CI can't run yet: there's no push or PR.
-2. **Screenshots** of anything with visible impact, compared against the reference design
-   if there is one.
+2. **Visual verification** — drive what you built and check it does on screen what it is
+   supposed to, against the reference design if there is one. The screenshots are the
+   record of having looked, not the point of looking.
 3. **The e2e suite**, if the repo has one and the change is in reach of it — and whether
-   anything you just verified by hand belongs _in_ it. See
-   [What earns an e2e test](#what-earns-an-e2e-test).
+   anything you just verified by hand belongs _in_ it. See [E2E tests](#e2e-tests).
 4. **Fix** whatever comes up in 1, 2 and 3.
 5. **Write the implementation notes.**
 6. **Open the PR**, with a matching description, a link to those notes, and **assigned to
@@ -93,6 +93,18 @@ In this order:
 
 Steps 8 and 9 produce new commits, so CI runs again on its own. If the review found
 nothing, that's said explicitly instead of skipping the step.
+
+**Step 2 is a check, and it has two exits.** Taking pictures is not the job — establishing
+that the thing behaves as intended is, and the images are what lets someone else confirm it
+without rebuilding your branch. So it produces findings like any other check:
+
+- **It looks wrong** → step 4, with the screenshot as the evidence of what wrong looked like.
+- **It is right, but nothing would have told you if it weren't** → step 3. A behaviour you
+  had to check by eye, that fails without an error, is the definition of what earns an e2e
+  test — and you are already in the browser, which is the cheapest moment to notice.
+
+That second exit is why the two sit together, rather than the visual pass being an
+afterthought once the code is written.
 
 **The e2e run is its own step because it is a different kind of check, not because it is
 slow.** Steps 1 and 2 are cheap and apply to every change; step 3 needs a browser binary
@@ -138,7 +150,7 @@ only matches the first push is worse than a thin one, because it still gets read
 Appending a new section is the easy way to bury it mid-body; every rewrite puts it back at
 the bottom.
 
-Step 10 is not a formality: merging is the one step in this list that can't be undone
+Step 11 is not a formality: merging is the one step in this list that can't be undone
 quietly, and it's the last chance to catch something the automated checks can't see. A green
 pipeline says the code runs, not that it's the right code.
 
