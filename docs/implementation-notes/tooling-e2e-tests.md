@@ -65,9 +65,10 @@ load-bearing behaviour was broken on purpose and the suite re-run:
 | a stray `console.error` in `AppShell`                 | 2 tests — via the fixture         |
 | `Sheet`'s dialog made non-modal                       | 2 tests — the trap, and inertness |
 
-Only the intended tests failed each time. This is cheap and worth repeating whenever a test
-is added: the point of an e2e test here is to catch a silent failure, and a test that cannot
-fail is itself one.
+Only the intended tests failed each time. The point of an e2e test here is to catch a silent
+failure, and a test that cannot fail is itself one — which is why this stopped being a habit
+and became a rule in `AGENTS.md`: **a new e2e test is not done until it has been watched to
+fail.**
 
 The last row is why. It was run during the self-review, and the **focus-trap test passed it**
 — the mutation removed the trap and the test did not notice. What follows is the reason.
@@ -221,11 +222,46 @@ browser passes happen together and their findings land on the same fix step.
 Step 1's wording changed with it — it used to promise "the same checks CI runs", which stops
 being true the moment CI has a second job.
 
-> **This edit is inside the `convenciones-generales` block, which is replicated verbatim in
-> every repo under `~/workspace`.** It needs propagating. The e2e criteria themselves stay in
-> the project section on purpose: they are specific to this suite and this app, and copying
-> them into a repo with no e2e suite would describe something that doesn't exist — which is
-> the mistake the plan's original wording was written to avoid.
+### The criteria had no trigger, which made them unreachable
+
+Caught in review, after the suite was already green. The three conditions answer "does this
+behaviour qualify?" — but every mention of e2e in the workflow was about **running** the
+suite, and the conditions themselves sat inside a section an agent only opens if it is
+already thinking about e2e tests. Nothing ever posed the question.
+
+The concrete failure: phase 4 builds the real filter row with its search field, which is the
+behaviour `overlays.spec.ts` covers today against the kitchen sink. An agent runs
+`npm run test:e2e`, it passes — it is still testing the kitchen sink — step 3 is satisfied,
+and the real filter row ships uncovered with every box honestly ticked.
+
+Which is the failure mode `PLAN.md` names about itself: _anything with no trigger belongs in
+nobody's plan_. So the trigger is now explicit, and it is deliberately not a new ritual:
+
+> **If you checked it by hand in a browser and it would fail silently, it earns a test.**
+
+It fires where an agent already is — steps 2 and 3 put you in front of the running app — and
+it is self-liquidating, because the hand-verification list shrinks each time it is used. It
+is also the honest description of how this suite came to exist: phase 2's "verified by hand"
+list was its specification.
+
+The same paragraph now says that a repo with no suite should start one on the first
+qualifying behaviour, rather than at a phase boundary. That is this task's own mistake
+written down: the trigger said "phase 3, with auth", and the behaviours were sitting there
+unguarded the whole time.
+
+### The mutation check is a rule now, not an anecdote
+
+Watching a new test fail is a completion criterion, not a nicety, and the reason is three
+sections up: a test satisfied all three conditions, passed, and asserted the wrong half of
+Radix's focus handling. The rule asks for the mutation and what it caught to be named in the
+PR description, which is what makes it checkable by someone else instead of a claim.
+
+> **All of this is inside the `convenciones-generales` block, replicated verbatim in every
+> repo under `~/workspace`, and it needs propagating.** The conditions and the trigger moved
+> up there in full; what stayed project-side is only what those rules come to _here_ — the
+> `activeHrefFor` example, the pointer at `e2e/support.ts`, the traps, and the cost. Writing
+> the generic half so it reads correctly in a repo with no suite yet was the work: it has to
+> tell you when to acquire one, not describe one you don't have.
 
 ## Left for later
 

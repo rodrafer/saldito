@@ -77,7 +77,9 @@ In this order:
    CI can't run yet: there's no push or PR.
 2. **Screenshots** of anything with visible impact, compared against the reference design
    if there is one.
-3. **The e2e suite**, if the repo has one and the change touches anything it can reach.
+3. **The e2e suite**, if the repo has one and the change is in reach of it — and whether
+   anything you just verified by hand belongs _in_ it. See
+   [What earns an e2e test](#what-earns-an-e2e-test).
 4. **Fix** whatever comes up in 1, 2 and 3.
 5. **Write the implementation notes.**
 6. **Open the PR**, with a matching description, a link to those notes, and **assigned to
@@ -142,6 +144,63 @@ the bottom.
 Step 10 is not a formality: merging is the one step in this list that can't be undone
 quietly, and it's the last chance to catch something the automated checks can't see. A green
 pipeline says the code runs, not that it's the right code.
+
+## What earns an e2e test
+
+Not every repo needs an e2e suite and none should have one by default. This is when a
+behaviour deserves one — and, the part that gets forgotten, when to ask the question at all.
+
+### Verifying by hand is the trigger
+
+**If you checked it by hand in a browser and it would fail silently, it earns a test.**
+
+That is the whole trigger, and it fires where you already are: steps 2 and 3 put you in front
+of the running app, and whatever you find yourself clicking through is by definition what
+nothing else covers. A suite grown this way _replaces_ a hand-verification list instead of
+accumulating next to one.
+
+The inverse carries as much weight. A behaviour nobody thought to check by hand either fails
+loudly or doesn't matter yet, and neither earns a test.
+
+**If the repo has no suite, this is when to start one.** The first behaviour that meets the
+conditions below is the reason to add the harness — not a phase boundary, not a milestone,
+not a "flow worth driving end to end". Waiting for one of those is how a list of silent
+failures ends up carried by hand for months.
+
+### The conditions
+
+Three, and it takes all three:
+
+1. **Only a real browser can prove it.** Focus, portalling, CSS-driven layout, scroll
+   locking, animation lifecycles, hydration. If a jsdom-based unit test can see it, that is
+   cheaper, faster and easier to read — put it there.
+2. **It fails silently.** No exception, no red, nothing a reviewer would notice on the
+   screen: focus landing on `<body>` instead of the opener, an overlay anchored to the wrong
+   box, a search field that quietly stops receiving keystrokes. A behaviour that fails loudly
+   already has a reporter.
+3. **Nothing cheaper already covers it.** A pure function reachable from a unit test stays a
+   unit test even when what it drives is visual. The e2e half is only what the function
+   cannot be asked directly — that its result reaches the DOM at all.
+
+**What doesn't earn one:** anything a screenshot answers better (spacing, colour, gradients),
+the happy path of a function already under unit test, and anything needing a fixed wait to
+pass. A test that needs a sleep hasn't found what it is really waiting for; web-first
+assertions retry on their own, and if none of them expresses the condition, that is the thing
+to fix.
+
+### A test is not done until it has been watched to fail
+
+Write it, break the behaviour on purpose, watch it go red for the reason you expect, put the
+code back.
+
+Not a formality. A test can satisfy all three conditions, pass, and still assert nothing: a
+locator that silently matches nothing is green, an assertion on an attribute that is absent
+either way is green, and a check can be watching a weaker behaviour that happens to travel
+with the one it names. Nothing else detects that, and what it produces is a suite that grows
+while its coverage doesn't.
+
+Name the mutation and what it caught in the PR description. That is what makes this checkable
+by someone else rather than a claim.
 
 ## Implementation notes
 
@@ -298,32 +357,20 @@ as the captures — `npx playwright install chromium`, once per machine. It is a
 config from the screenshot run: `playwright.config.ts` is the suite, and it owns the default
 name so a bare `npx playwright test` runs tests rather than writing PNGs.
 
+**What earns a test, and when to ask the question, is in the general conventions above.**
+What follows is what those rules come to in this repo.
+
 Read `e2e/support.ts` before writing one. It carries the viewports, the two navigation
-locators, `parkPointer`, `tabTo` and `expectFocusTrappedIn`, and the fixture that fails any
-test whose page logged an error.
+locators, `parkPointer`, `tabTo`, `expectFocusLoopsIn`, `expectFocusRecapturedFrom`, and the
+fixture that fails any test whose page logged an error.
 
-### What earns an e2e test
+`activeHrefFor` is the standing example of condition 3: the rule that `/gastos/nuevo` still
+lights up Gastos is a pure function over a string, so it belongs to Vitest the day a nested
+route exists. What the suite checks instead is the half the function cannot be asked — that
+the pathname reaches the component at all after a client-side navigation.
 
-Three conditions, and it takes all three:
-
-1. **Only a real browser can prove it.** Focus, portalling, CSS-driven layout, scroll
-   locking, animation lifecycles, hydration. If jsdom can see it, Vitest is cheaper, faster
-   and easier to read — put it there.
-2. **It fails silently.** No exception, no red, nothing a reviewer would notice on the
-   screen: focus landing on `<body>` instead of the opener, an overlay anchored to the wrong
-   box, a search field that quietly stops receiving keystrokes. A behaviour that fails loudly
-   already has a reporter.
-3. **Nothing cheaper already covers it.** A pure function reachable from a unit test is a
-   unit test even when it drives something visual. `activeHrefFor` — the rule that
-   `/gastos/nuevo` still lights up Gastos — is the standing example: it belongs to Vitest the
-   day a nested route exists, and what the e2e suite checks instead is that the pathname
-   reaches the component at all after a client-side navigation.
-
-**What doesn't earn one:** anything a screenshot answers better (spacing, colour, gradients
-— those are the capture run's), the happy path of a function already under unit test, and
-anything needing a fixed wait to pass. A test that needs `waitForTimeout` is a test that
-hasn't found what it is really waiting for; the web-first assertions retry on their own, and
-if none of them expresses the condition, that is the thing to fix.
+Condition 1's counterpart here is the capture run. Spacing, colour and gradients are its job,
+never this suite's, and `waitForTimeout` is the specific fixed wait that must not appear.
 
 ### The traps, all paid for already
 
