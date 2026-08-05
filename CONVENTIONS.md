@@ -103,15 +103,20 @@ In this order:
     initiative, however green everything looks.
 12. **Squash & Merge**, once that approval is given.
 
-Steps 8 and 9 produce new commits, so CI runs again on its own. If the review found
+The review-fix and screenshot-saving steps produce new commits, so CI runs again on its own. If the review found
 nothing, that's said explicitly instead of skipping the step.
 
-**Step 2 is a check, and it has two exits.** Taking pictures is not the job — establishing
+(Steps are referred to by name rather than number wherever the reference is more than a line
+away from the list. A numbered list acquires a second thing to keep in sync every time it
+changes, and nothing checks it — which is exactly how a stale "step 10" survived a
+renumbering.)
+
+**Visual verification is a check, and it has two exits.** Taking pictures is not the job — establishing
 that the thing behaves as intended is, and the images are what lets someone else confirm it
 without rebuilding your branch. So it produces findings like any other check:
 
-- **It looks wrong** → step 4, with the screenshot as the evidence of what wrong looked like.
-- **It is right, but nothing would have told you if it weren't** → step 3. A behaviour you
+- **It looks wrong** → **Fix**, with the screenshot as the evidence of what wrong looked like.
+- **It is right, but nothing would have told you if it weren't** → **the e2e suite**. A behaviour you
   had to check by eye, that fails without an error, is the definition of what earns an e2e
   test — and you are already in the browser, which is the cheapest moment to notice.
 
@@ -119,11 +124,11 @@ That second exit is why the two sit together, rather than the visual pass being 
 afterthought once the code is written.
 
 **The e2e run is its own step because it is a different kind of check, not because it is
-slow.** Steps 1 and 2 are cheap and apply to every change; step 3 needs a browser binary
+slow.** Local verification and the visual pass are cheap and apply to every change; this one needs a browser binary
 that `npm ci` doesn't install and a dev server it starts itself, and it only says anything
 about changes it can actually reach — a migration or a pure calculation gets nothing out of
 it. Sitting next to the screenshots is where it belongs: both drive the same browser, so
-they get run in one pass and their findings land together on step 4. What is _not_ optional
+they get run in one pass and their findings land together on **Fix**. What is _not_ optional
 is running it when the change is in reach of the suite. It gates the merge either way; the
 only question is whether the red arrives before the push or after it.
 
@@ -162,7 +167,7 @@ only matches the first push is worse than a thin one, because it still gets read
 Appending a new section is the easy way to bury it mid-body; every rewrite puts it back at
 the bottom.
 
-Step 11 is not a formality: merging is the one step in this list that can't be undone
+The approval step is not a formality: merging is the one step in this list that can't be undone
 quietly, and it's the last chance to catch something the automated checks can't see. A green
 pipeline says the code runs, not that it's the right code.
 

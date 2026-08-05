@@ -54,7 +54,8 @@ components always use `var(--sd-*)`.
 **ARS and USD are never mixed.** Balances, debts, and the settlement plan are calculated
 per currency, separately. Amounts are integers: there are no cents.
 
-Visual verification starts in Phase 2, comparing against `Prototipo.dc.html`.
+Anything with visible impact is checked against `Prototipo.dc.html`, which is what the
+workflow's visual-verification step compares to here.
 
 ## Generating the screenshots
 
@@ -79,8 +80,8 @@ shape is `test.use(DESKTOP)` or `test.use(MOBILE)`, `goto`, `settle`, `shot`.
 It has to run against `next dev`, not a build: `/dev/kitchen-sink` is a page only in
 development.
 
-**Where the copies end up, and how each one is presented in the PR, is step 9 of the
-workflow.**
+**Where the copies end up, and how each one is presented in the PR, is the workflow's
+screenshot-saving step.**
 
 Visual regression has not landed here, and the e2e suite is described below.
 
@@ -103,13 +104,14 @@ Read `e2e/support.ts` before writing one. It carries the viewports, the two navi
 locators, `parkPointer`, `tabTo`, `expectFocusLoopsIn`, `expectFocusRecapturedFrom`, and the
 fixture that fails any test whose page logged an error.
 
-`activeHrefFor` is the standing example of the third condition: the rule that `/gastos/nuevo` still
-lights up Gastos is a pure function over a string, so it belongs to Vitest the day a nested
-route exists. What the suite checks instead is the half the function cannot be asked — that
+`activeHrefFor` is the standing example of _nothing cheaper already covers it_: the rule that
+`/gastos/nuevo` still lights up Gastos is a pure function over a string, so it belongs to
+Vitest the day a nested route exists. What the suite checks instead is the half the function cannot be asked — that
 the pathname reaches the component at all after a client-side navigation.
 
-Condition 1's counterpart here is the capture run. Spacing, colour and gradients are its job,
-never this suite's, and `waitForTimeout` is the specific fixed wait that must not appear.
+_Only a real browser can prove it_ has a counterpart here: the capture run. Spacing, colour
+and gradients are its job, never this suite's, and `waitForTimeout` is the specific fixed wait
+that must not appear.
 
 ### The traps, all paid for already
 
@@ -156,5 +158,5 @@ nobody can read a result from. Traces are kept on failure instead, and CI upload
 npm run format:check && npm run lint && npm run typecheck && npm test && npm run build
 ```
 
-Plus `npm run test:e2e` when the change is in reach of the suite — step 3 of the workflow.
+Plus `npm run test:e2e` when the change is in reach of the suite — the workflow's e2e step.
 Both are what CI runs, across its two jobs.

@@ -54,6 +54,20 @@ Worth recording because it is the failure mode of numbered steps in general. A c
 that says "step N" acquires a second thing to keep in sync every time the list changes, and
 nothing checks it.
 
+**And then this PR did it five more times** — caught in its own self-review. Having written
+the paragraph above, the first draft referred to "step 9 of the workflow", "step 3 of the
+workflow", "condition 1", "the third condition", and "step 11 is not a formality", two of
+them pointing across a file boundary where a renumbering would be even less visible.
+
+So the rule is now stated rather than merely learned: **steps and conditions are referred to
+by name whenever the reference is more than a line away from the list.** Names survive
+reordering, numbers do not, and the reference costs nothing extra to read — "the workflow's
+e2e step" is clearer than "step 3" even when step 3 is correct. Numbers are left only inside
+the lists themselves, where the reader can see what they point at.
+
+Knowing about a hazard and being immune to it are different things, which is the more general
+lesson and the reason this is written down twice.
+
 ### Step 2 was named after its artefact rather than its purpose
 
 It read "**Screenshots** of anything with visible impact". That describes an output, and an
