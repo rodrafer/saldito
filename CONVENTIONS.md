@@ -27,6 +27,18 @@ Two exceptions:
 When the domain has its own vocabulary in another language, a short glossary goes in the
 repo mapping the spec's terms to the code's.
 
+## Reference material and who wins
+
+Specs, design handoffs and prototypes arrive from outside and **are not edited**. They are
+the copy of what was delivered and have to stay comparable against the original, so
+corrections go in the repo's own notes, never into the source document.
+
+**When two reference documents disagree, the repo says which one wins, and on what.** They
+will disagree — they are written at different times by different people — and the arbitration
+has to be settled once, in writing, rather than re-argued per conflict by whoever hits it. It
+is rarely one document winning outright: the useful form names the axis, so a newer
+specification can win on behaviour while the drawn artefact wins on appearance.
+
 ## Scaffolding architecture
 
 **Feature-based: grouped by domain, not by file type.** Each feature gathers its own —
@@ -153,6 +165,32 @@ the bottom.
 Step 11 is not a formality: merging is the one step in this list that can't be undone
 quietly, and it's the last chance to catch something the automated checks can't see. A green
 pipeline says the code runs, not that it's the right code.
+
+## Screenshots
+
+The captures a PR carries. How they are taken is the repo's business; what follows holds
+regardless of tooling.
+
+**What to capture is decided per PR.** There is no standard set to reproduce and no fixed
+list of dimensions to walk. Take the shots that show the thing this PR builds actually
+working — plus whatever you needed rendered to believe it while building, which is usually
+the same set arrived at from the other direction. A tightened margin is one shot. A new
+screen with an overlay, an empty state and a mobile envelope is four or five.
+
+**The harness is tracked; the shot lists are not.** Whatever fixes viewports, scaling, font
+readiness and the techniques that aren't obvious is durable and belongs in the repo. The
+per-PR script that walks a particular screen does not: nothing in CI runs it, so it rots
+silently — it scrolls to a heading by name, or opens an overlay through a button that later
+moves — and the person who finds out is whoever tried to reuse it months later. What a
+capture proves belongs to the PR that took it, and the images are already in that PR's
+description.
+
+**Captures, an assertion suite, and visual regression are three different tools.** They get
+collapsed constantly, so: a capture run asserts nothing and a human looks at its output once,
+which is why it must never gate a merge. An e2e suite asserts, gates, and pays CI time for
+the privilege. Visual regression compares one run against another, and its cost is neither of
+the above — baselines committed to the repo, an approval flow for every intended change, and
+a flakiness budget of its own. Wanting the first is not a reason to acquire the third.
 
 ## E2E tests
 

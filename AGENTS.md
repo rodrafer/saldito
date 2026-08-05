@@ -23,10 +23,9 @@ is true of Saldito. Both are loaded, and they are meant to be read together.
 
 On conflict between the functional spec and the prototype: **the spec wins on
 functionality, the prototype wins on visuals**. The spec is more recent and includes
-decisions the prototype doesn't reflect yet.
-
-`design_handoff_saldito/` is reference material: **it's not edited**. It's the copy of
-what design delivered and has to keep being compared against the original.
+decisions the prototype doesn't reflect yet. That is this repo's answer to the arbitration
+rule in [`CONVENTIONS.md`](CONVENTIONS.md#reference-material-and-who-wins), which is also why
+`design_handoff_saldito/` is never edited.
 
 ## Where things that get written go
 
@@ -67,38 +66,23 @@ Playwright starts `next dev` on its own, runs whatever shot files are present an
 `<output-dir>/<name>.png`. The browser binary isn't a dependency — `npx playwright install
 chromium`, once per machine.
 
-**What to capture is decided per PR.** There is no standard set to reproduce and no fixed
-list of dimensions to walk. Take the shots that show the thing this PR builds actually
-working — plus whatever you needed rendered to believe it while building, which is usually
-the same set arrived at from the other direction. A tightened margin is one shot. A new
-screen with an overlay, an empty state and a mobile envelope is four or five.
+**What to capture, what is tracked, and how captures differ from the e2e suite are in
+[`CONVENTIONS.md`](CONVENTIONS.md#screenshots).** Here that comes to:
 
-**The shot files are not tracked.** `tools/screenshots/*.shots.ts` is gitignored: the session
-that needs captures writes them, runs them, and lets them go. Nothing in CI runs these, so a
-tracked shot file would rot silently — it scrolls to a heading by name, or opens an overlay
-through a button that later moves — and the person who finds out is whoever tried to reuse it
-months later. What a capture proves belongs to the PR that took it, and the images are
-already in that PR's description.
-
-What _is_ tracked is the harness, because it isn't per-PR and doesn't rot:
-`playwright.shots.config.ts` and `tools/screenshots/shot.ts`. `shot.ts` opens with the four
-techniques that aren't obvious — arriving at focus by keyboard so `:focus-visible` applies,
-framing before clicking, waiting on an overlay by role and name, and clipping to a band —
-and carries `settle`, `tabTo` and `clipOf`. Read it before writing a shot file; the shape is
-`test.use(DESKTOP)` or `test.use(MOBILE)`, `goto`, `settle`, `shot`.
-
-**Where the copies end up, and how each one is presented in the PR, is step 9 of the workflow
-above.**
+The tracked harness is `playwright.shots.config.ts` and `tools/screenshots/shot.ts`; the shot
+files are `tools/screenshots/*.shots.ts` and they are gitignored. `shot.ts` opens with the
+four techniques that aren't obvious — arriving at focus by keyboard so `:focus-visible`
+applies, framing before clicking, waiting on an overlay by role and name, and clipping to a
+band — and carries `settle`, `tabTo` and `clipOf`. Read it before writing a shot file; the
+shape is `test.use(DESKTOP)` or `test.use(MOBILE)`, `goto`, `settle`, `shot`.
 
 It has to run against `next dev`, not a build: `/dev/kitchen-sink` is a page only in
 development.
 
-**This is not the e2e suite and it is not in CI.** Nothing here asserts anything — the
-captures are for a reviewer to look at, and a failing capture run should not block a merge.
-The e2e suite is the opposite commitment on every axis; it lives in `e2e/` and is described
-below. Comparing one capture run against another is visual regression testing, which is a
-third tool again with a different cost (baselines in the repo, an approval flow, its own
-flakiness), and it has not landed.
+**Where the copies end up, and how each one is presented in the PR, is step 9 of the
+workflow.**
+
+Visual regression has not landed here, and the e2e suite is described below.
 
 ## E2E tests
 
@@ -111,14 +95,15 @@ as the captures — `npx playwright install chromium`, once per machine. It is a
 config from the screenshot run: `playwright.config.ts` is the suite, and it owns the default
 name so a bare `npx playwright test` runs tests rather than writing PNGs.
 
-**What earns a test, and when to ask the question, is in the general conventions above.**
-What follows is what those rules come to in this repo.
+**When a behaviour earns a test, what to do when one goes red, and what the suite is allowed
+to cost are in [`CONVENTIONS.md`](CONVENTIONS.md#e2e-tests).** What follows is what those
+rules come to in this repo.
 
 Read `e2e/support.ts` before writing one. It carries the viewports, the two navigation
 locators, `parkPointer`, `tabTo`, `expectFocusLoopsIn`, `expectFocusRecapturedFrom`, and the
 fixture that fails any test whose page logged an error.
 
-`activeHrefFor` is the standing example of condition 3: the rule that `/gastos/nuevo` still
+`activeHrefFor` is the standing example of the third condition: the rule that `/gastos/nuevo` still
 lights up Gastos is a pure function over a string, so it belongs to Vitest the day a nested
 route exists. What the suite checks instead is the half the function cannot be asked — that
 the pathname reaches the component at all after a client-side navigation.
