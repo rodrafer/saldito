@@ -231,6 +231,24 @@ something nobody ships. So the test moves with the behaviour, and if it cannot y
 test says where it is pinned and why**, in a comment at the top of the file naming what would
 have to exist for it to move. A shelf life nobody wrote down is a shelf life nobody honours.
 
+### What the suite costs, and what to do when it costs too much
+
+The suite runs on every push, so its time is a standing charge on every change anyone makes
+afterwards — which makes it the one thing here that gets worse on its own.
+
+**No fixed number belongs in this file.** It would be wrong within two phases, nothing
+triggers a refresh, and a stale figure gets quoted as current precisely because it is written
+where rules live. What belongs here is the threshold and the levers:
+
+- A PR that **adds to the suite** records the run time before and after in its implementation
+  notes, and what the increase bought. Only that PR pays the bookkeeping, and the trend stays
+  recoverable by reading the notes in order.
+- When the run stops being something you would happily wait for locally, that is the signal —
+  not a number someone has to remember. **Parallel workers first**, since most suites start
+  serial for reasons that stop applying; **splitting the job second.**
+- If neither helps, the suite is testing things that did not earn it. Re-read the conditions,
+  not the config.
+
 ## Implementation notes
 
 Every task that lands on `main` closes with a document in

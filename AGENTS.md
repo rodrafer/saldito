@@ -155,13 +155,15 @@ Against `next dev`, because sheet, modal and filter menu have no caller outside
 phases 4 and 5 ship real filter rows and real modals, move the suite onto
 `next build && next start`** and test what actually ships.
 
-The suite itself is ~26s locally and **~30s in CI**, and that number is stable. The job
-around it is ~1m–1m15s, most of the difference being install steps that swing several
-seconds between identical runs. It runs parallel to `verify` so it never queues behind it,
-but it is the slower of the two and therefore the pipeline's critical path — roughly ~45s to
-~1m15s. **No retries**, here or
-in the capture config: a test that passes on the second try is one nobody can read a result
-from. Traces are kept on failure instead, and CI uploads the report.
+It runs as its own CI job, parallel to `verify` so it never queues behind it — but it is the
+slower of the two and therefore the pipeline's critical path, so what the suite costs is what
+the pipeline costs. **The numbers are deliberately not written down here**: the measured cost
+of each increase lives in the implementation notes of the PR that caused it, per
+[`CONVENTIONS.md`](CONVENTIONS.md#what-the-suite-costs-and-what-to-do-when-it-costs-too-much).
+`docs/implementation-notes/tooling-e2e-tests.md` is the baseline.
+
+**No retries**, here or in the capture config: a test that passes on the second try is one
+nobody can read a result from. Traces are kept on failure instead, and CI uploads the report.
 
 ## Before calling something done
 
