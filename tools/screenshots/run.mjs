@@ -49,12 +49,18 @@ if (!existsSync(chromium.executablePath())) {
 
 console.log(`Capturing into ${out}`);
 
-const result = spawnSync('npx', ['playwright', 'test', ...forwarded], {
-  stdio: 'inherit',
-  /* One timestamp for every worker, so a shot can tell "this run wrote that
+/* `--config` is not optional: the default config is the e2e suite's, so
+   without this a capture run would execute the tests instead. */
+const result = spawnSync(
+  'npx',
+  ['playwright', 'test', '--config=playwright.shots.config.ts', ...forwarded],
+  {
+    stdio: 'inherit',
+    /* One timestamp for every worker, so a shot can tell "this run wrote that
      file" from "a previous run did", which is the difference between a name
      collision and an ordinary overwrite. */
-  env: { ...process.env, SHOTS_OUT: out, SHOTS_RUN_STARTED_AT: String(Date.now()) },
-});
+    env: { ...process.env, SHOTS_OUT: out, SHOTS_RUN_STARTED_AT: String(Date.now()) },
+  },
+);
 
 process.exit(result.status ?? 1);

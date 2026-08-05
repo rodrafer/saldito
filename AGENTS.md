@@ -73,26 +73,38 @@ about what's in flight, `git fetch --prune`, or ask the remote directly with
 
 In this order:
 
-1. **Local verification** — the same checks CI runs. CI can't run yet: there's no push or
-   PR.
+1. **Local verification** — the fast checks CI runs: format, lint, types, unit tests, build.
+   CI can't run yet: there's no push or PR.
 2. **Screenshots** of anything with visible impact, compared against the reference design
    if there is one.
-3. **Fix** whatever comes up in 1 and 2.
-4. **Write the implementation notes.**
-5. **Open the PR**, with a matching description, a link to those notes, and **assigned to
+3. **The e2e suite**, if the repo has one and the change is in reach of it — and whether
+   anything you just verified by hand belongs _in_ it. See
+   [What earns an e2e test](#what-earns-an-e2e-test).
+4. **Fix** whatever comes up in 1, 2 and 3.
+5. **Write the implementation notes.**
+6. **Open the PR**, with a matching description, a link to those notes, and **assigned to
    me** — an unassigned PR has nobody waiting on it, and it's the assignee list that says
    whose turn it is.
-6. **Self-review the PR** — read your own diff as if it were someone else's.
-7. **Fix** whatever comes out of the review, and **update the notes and the PR description**
+7. **Self-review the PR** — read your own diff as if it were someone else's.
+8. **Fix** whatever comes out of the review, and **update the notes and the PR description**
    if something worth recording changed.
-8. **Save the screenshots** where they belong and flag it so they get pasted into the PR.
-9. **Final CI check** green.
-10. **Ask for explicit approval to merge**, and wait for it. Never merge on your own
+9. **Save the screenshots** where they belong and flag it so they get pasted into the PR.
+10. **Final CI check** green.
+11. **Ask for explicit approval to merge**, and wait for it. Never merge on your own
     initiative, however green everything looks.
-11. **Squash & Merge**, once that approval is given.
+12. **Squash & Merge**, once that approval is given.
 
-Steps 7 and 8 produce new commits, so CI runs again on its own. If the review found
+Steps 8 and 9 produce new commits, so CI runs again on its own. If the review found
 nothing, that's said explicitly instead of skipping the step.
+
+**The e2e run is its own step because it is a different kind of check, not because it is
+slow.** Steps 1 and 2 are cheap and apply to every change; step 3 needs a browser binary
+that `npm ci` doesn't install and a dev server it starts itself, and it only says anything
+about changes it can actually reach — a migration or a pure calculation gets nothing out of
+it. Sitting next to the screenshots is where it belongs: both drive the same browser, so
+they get run in one pass and their findings land together on step 4. What is _not_ optional
+is running it when the change is in reach of the suite. It gates the merge either way; the
+only question is whether the red arrives before the push or after it.
 
 **Every screenshot in a PR carries a heading and a line saying what to look at.** A wall of
 images is work for the reviewer: they have to infer what each one is meant to prove and
@@ -132,6 +144,63 @@ the bottom.
 Step 10 is not a formality: merging is the one step in this list that can't be undone
 quietly, and it's the last chance to catch something the automated checks can't see. A green
 pipeline says the code runs, not that it's the right code.
+
+## What earns an e2e test
+
+Not every repo needs an e2e suite and none should have one by default. This is when a
+behaviour deserves one — and, the part that gets forgotten, when to ask the question at all.
+
+### Verifying by hand is the trigger
+
+**If you checked it by hand in a browser and it would fail silently, it earns a test.**
+
+That is the whole trigger, and it fires where you already are: steps 2 and 3 put you in front
+of the running app, and whatever you find yourself clicking through is by definition what
+nothing else covers. A suite grown this way _replaces_ a hand-verification list instead of
+accumulating next to one.
+
+The inverse carries as much weight. A behaviour nobody thought to check by hand either fails
+loudly or doesn't matter yet, and neither earns a test.
+
+**If the repo has no suite, this is when to start one.** The first behaviour that meets the
+conditions below is the reason to add the harness — not a phase boundary, not a milestone,
+not a "flow worth driving end to end". Waiting for one of those is how a list of silent
+failures ends up carried by hand for months.
+
+### The conditions
+
+Three, and it takes all three:
+
+1. **Only a real browser can prove it.** Focus, portalling, CSS-driven layout, scroll
+   locking, animation lifecycles, hydration. If a jsdom-based unit test can see it, that is
+   cheaper, faster and easier to read — put it there.
+2. **It fails silently.** No exception, no red, nothing a reviewer would notice on the
+   screen: focus landing on `<body>` instead of the opener, an overlay anchored to the wrong
+   box, a search field that quietly stops receiving keystrokes. A behaviour that fails loudly
+   already has a reporter.
+3. **Nothing cheaper already covers it.** A pure function reachable from a unit test stays a
+   unit test even when what it drives is visual. The e2e half is only what the function
+   cannot be asked directly — that its result reaches the DOM at all.
+
+**What doesn't earn one:** anything a screenshot answers better (spacing, colour, gradients),
+the happy path of a function already under unit test, and anything needing a fixed wait to
+pass. A test that needs a sleep hasn't found what it is really waiting for; web-first
+assertions retry on their own, and if none of them expresses the condition, that is the thing
+to fix.
+
+### A test is not done until it has been watched to fail
+
+Write it, break the behaviour on purpose, watch it go red for the reason you expect, put the
+code back.
+
+Not a formality. A test can satisfy all three conditions, pass, and still assert nothing: a
+locator that silently matches nothing is green, an assertion on an attribute that is absent
+either way is green, and a check can be watching a weaker behaviour that happens to travel
+with the one it names. Nothing else detects that, and what it produces is a suite that grows
+while its coverage doesn't.
+
+Name the mutation and what it caught in the PR description. That is what makes this checkable
+by someone else rather than a claim.
 
 ## Implementation notes
 
@@ -258,13 +327,13 @@ months later. What a capture proves belongs to the PR that took it, and the imag
 already in that PR's description.
 
 What _is_ tracked is the harness, because it isn't per-PR and doesn't rot:
-`playwright.config.ts` and `tools/screenshots/shot.ts`. `shot.ts` opens with the four
+`playwright.shots.config.ts` and `tools/screenshots/shot.ts`. `shot.ts` opens with the four
 techniques that aren't obvious — arriving at focus by keyboard so `:focus-visible` applies,
 framing before clicking, waiting on an overlay by role and name, and clipping to a band —
 and carries `settle`, `tabTo` and `clipOf`. Read it before writing a shot file; the shape is
 `test.use(DESKTOP)` or `test.use(MOBILE)`, `goto`, `settle`, `shot`.
 
-**Where the copies end up, and how each one is presented in the PR, is step 8 of the workflow
+**Where the copies end up, and how each one is presented in the PR, is step 9 of the workflow
 above.**
 
 It has to run against `next dev`, not a build: `/dev/kitchen-sink` is a page only in
@@ -272,9 +341,73 @@ development.
 
 **This is not the e2e suite and it is not in CI.** Nothing here asserts anything — the
 captures are for a reviewer to look at, and a failing capture run should not block a merge.
-Comparing one run against another is visual regression testing, which is a different tool
-with a different cost (baselines in the repo, an approval flow, its own flakiness). If it
-ever lands it lands with the e2e item, not here.
+The e2e suite is the opposite commitment on every axis; it lives in `e2e/` and is described
+below. Comparing one capture run against another is visual regression testing, which is a
+third tool again with a different cost (baselines in the repo, an approval flow, its own
+flakiness), and it has not landed.
+
+## E2E tests
+
+```bash
+npm run test:e2e
+```
+
+Playwright starts `next dev` on its own and runs `e2e/*.spec.ts`. Same browser prerequisite
+as the captures — `npx playwright install chromium`, once per machine. It is a separate
+config from the screenshot run: `playwright.config.ts` is the suite, and it owns the default
+name so a bare `npx playwright test` runs tests rather than writing PNGs.
+
+**What earns a test, and when to ask the question, is in the general conventions above.**
+What follows is what those rules come to in this repo.
+
+Read `e2e/support.ts` before writing one. It carries the viewports, the two navigation
+locators, `parkPointer`, `tabTo`, `expectFocusLoopsIn`, `expectFocusRecapturedFrom`, and the
+fixture that fails any test whose page logged an error.
+
+`activeHrefFor` is the standing example of condition 3: the rule that `/gastos/nuevo` still
+lights up Gastos is a pure function over a string, so it belongs to Vitest the day a nested
+route exists. What the suite checks instead is the half the function cannot be asked — that
+the pathname reaches the component at all after a client-side navigation.
+
+Condition 1's counterpart here is the capture run. Spacing, colour and gradients are its job,
+never this suite's, and `waitForTimeout` is the specific fixed wait that must not appear.
+
+### The traps, all paid for already
+
+- **A hidden tab never dispatches `animationend`**, so Radix's `Presence` stays suspended and
+  an overlay looks stuck open with nothing wrong. Headless is fine — every headless page
+  reports as visible — but `--headed` with more than one worker puts pages in background
+  windows. Debug with `--headed --workers=1`. This cost phase 2 an hour.
+- **Register a listener in an awaited call before triggering what it listens for.** Holding
+  the promise an `evaluate` returns and acting while it is in flight loses the race: the
+  locator still has to be resolved over the wire. See `exitAnimationOf` in
+  `e2e/overlays.spec.ts` — the failure looks exactly like the feature being broken.
+- **Park the pointer.** Playwright leaves the mouse at (0, 0), which on desktop is on top of
+  the rail — and the rail expands on `:hover` as readily as on `:focus-within`. A keyboard
+  test can pass on a hover it never asked for.
+- **Tabbing does not prove a focus trap.** Radix's `FocusScope` takes `loop` and `trapped` as
+  separate props and runs its Tab handler when either is set, so a dialog that only loops is
+  indistinguishable from one that traps as long as you navigate by Tab. Assert both halves —
+  `expectFocusLoopsIn` and `expectFocusRecapturedFrom`.
+- **`getByRole` cannot see into an `aria-hidden` subtree**, because Playwright's role engine
+  skips them the way an assistive technology does. While an overlay is open that is the whole
+  rest of the app, so anything reaching _behind_ the overlay needs a CSS locator. The role
+  query matching nothing there is the inertness working, not a bug to chase.
+
+### Where it runs, and what that costs
+
+Against `next dev`, because sheet, modal and filter menu have no caller outside
+`/dev/kitchen-sink` and `pageExtensions` keeps that page out of a build entirely. **Once
+phases 4 and 5 ship real filter rows and real modals, move the suite onto
+`next build && next start`** and test what actually ships.
+
+The suite itself is ~26s locally and **~30s in CI**, and that number is stable. The job
+around it is ~1m–1m15s, most of the difference being install steps that swing several
+seconds between identical runs. It runs parallel to `verify` so it never queues behind it,
+but it is the slower of the two and therefore the pipeline's critical path — roughly ~45s to
+~1m15s. **No retries**, here or
+in the capture config: a test that passes on the second try is one nobody can read a result
+from. Traces are kept on failure instead, and CI uploads the report.
 
 ## Before calling something done
 
@@ -282,4 +415,5 @@ ever lands it lands with the e2e item, not here.
 npm run format:check && npm run lint && npm run typecheck && npm test && npm run build
 ```
 
-Same as what CI runs.
+Plus `npm run test:e2e` when the change is in reach of the suite — step 3 of the workflow.
+Both are what CI runs, across its two jobs.
