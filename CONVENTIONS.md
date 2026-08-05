@@ -154,10 +154,11 @@ Step 11 is not a formality: merging is the one step in this list that can't be u
 quietly, and it's the last chance to catch something the automated checks can't see. A green
 pipeline says the code runs, not that it's the right code.
 
-## What earns an e2e test
+## E2E tests
 
 Not every repo needs an e2e suite and none should have one by default. This is when a
-behaviour deserves one — and, the part that gets forgotten, when to ask the question at all.
+behaviour deserves one — the part that gets forgotten, which is when to ask the question at
+all — and what happens to it afterwards.
 
 ### Verifying by hand is the trigger
 
@@ -176,7 +177,7 @@ conditions below is the reason to add the harness — not a phase boundary, not 
 not a "flow worth driving end to end". Waiting for one of those is how a list of silent
 failures ends up carried by hand for months.
 
-### The conditions
+### What earns one
 
 Three, and it takes all three:
 
@@ -210,6 +211,25 @@ while its coverage doesn't.
 
 Name the mutation and what it caught in the PR description. That is what makes this checkable
 by someone else rather than a claim.
+
+### When the behaviour changes, so does the test
+
+Writing a test is the easy half. Two things go wrong afterwards, and only one of them is
+loud.
+
+**A red e2e test is a question, not a chore.** It means the behaviour and the assertion
+disagree, and nothing in the failure says which one is wrong. Answer that first. If the
+change was intended, the test is rewritten and then **watched to fail again** — an assertion
+edited to match new behaviour has never been proven in its new form, and "I made it green" is
+the exact move that turns a suite into decoration. If the change was not intended, the test
+just did its job and the code is what changes.
+
+**A test can also go stale without going red**, which is the dangerous half. When a behaviour
+moves — a new component, a real screen replacing a scaffold, a route that relocates — a test
+pinned to the old surface keeps passing while nothing guards the new one. It reports green on
+something nobody ships. So the test moves with the behaviour, and if it cannot yet, **the
+test says where it is pinned and why**, in a comment at the top of the file naming what would
+have to exist for it to move. A shelf life nobody wrote down is a shelf life nobody honours.
 
 ## Implementation notes
 
