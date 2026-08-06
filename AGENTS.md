@@ -29,14 +29,12 @@ rule in [`CONVENTIONS.md`](CONVENTIONS.md#reference-material-and-who-wins), whic
 
 ## Where things that get written go
 
-| What                                  | Where                                           |
-| ------------------------------------- | ----------------------------------------------- |
-| Findings from a phase                 | `docs/implementation-notes/phase-<n>-<slug>.md` |
-| Discrepancies from the design handoff | `HANDOFF_NOTES.md`                              |
-| Scope and phase-order decisions       | `PLAN.md`                                       |
+The routing is in [`CONVENTIONS.md`](CONVENTIONS.md#where-written-decisions-go). The three
+destinations here are `docs/implementation-notes/phase-<n>-<slug>.md`, `PLAN.md`, and
+`HANDOFF_NOTES.md` for anything that diverges from `design_handoff_saldito/`.
 
-A phase closes with its implementation note. See
-`docs/implementation-notes/README.md` for what goes there and what doesn't.
+A phase closes with its implementation note. See `docs/implementation-notes/README.md` for
+what goes there and what doesn't.
 
 ## Project specifics
 

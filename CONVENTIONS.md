@@ -292,6 +292,22 @@ where rules live. What belongs here is the threshold and the levers:
 - If neither helps, the suite is testing things that did not earn it. Re-read the conditions,
   not the config.
 
+## Where written decisions go
+
+Three destinations, and the routing is worth stating once because the sections below assume
+it:
+
+| What                                                     | Where                                 |
+| -------------------------------------------------------- | ------------------------------------- |
+| Findings — what the implementation itself revealed       | `docs/implementation-notes/<slug>.md` |
+| Scope and order decisions, taken before the work         | the planning document                 |
+| Discrepancies from a design handoff, if the repo has one | the repo's handoff notes              |
+
+The first two are one distinction, and the line between them is where this goes wrong often
+enough to be worth its own explanation below. The third row exists because a handoff is
+reference material and **is not edited** — a correction has to land somewhere, and it cannot
+land in the source document.
+
 ## Implementation notes
 
 Every task that lands on `main` closes with a document in

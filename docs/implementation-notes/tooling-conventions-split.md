@@ -144,9 +144,22 @@ capture techniques, the viewports, `/dev/kitchen-sink`, and the `activeHrefFor` 
 shared file that accumulates rules not every repo needs is a shared file that stops being
 read.
 
-**Not extracted, though it looked extractable:** the "where things that get written go"
-table. The shared `Implementation notes` section already carries that routing, and a second
-statement of it in a different shape would be two places to correct.
+**Extracted on review, having first been left out.** The "where things that get written go"
+table was held back on the grounds that the shared `Implementation notes` section already
+routes findings to the notes and scope to the plan, so a table would be a second statement of
+the same thing. That reasoning covered two of its three rows and quietly ignored the third:
+**discrepancies from a design handoff are routed nowhere else in the shared file.**
+
+The objection that remained was that the row assumes a handoff exists, which most repos will
+not have. `if the repo has one` disposes of it — the same shape as the e2e section, which is
+written to say when to acquire a suite rather than to describe one that exists. Conditional
+rows are how a shared file covers a practice that is common without being universal, and
+refusing them is how it ends up covering only the intersection.
+
+It went in as its own short section rather than inside `Implementation notes`, because it
+routes three destinations and that section owns one. The table indexes; the prose under it
+still explains the line between a finding and a scope decision, which is the part that
+actually gets got wrong.
 
 ## Propagating this
 
