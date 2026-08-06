@@ -5,258 +5,12 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
-<!-- BEGIN:convenciones-generales -->
-
-# General conventions
-
-These rules don't depend on the stack: they apply to all my projects and **this block is
-replicated identically in every repo**. If one changes, it changes everywhere. What's
-specific to this project is further below.
-
-## Language
-
-**The repo is written in English**: identifiers, comments, documentation, commit messages,
-and PR titles and descriptions. That's what lets anyone read the repo without friction.
-
-This covers the PR even when the conversation that produced it happened in another language,
-which is the case it actually gets missed in.
-
-Two exceptions:
-
-- **Text the end user sees** goes in the product's language.
-- **Reference material delivered by third parties** (design handoffs, specs) stays as it
-  arrived: it's compared against the original, and translating it breaks that.
-
-When the domain has its own vocabulary in another language, a short glossary goes in the
-repo mapping the spec's terms to the code's.
-
-## Scaffolding architecture
-
-**Feature-based: grouped by domain, not by file type.** Each feature gathers its own —
-components, hooks, actions, schemas, types— instead of spreading them across
-`components/`, `hooks/`, and `services/` folders that grow disconnected from the product.
-
-Only what's genuinely used by several features is shared: UI primitives, utilities, and
-domain types.
-
-**Pure business logic is isolated, with no framework dependencies.** No imports from the
-router, the database client, or components. That way it runs identically in tests, on the
-server, and on the client, and can be reasoned about without spinning up the app.
-
-## Commits
-
-**Grouped by topic. No giant single commit per task.** If a change touches several
-unrelated things, separate commits go out even if they came from the same session.
-
-Each commit has to be reviewable on its own, and its message explains **why**, not just
-what. A `package.json` that adds a tool goes with that tool's config, not lumped in with
-every dependency in the project.
-
-Branches `feature/<slug>`, merged via **Squash & Merge**.
-
-**Once merged, the branch goes — local and remote.** Nothing is lost by deleting it: GitHub
-keeps `refs/pull/<n>/head` pointing at the pre-squash tip indefinitely, so the PR page still
-shows every individual commit and the branch can be restored from there. What is lost by
-keeping them is the ability to read `git branch -r` and see what is actually in flight.
-
-Squash & Merge replays the work as one new commit, so the branch's own commits are never
-ancestors of `main`. `git branch -d` will refuse on that basis and `git branch -D` is the
-correct call — the one case where that flag doesn't mean "I am discarding unmerged work".
-
-**`git branch -r` is a local cache, not the remote.** Remote-tracking refs survive the branch
-they track: delete a branch on GitHub and the local `origin/…` entry stays until something
-prunes it, so the list reads as stale branches that no longer exist. Before claiming anything
-about what's in flight, `git fetch --prune`, or ask the remote directly with
-`git ls-remote --heads origin`.
-
-## Workflow to ship code to `main`
-
-In this order:
-
-1. **Local verification** — the fast checks CI runs: format, lint, types, unit tests, build.
-   CI can't run yet: there's no push or PR.
-2. **Screenshots** of anything with visible impact, compared against the reference design
-   if there is one.
-3. **The e2e suite**, if the repo has one and the change is in reach of it — and whether
-   anything you just verified by hand belongs _in_ it. See
-   [What earns an e2e test](#what-earns-an-e2e-test).
-4. **Fix** whatever comes up in 1, 2 and 3.
-5. **Write the implementation notes.**
-6. **Open the PR**, with a matching description, a link to those notes, and **assigned to
-   me** — an unassigned PR has nobody waiting on it, and it's the assignee list that says
-   whose turn it is.
-7. **Self-review the PR** — read your own diff as if it were someone else's.
-8. **Fix** whatever comes out of the review, and **update the notes and the PR description**
-   if something worth recording changed.
-9. **Save the screenshots** where they belong and flag it so they get pasted into the PR.
-10. **Final CI check** green.
-11. **Ask for explicit approval to merge**, and wait for it. Never merge on your own
-    initiative, however green everything looks.
-12. **Squash & Merge**, once that approval is given.
-
-Steps 8 and 9 produce new commits, so CI runs again on its own. If the review found
-nothing, that's said explicitly instead of skipping the step.
-
-**The e2e run is its own step because it is a different kind of check, not because it is
-slow.** Steps 1 and 2 are cheap and apply to every change; step 3 needs a browser binary
-that `npm ci` doesn't install and a dev server it starts itself, and it only says anything
-about changes it can actually reach — a migration or a pure calculation gets nothing out of
-it. Sitting next to the screenshots is where it belongs: both drive the same browser, so
-they get run in one pass and their findings land together on step 4. What is _not_ optional
-is running it when the change is in reach of the suite. It gates the merge either way; the
-only question is whether the red arrives before the push or after it.
-
-**Every screenshot in a PR carries a heading and a line saying what to look at.** A wall of
-images is work for the reviewer: they have to infer what each one is meant to prove and
-whether it proves it. The heading names the state — which screen, which viewport, which
-overlay open — and the line points at the specific thing that changed, so a reviewer can
-tell agreement from oversight without reading the diff first. The body of the PR carries
-those headings before the screenshots exist, each with a marker where the image goes.
-
-**Every PR description carries a `## Review guide`.** It says what order to read the files
-in, why that order, and what can be skipped. The point is to spend the reviewer's attention
-where it changes the outcome: start at the file that carries the decision, not at the top of
-the alphabet, and name outright the parts that are mechanical, generated, or the same edit
-repeated — a PR where twenty of twenty-five files are one rename applied over and over should
-say so, instead of letting the reviewer discover it on file eleven. Saying "skip these" is
-the part that makes it a guide rather than an index.
-
-**A mermaid diagram goes in when the PR introduces or rewires relationships between
-modules** — and stays out otherwise. It has to show what the diff doesn't make obvious: a
-dependency through context, a new seam, who calls the new thing, and **the untouched files
-the new code leans on**, which are precisely the ones a diff never mentions. A diagram that
-restates the changed-file list is redundant with what GitHub already shows above it.
-
-Deliberately not mandatory. Nothing verifies a diagram against the code, so it rots faster
-than prose, and a wrong architecture diagram is worse than none because it gets believed. On
-a mechanical change or a contained fix, leave it out.
-
-**The title and description describe the PR as it stands, not as it was opened.** Anything
-that lands afterwards — review fixes, a scope that grew, work that rode along — updates the
-description whenever it changes what a reviewer should expect to find, and updates the
-**title** too once the title has stopped naming what is actually in there. A description that
-only matches the first push is worse than a thin one, because it still gets read as current.
-
-**`🤖 Generated with [Claude Code](https://claude.com/claude-code)` goes last, always.**
-Appending a new section is the easy way to bury it mid-body; every rewrite puts it back at
-the bottom.
-
-Step 10 is not a formality: merging is the one step in this list that can't be undone
-quietly, and it's the last chance to catch something the automated checks can't see. A green
-pipeline says the code runs, not that it's the right code.
-
-## What earns an e2e test
-
-Not every repo needs an e2e suite and none should have one by default. This is when a
-behaviour deserves one — and, the part that gets forgotten, when to ask the question at all.
-
-### Verifying by hand is the trigger
-
-**If you checked it by hand in a browser and it would fail silently, it earns a test.**
-
-That is the whole trigger, and it fires where you already are: steps 2 and 3 put you in front
-of the running app, and whatever you find yourself clicking through is by definition what
-nothing else covers. A suite grown this way _replaces_ a hand-verification list instead of
-accumulating next to one.
-
-The inverse carries as much weight. A behaviour nobody thought to check by hand either fails
-loudly or doesn't matter yet, and neither earns a test.
-
-**If the repo has no suite, this is when to start one.** The first behaviour that meets the
-conditions below is the reason to add the harness — not a phase boundary, not a milestone,
-not a "flow worth driving end to end". Waiting for one of those is how a list of silent
-failures ends up carried by hand for months.
-
-### The conditions
-
-Three, and it takes all three:
-
-1. **Only a real browser can prove it.** Focus, portalling, CSS-driven layout, scroll
-   locking, animation lifecycles, hydration. If a jsdom-based unit test can see it, that is
-   cheaper, faster and easier to read — put it there.
-2. **It fails silently.** No exception, no red, nothing a reviewer would notice on the
-   screen: focus landing on `<body>` instead of the opener, an overlay anchored to the wrong
-   box, a search field that quietly stops receiving keystrokes. A behaviour that fails loudly
-   already has a reporter.
-3. **Nothing cheaper already covers it.** A pure function reachable from a unit test stays a
-   unit test even when what it drives is visual. The e2e half is only what the function
-   cannot be asked directly — that its result reaches the DOM at all.
-
-**What doesn't earn one:** anything a screenshot answers better (spacing, colour, gradients),
-the happy path of a function already under unit test, and anything needing a fixed wait to
-pass. A test that needs a sleep hasn't found what it is really waiting for; web-first
-assertions retry on their own, and if none of them expresses the condition, that is the thing
-to fix.
-
-### A test is not done until it has been watched to fail
-
-Write it, break the behaviour on purpose, watch it go red for the reason you expect, put the
-code back.
-
-Not a formality. A test can satisfy all three conditions, pass, and still assert nothing: a
-locator that silently matches nothing is green, an assertion on an attribute that is absent
-either way is green, and a check can be watching a weaker behaviour that happens to travel
-with the one it names. Nothing else detects that, and what it produces is a suite that grows
-while its coverage doesn't.
-
-Name the mutation and what it caught in the PR description. That is what makes this checkable
-by someone else rather than a claim.
-
-## Implementation notes
-
-Every task that lands on `main` closes with a document in
-`docs/implementation-notes/`, written **before opening the PR** and linked from its
-description.
-
-They keep what the code can't tell on its own: why one path was chosen over another, what
-was discarded, what broke along the way. The diff shows _what_ changed; the notes explain
-_why_.
-
-What's most valuable are the **findings**: when the implementation contradicts the spec,
-when a tool behaves differently than expected, or when a test finds something no one had
-anticipated. That's lost as soon as the session ends if it doesn't get written down.
-
-They don't repeat what the code already says. If something is clear from reading the diff,
-it doesn't go here.
-
-**Notes are not where scope changes get recorded.** A decision taken _before_ the work —
-adding a dependency, dropping something from the phase, changing the approach — belongs in
-the planning document, because that's what the next session reads to know what to build. A
-plan that only gets corrected in hindsight is stale from the moment the work starts.
-
-The line is when the decision happened, not how important it was:
-
-- **Decided in advance** → planning document, stated as scope. The notes then carry the
-  reasoning and whatever the implementation actually revealed about it.
-- **Discovered while implementing** → notes. That's a finding.
-
-When a decision changes the scope of a phase, say so and update the plan before writing
-code, rather than letting the notes absorb it later.
-
-## Model and effort
-
-**At the start of every session**, before anything else, check the active model against
-what the task actually needs. The model is visible in the system prompt; the effort level
-often is not — when it isn't, ask rather than assume.
-
-If they don't match the task, say so and recommend the change **before** starting work.
-
-**Prefer switching in place over discarding the session.** The cost of switching is a
-prompt-cache invalidation, which scales with accumulated context: on the first turn it is
-nearly free, after an hour of work it is not. Only suggest starting over when the wrong
-setup already produced substantive work — that work stays in context and anchors whatever
-comes next.
-
-**When handing off a prompt for a new session** — or whenever it becomes clear one is
-about to start — recommend a model and effort level for it, with one line of reasoning.
-
-The criterion is how much reasoning depth the task demands and how good the automated
-verification is, not the size of the diff. A thousand-line migration covered by tests
-needs less than a twenty-line change to money-splitting logic.
-
-<!-- END:convenciones-generales -->
-
 # Saldito conventions
+
+**The general conventions are in [`CONVENTIONS.md`](CONVENTIONS.md)** — language, scaffolding,
+commits, the workflow to ship to `main`, e2e tests, implementation notes, and model and
+effort. That file is byte-identical in every repo under `~/workspace`; this one is only what
+is true of Saldito. Both are loaded, and they are meant to be read together.
 
 ## Sources of truth
 
@@ -269,21 +23,18 @@ needs less than a twenty-line change to money-splitting logic.
 
 On conflict between the functional spec and the prototype: **the spec wins on
 functionality, the prototype wins on visuals**. The spec is more recent and includes
-decisions the prototype doesn't reflect yet.
-
-`design_handoff_saldito/` is reference material: **it's not edited**. It's the copy of
-what design delivered and has to keep being compared against the original.
+decisions the prototype doesn't reflect yet. That is this repo's answer to the arbitration
+rule in [`CONVENTIONS.md`](CONVENTIONS.md#reference-material-and-who-wins), which is also why
+`design_handoff_saldito/` is never edited.
 
 ## Where things that get written go
 
-| What                                  | Where                                           |
-| ------------------------------------- | ----------------------------------------------- |
-| Findings from a phase                 | `docs/implementation-notes/phase-<n>-<slug>.md` |
-| Discrepancies from the design handoff | `HANDOFF_NOTES.md`                              |
-| Scope and phase-order decisions       | `PLAN.md`                                       |
+The routing is in [`CONVENTIONS.md`](CONVENTIONS.md#where-written-decisions-go). The three
+destinations here are `docs/implementation-notes/phase-<n>-<slug>.md`, `PLAN.md`, and
+`HANDOFF_NOTES.md` for anything that diverges from `design_handoff_saldito/`.
 
-A phase closes with its implementation note. See
-`docs/implementation-notes/README.md` for what goes there and what doesn't.
+A phase closes with its implementation note. See `docs/implementation-notes/README.md` for
+what goes there and what doesn't.
 
 ## Project specifics
 
@@ -301,7 +52,8 @@ components always use `var(--sd-*)`.
 **ARS and USD are never mixed.** Balances, debts, and the settlement plan are calculated
 per currency, separately. Amounts are integers: there are no cents.
 
-Visual verification starts in Phase 2, comparing against `Prototipo.dc.html`.
+Anything with visible impact is checked against `Prototipo.dc.html`, which is what the
+workflow's visual-verification step compares to here.
 
 ## Generating the screenshots
 
@@ -313,38 +65,23 @@ Playwright starts `next dev` on its own, runs whatever shot files are present an
 `<output-dir>/<name>.png`. The browser binary isn't a dependency — `npx playwright install
 chromium`, once per machine.
 
-**What to capture is decided per PR.** There is no standard set to reproduce and no fixed
-list of dimensions to walk. Take the shots that show the thing this PR builds actually
-working — plus whatever you needed rendered to believe it while building, which is usually
-the same set arrived at from the other direction. A tightened margin is one shot. A new
-screen with an overlay, an empty state and a mobile envelope is four or five.
+**What to capture, what is tracked, and how captures differ from the e2e suite are in
+[`CONVENTIONS.md`](CONVENTIONS.md#screenshots).** Here that comes to:
 
-**The shot files are not tracked.** `tools/screenshots/*.shots.ts` is gitignored: the session
-that needs captures writes them, runs them, and lets them go. Nothing in CI runs these, so a
-tracked shot file would rot silently — it scrolls to a heading by name, or opens an overlay
-through a button that later moves — and the person who finds out is whoever tried to reuse it
-months later. What a capture proves belongs to the PR that took it, and the images are
-already in that PR's description.
-
-What _is_ tracked is the harness, because it isn't per-PR and doesn't rot:
-`playwright.shots.config.ts` and `tools/screenshots/shot.ts`. `shot.ts` opens with the four
-techniques that aren't obvious — arriving at focus by keyboard so `:focus-visible` applies,
-framing before clicking, waiting on an overlay by role and name, and clipping to a band —
-and carries `settle`, `tabTo` and `clipOf`. Read it before writing a shot file; the shape is
-`test.use(DESKTOP)` or `test.use(MOBILE)`, `goto`, `settle`, `shot`.
-
-**Where the copies end up, and how each one is presented in the PR, is step 9 of the workflow
-above.**
+The tracked harness is `playwright.shots.config.ts` and `tools/screenshots/shot.ts`; the shot
+files are `tools/screenshots/*.shots.ts` and they are gitignored. `shot.ts` opens with the
+four techniques that aren't obvious — arriving at focus by keyboard so `:focus-visible`
+applies, framing before clicking, waiting on an overlay by role and name, and clipping to a
+band — and carries `settle`, `tabTo` and `clipOf`. Read it before writing a shot file; the
+shape is `test.use(DESKTOP)` or `test.use(MOBILE)`, `goto`, `settle`, `shot`.
 
 It has to run against `next dev`, not a build: `/dev/kitchen-sink` is a page only in
 development.
 
-**This is not the e2e suite and it is not in CI.** Nothing here asserts anything — the
-captures are for a reviewer to look at, and a failing capture run should not block a merge.
-The e2e suite is the opposite commitment on every axis; it lives in `e2e/` and is described
-below. Comparing one capture run against another is visual regression testing, which is a
-third tool again with a different cost (baselines in the repo, an approval flow, its own
-flakiness), and it has not landed.
+**Where the copies end up, and how each one is presented in the PR, is the workflow's
+screenshot-saving step.**
+
+Visual regression has not landed here, and the e2e suite is described below.
 
 ## E2E tests
 
@@ -357,20 +94,22 @@ as the captures — `npx playwright install chromium`, once per machine. It is a
 config from the screenshot run: `playwright.config.ts` is the suite, and it owns the default
 name so a bare `npx playwright test` runs tests rather than writing PNGs.
 
-**What earns a test, and when to ask the question, is in the general conventions above.**
-What follows is what those rules come to in this repo.
+**When a behaviour earns a test, what to do when one goes red, and what the suite is allowed
+to cost are in [`CONVENTIONS.md`](CONVENTIONS.md#e2e-tests).** What follows is what those
+rules come to in this repo.
 
 Read `e2e/support.ts` before writing one. It carries the viewports, the two navigation
 locators, `parkPointer`, `tabTo`, `expectFocusLoopsIn`, `expectFocusRecapturedFrom`, and the
 fixture that fails any test whose page logged an error.
 
-`activeHrefFor` is the standing example of condition 3: the rule that `/gastos/nuevo` still
-lights up Gastos is a pure function over a string, so it belongs to Vitest the day a nested
-route exists. What the suite checks instead is the half the function cannot be asked — that
+`activeHrefFor` is the standing example of _nothing cheaper already covers it_: the rule that
+`/gastos/nuevo` still lights up Gastos is a pure function over a string, so it belongs to
+Vitest the day a nested route exists. What the suite checks instead is the half the function cannot be asked — that
 the pathname reaches the component at all after a client-side navigation.
 
-Condition 1's counterpart here is the capture run. Spacing, colour and gradients are its job,
-never this suite's, and `waitForTimeout` is the specific fixed wait that must not appear.
+_Only a real browser can prove it_ has a counterpart here: the capture run. Spacing, colour
+and gradients are its job, never this suite's, and `waitForTimeout` is the specific fixed wait
+that must not appear.
 
 ### The traps, all paid for already
 
@@ -401,13 +140,15 @@ Against `next dev`, because sheet, modal and filter menu have no caller outside
 phases 4 and 5 ship real filter rows and real modals, move the suite onto
 `next build && next start`** and test what actually ships.
 
-The suite itself is ~26s locally and **~30s in CI**, and that number is stable. The job
-around it is ~1m–1m15s, most of the difference being install steps that swing several
-seconds between identical runs. It runs parallel to `verify` so it never queues behind it,
-but it is the slower of the two and therefore the pipeline's critical path — roughly ~45s to
-~1m15s. **No retries**, here or
-in the capture config: a test that passes on the second try is one nobody can read a result
-from. Traces are kept on failure instead, and CI uploads the report.
+It runs as its own CI job, parallel to `verify` so it never queues behind it — but it is the
+slower of the two and therefore the pipeline's critical path, so what the suite costs is what
+the pipeline costs. **The numbers are deliberately not written down here**: the measured cost
+of each increase lives in the implementation notes of the PR that caused it, per
+[`CONVENTIONS.md`](CONVENTIONS.md#what-the-suite-costs-and-what-to-do-when-it-costs-too-much).
+`docs/implementation-notes/tooling-e2e-tests.md` is the baseline.
+
+**No retries**, here or in the capture config: a test that passes on the second try is one
+nobody can read a result from. Traces are kept on failure instead, and CI uploads the report.
 
 ## Before calling something done
 
@@ -415,5 +156,5 @@ from. Traces are kept on failure instead, and CI uploads the report.
 npm run format:check && npm run lint && npm run typecheck && npm test && npm run build
 ```
 
-Plus `npm run test:e2e` when the change is in reach of the suite — step 3 of the workflow.
+Plus `npm run test:e2e` when the change is in reach of the suite — the workflow's e2e step.
 Both are what CI runs, across its two jobs.

@@ -1,1 +1,2 @@
+@CONVENTIONS.md
 @AGENTS.md
